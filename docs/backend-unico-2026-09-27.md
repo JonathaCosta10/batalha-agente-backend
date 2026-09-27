@@ -184,6 +184,8 @@ Dados versionados em `desafio_itau/politica/cotas-gemini-v1.json` (1.0.0).
 | gemma-4-26b-a4b-it / 31b-it | 30 | 14400 | 0 | 400 com o corpo real | não |
 
 **Router** (ordem vem do ficheiro; `CONVERSAS['ROTEADOR']` = True por omissão):
+Lógica completa, consumo por modelo e procedimento para alterar: [`rotacao-modelos-gemini.md`](rotacao-modelos-gemini.md).
+
 
 - `input_guard` / `output_guard`: gemini-3.1-flash-lite -> gemini-3.6-flash -> gemini-3.5-flash-lite -> gemini-3.5-flash.
 - `generate`: gemini-3.5-flash-lite -> gemini-3.1-flash-lite -> gemini-3.6-flash -> gemini-3.5-flash.
