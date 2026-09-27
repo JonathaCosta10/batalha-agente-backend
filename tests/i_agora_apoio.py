@@ -96,6 +96,9 @@ class IAgoraBase(unittest.TestCase):
         self.service = ConversationService()
         for p in (patch.object(pu, 'ARQUIVO_CSV', csv), patch.object(views, 'source', lambda: self.src),
                   patch.object(sessao, 'RNG', self.rng_obj),
+                  # Sequência `rng` = índices do sorteio UNIFORME; sem ficheiro de situação o sorteio é uniforme
+                  # (o sorteio por situação tem os seus testes em test_sorteio_situacao.py).
+                  patch.object(sessao, 'ARQUIVO_SITUACAO', Path(self.pasta.name) / 'situacao_ausente.json'),
                   patch.object(conversas_views, 'get_service', lambda: self.service)):
             p.start()
             self.addCleanup(p.stop)

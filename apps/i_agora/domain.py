@@ -95,6 +95,19 @@ def draft_for_case(baseline, case):
     return validate_plan(p)
 
 
+# Regra do perfil (README do front, seção 12): comparação observada no mês de referência. É a MESMA função que a
+# abertura usa (from_snapshot) e que scripts/gerar_situacao_por_usuario.py aplica aos 1.000 ids (sorteio por situação).
+SITUACOES = ('fluxo_negativo', 'fluxo_equilibrado', 'sobra_observada')
+REGRA_SITUACAO = ('i_agora.domain.situacao_do_mes v1 (README do front, secao 12): saidas > entradas -> fluxo_negativo; '
+                  'saidas = entradas -> fluxo_equilibrado; saidas < entradas -> sobra_observada; '
+                  'ultimo mes encerrado do cliente, tipo E/S')
+
+
+def situacao_do_mes(incoming, outgoing):
+    incoming, outgoing = dec(incoming), dec(outgoing)
+    return 'fluxo_negativo' if outgoing > incoming else 'fluxo_equilibrado' if outgoing == incoming else 'sobra_observada'
+
+
 def from_snapshot(s):
     # O snapshot normalizado já separa entradas de renda recorrente.
     p = s['reference_month']
@@ -115,7 +128,7 @@ def from_snapshot(s):
     person = {'id': s.get('index', 1), 'idUsuario': ref, 'nome': nome, 'primeiroNome': nome, 'genero': None,
               'nomeSelo': NOMES_SELO if nome else None, 'plan': deepcopy(draft), 'referenceLabel': period_label(p),
               'planPeriodLabel': period_label(next_period), 'sourceAvailable': True, 'sourceLabel': s['seal']['source']}
-    situation = 'fluxo_negativo' if outgoing > incoming else 'fluxo_equilibrado' if outgoing == incoming else 'sobra_observada'
+    situation = situacao_do_mes(incoming, outgoing)
     return {'planId': str(uuid4()), 'version': 1, 'stage': 'intro', 'draft': draft, 'confirmed': None,
             'confirmedAt': None, 'phraseIndex': 0,
             'profile': {'person': person,

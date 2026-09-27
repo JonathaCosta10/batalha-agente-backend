@@ -296,10 +296,25 @@ POST /api/v1/context-agent/perfil-usuario/definir/   {"usuario": "00108ccd-699c-
   usuario: { codigo: string /* id_usuario */, pessoa: string /* "Maria" */, nome_origem: "nome_gerado" },
   tempo_resposta_ms: number }
 // Sorteio no servidor (2026-09-27 14:27, pedido do front): {"usuario": "aleatorio", "excluir": "<uuid atual>"}
-// → mesmo 201, com um id uniforme entre os 1.000 do CSV da verdade e diferente de `excluir` (opcional).
+// → mesmo 201, com um id entre os 1.000 do CSV da verdade, sempre diferente de `excluir` (opcional).
 // Todos os 1.000 têm 12 meses (mín. 278 movimentos, mediana 450), não há perfil ralo no sorteio.
-// Serve para "Testar próximo perfil" também; i-agora/sessao/abertura com next:true troca o titular da
-// mesma sessão neste backend (sorteio com exclusão do atual).
+// POR SITUAÇÃO (2026-09-27 14:39, dono): primeiro sorteia a situação financeira (uniforme entre as que têm
+// gente, FORA a da pessoa de `excluir` quando há outra), depois um id uniforme dentro dela. Assim o
+// "Testar próximo perfil" mostra outro tipo de pessoa a cada clique. A 201 ganha:
+//   sorteio: {"modo": "por_situacao", "situacao": "fluxo_negativo" | "fluxo_equilibrado" | "sobra_observada"}
+//   sorteio: {"modo": "uniforme", "motivo": "situacao NAO_MEDIDA"}   // sem data/situacao_por_usuario.json
+// (só a categoria; nenhum valor do extrato). Com "usuario" = UUID explícito não há campo `sorteio`.
+// Forçar: {"usuario": "aleatorio", "situacao": "<categoria>"} → só dentro dela.
+//   400 {"erro": ..., "situacoes_validas": ["fluxo_negativo", "sobra_observada"]}  categoria inexistente/sem gente
+//   503 {"estado": "NAO_MEDIDO"} situação forçada sem o ficheiro de situações (nunca vira uniforme calado)
+// Situação = a MESMA regra da abertura do i-agora (README do front §12, apps/i_agora/domain.situacao_do_mes):
+// último mês encerrado do cliente no extrato, saídas > entradas → fluxo_negativo, = → fluxo_equilibrado,
+// < → sobra_observada. Pré-calculada por scripts/gerar_situacao_por_usuario.py (1 consulta BigQuery) em
+// data/situacao_por_usuario.json, com selo. Medido 2026-09-27 14:42 BRT (job e28b94f8, mês 2025-12):
+// fluxo_negativo 316 · sobra_observada 684 · fluxo_equilibrado 0 · NAO_MEDIDO 0. Hoje, portanto, o
+// "próximo perfil" alterna entre as duas categorias.
+// i-agora/sessao/abertura com next:true troca o titular da mesma sessão pelo MESMO sorteio (excluindo o atual
+// e a situação dele); a resposta da abertura não muda de forma (sem campo `sorteio`).
 // 400 {"erro": "Índice posicional descontinuado: envie usuario com o id_usuario (UUID)."}
 // 404 UUID bem formado que não está no CSV da verdade
 
