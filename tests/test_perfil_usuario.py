@@ -158,6 +158,22 @@ class PerfilUsuarioTest(unittest.TestCase):
         sessao = self._definir().json()["sessao_id"]
         self.assertEqual(self._perguntar(sessao, "   ").status_code, 400)
 
+    def test_aleatorio_sorteia_no_servidor_e_exclui_o_atual(self):
+        # Base de 2: excluindo a Maria, só pode sair o Eduardo (e vice-versa), em todas as tentativas.
+        for _ in range(10):
+            corpo = {"usuario": "aleatorio", "excluir": MARIA}
+            resposta = self.http.post(BASE + "definir/", corpo, content_type="application/json")
+            self.assertEqual(resposta.status_code, 201)
+            self.assertEqual(resposta.json()["usuario"]["codigo"], EDUARDO)
+            corpo["excluir"] = EDUARDO.upper()
+            resposta = self.http.post(BASE + "definir/", corpo, content_type="application/json")
+            self.assertEqual(resposta.json()["usuario"]["codigo"], MARIA)
+        # Sem excluir: qualquer um dos dois, sempre um id do CSV.
+        codigo = self._definir("ALEATORIO").json()["usuario"]["codigo"]
+        self.assertIn(codigo, (MARIA, EDUARDO))
+        # Prova negativa: palavra parecida não sorteia, é referência inválida.
+        self.assertEqual(self._definir("aleatoria").status_code, 400)
+
     def test_csv_ausente_503_nao_medido(self):
         self.csv.unlink()
         pu._base["mtime"] = None

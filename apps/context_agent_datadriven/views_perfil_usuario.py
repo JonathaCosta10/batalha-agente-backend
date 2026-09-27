@@ -55,8 +55,19 @@ class PerfilUsuarioDefinirAPI(APIView):
     """Primeira chamada do front: define quem é o usuário e abre a sessão."""
 
     def post(self, request):
-        return _executar(lambda: pu.definir_usuario(_texto(request.data, "usuario", 64)),
+        return _executar(lambda: pu.definir_usuario(_referencia(request.data)),
                          codigo_ok=status.HTTP_201_CREATED)
+
+
+def _referencia(dados):
+    """UUID do usuário, ou "aleatorio" (+ "excluir": UUID atual) para o servidor sortear entre os 1.000 do CSV
+    da verdade um id diferente do atual (pedido do front 2026-09-27 14:27: uma chamada em vez de três)."""
+    ref = _texto(dados, "usuario", 64)
+    if ref.strip().lower() != "aleatorio":
+        return ref
+    from apps.i_agora.sessao import sortear  # import tardio: i_agora.sessao importa este serviço
+    excluir = dados.get("excluir") if isinstance(dados, dict) else None
+    return sortear(exclude=str(excluir).strip().lower() if excluir else None)
 
 
 class PerfilUsuarioPerguntaAPI(APIView):

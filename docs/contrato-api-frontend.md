@@ -295,6 +295,11 @@ POST /api/v1/context-agent/perfil-usuario/definir/   {"usuario": "00108ccd-699c-
 { sessao_id: string, expira_em_segundos: 14400,
   usuario: { codigo: string /* id_usuario */, pessoa: string /* "Maria" */, nome_origem: "nome_gerado" },
   tempo_resposta_ms: number }
+// Sorteio no servidor (2026-09-27 14:27, pedido do front): {"usuario": "aleatorio", "excluir": "<uuid atual>"}
+// → mesmo 201, com um id uniforme entre os 1.000 do CSV da verdade e diferente de `excluir` (opcional).
+// Todos os 1.000 têm 12 meses (mín. 278 movimentos, mediana 450), não há perfil ralo no sorteio.
+// Serve para "Testar próximo perfil" também; i-agora/sessao/abertura com next:true troca o titular da
+// mesma sessão neste backend (sorteio com exclusão do atual).
 // 400 {"erro": "Índice posicional descontinuado: envie usuario com o id_usuario (UUID)."}
 // 404 UUID bem formado que não está no CSV da verdade
 
