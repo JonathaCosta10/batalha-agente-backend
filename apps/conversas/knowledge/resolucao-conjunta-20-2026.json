@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.0",
+  "id": "RC-20-2026",
+  "identificacao": {
+    "tipo": "Resolução Conjunta",
+    "numero": 20,
+    "ano": 2026,
+    "data_ato": "2026-05-04",
+    "titulo": "RESOLUÇÃO CONJUNTA Nº 20, DE 4 DE MAIO DE 2026",
+    "ementa": "Altera a Resolução Conjunta nº 8, de 21 de dezembro de 2023, que dispõe sobre medidas de educação financeira a serem adotadas por instituições financeiras, instituições de pagamento e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.",
+    "orgaos": [
+      "Conselho Monetário Nacional",
+      "Banco Central do Brasil"
+    ]
+  },
+  "natureza": "ato_modificador",
+  "proveniencia": {
+    "url_registro_oficial": "https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?numero=20&tipo=Resolu%C3%A7%C3%A3o%20Conjunta",
+    "url_copia_consultada": "https://sintse.tse.jus.br/documentos/2026/Mai/5/diario-oficial-da-uniao-secao-1-edicao-extra/conselho-monetario-nacional-resolucao-conjunta-no-20-de-4-de-maio-de-2026-altera-a-resolucao",
+    "tipo_copia": "transcricao_de_reproducao_dou",
+    "data_consulta_registrada_na_pesquisa": "2026-09-27",
+    "snapshot_arquivo": "fontes/RC20-2026-texto-integral.txt",
+    "snapshot_sha256": "fcb6569605f8450c3fe2a2c3989c2f2932bdea51a805ce9eaad6618e5dcf8ec4",
+    "texto_sha256": "02f0b70e46abf028f82d5250096d19356dc43bc8a42cb6003f10663b783d358d",
+    "transformacoes": [
+      "Remoção somente do cabeçalho e da nota editorial que envolviam o ato no snapshot.",
+      "Segmentação por offsets de caracteres Unicode; preservadas palavras, sinais e quebras de linha do texto recuperado."
+    ],
+    "status": "fiel_ao_snapshot_recuperado_nao_certificado",
+    "limitacoes": [
+      "Não autenticado contra cópia certificada do BCB/Imprensa Nacional nesta conversão.",
+      "Extração prévia pode não preservar diagramação e pode conter erros; hashes provam integridade local, não autenticidade legal.",
+      "Cadeia de alterações não certificada como exaustiva."
+    ]
+  },
+  "temporalidade": {
+    "inicio_vigencia_declarado_no_ato": "2027-07-01",
+    "dispositivo_fonte": "RC-20-2026:art-2",
+    "data_corte_pesquisa": "2026-09-27",
+    "status_na_data_corte": "publicada_com_vigencia_futura",
+    "revalidar_atos_supervenientes": true
+  },
+  "relacoes": [
+    {
+      "tipo": "altera",
+      "alvo": "RC-08-2023:art-3:par-1",
+      "dispositivo_modificador": "RC-20-2026:art-1",
+      "efeito_a_partir_de": "2027-07-01",
+      "nao_substitui_norma_inteira": true
+    }
+  ],
+  "texto_integral_recuperado": "RESOLUÇÃO CONJUNTA Nº 20, DE 4 DE MAIO DE 2026\nAltera a Resolução Conjunta nº 8, de 21 de dezembro de 2023, que dispõe sobre medidas de educação financeira a serem adotadas por instituições financeiras, instituições de pagamento e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.\n\nO Banco Central do Brasil, na forma do art. 9º da Lei nº 4.595, de 31 de dezembro de 1964, torna público que sua Diretoria Colegiada, em sessão realizada em 15 de abril de 2026, e o Conselho Monetário Nacional, em sessão realizada em 23 de abril de 2026, com base nos arts. 4º, caput, inciso VIII, da referida Lei, 9º-A, caput, inciso I, da Lei nº 4.728, de 14 de julho de 1965, 9º, caput, inciso II, da Lei nº 12.865, de 9 de outubro de 2013, 27, § 3º, da Lei nº 14.690, de 3 de outubro de 2023, 17 da Lei nº 15.252, de 4 de novembro de 2025, 20, § 1º, da Lei nº 4.864, de 29 de novembro de 1965, 1º do Decreto-Lei nº 70, de 21 de novembro de 1966, 7º e 23, caput, alínea \"a\", da Lei nº 6.099, de 12 de setembro de 1974, 1º, caput, inciso II, da Lei nº 10.194, de 14 de fevereiro de 2001, 1º, § 1º, da Lei Complementar nº 130, de 17 de abril de 2009, e 6º e 7º, caput, inciso III, da Lei nº 11.795, de 8 de outubro de 2008, resolveram:\n\nArt. 1º A Resolução Conjunta nº 8, de 21 de dezembro de 2023, publicada no Diário Oficial da União de 26 de dezembro de 2023, passa a vigorar com as seguintes alterações:\n“Art. 3º ......................................................................................\n..................................................................................................\n§ 1º ...........................................................................................\nI - considerar as diversas fases do relacionamento das instituições com seus clientes e usuários na definição de rotinas e procedimentos para a implementação de medidas de educação financeira;\nII - ser compatível com o modelo de negócio, com a natureza das atividades da instituição e com a complexidade dos produtos e serviços oferecidos aos clientes e usuários;\nIII - prever a prestação de informações e o assessoramento, nos casos de saldo devedor vencido de forma persistente ou recorrente;\nIV - ser aprovada pelo conselho de administração ou, caso inexistente, pela diretoria da instituição;\nV - ser objeto de avaliação periódica;\nVI - definir papéis e responsabilidades no âmbito da instituição;\nVII - prever programa de treinamento de empregados e prestadores de serviços que desempenhem atividades afetas;\nVIII - prever a disseminação interna de suas disposições; e\nIX - ser formalizada em documento específico.\n..........................................................................................” (NR)\n\nArt. 2º Esta Resolução Conjunta entra em vigor em 1º de julho de 2027.\n\nGABRIEL MURICCA GALÍPOLO\nPresidente do Banco Central do Brasil",
+  "cabecalho_e_preambulo": "RESOLUÇÃO CONJUNTA Nº 20, DE 4 DE MAIO DE 2026\nAltera a Resolução Conjunta nº 8, de 21 de dezembro de 2023, que dispõe sobre medidas de educação financeira a serem adotadas por instituições financeiras, instituições de pagamento e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.\n\nO Banco Central do Brasil, na forma do art. 9º da Lei nº 4.595, de 31 de dezembro de 1964, torna público que sua Diretoria Colegiada, em sessão realizada em 15 de abril de 2026, e o Conselho Monetário Nacional, em sessão realizada em 23 de abril de 2026, com base nos arts. 4º, caput, inciso VIII, da referida Lei, 9º-A, caput, inciso I, da Lei nº 4.728, de 14 de julho de 1965, 9º, caput, inciso II, da Lei nº 12.865, de 9 de outubro de 2013, 27, § 3º, da Lei nº 14.690, de 3 de outubro de 2023, 17 da Lei nº 15.252, de 4 de novembro de 2025, 20, § 1º, da Lei nº 4.864, de 29 de novembro de 1965, 1º do Decreto-Lei nº 70, de 21 de novembro de 1966, 7º e 23, caput, alínea \"a\", da Lei nº 6.099, de 12 de setembro de 1974, 1º, caput, inciso II, da Lei nº 10.194, de 14 de fevereiro de 2001, 1º, § 1º, da Lei Complementar nº 130, de 17 de abril de 2009, e 6º e 7º, caput, inciso III, da Lei nº 11.795, de 8 de outubro de 2008, resolveram:\n\n",
+  "artigos": [
+    {
+      "id": "RC-20-2026:art-1",
+      "numero": 1,
+      "referencia": "Art. 1º",
+      "inicio_caractere": 1244,
+      "fim_caractere_exclusivo": 2725,
+      "texto": "Art. 1º A Resolução Conjunta nº 8, de 21 de dezembro de 2023, publicada no Diário Oficial da União de 26 de dezembro de 2023, passa a vigorar com as seguintes alterações:\n“Art. 3º ......................................................................................\n..................................................................................................\n§ 1º ...........................................................................................\nI - considerar as diversas fases do relacionamento das instituições com seus clientes e usuários na definição de rotinas e procedimentos para a implementação de medidas de educação financeira;\nII - ser compatível com o modelo de negócio, com a natureza das atividades da instituição e com a complexidade dos produtos e serviços oferecidos aos clientes e usuários;\nIII - prever a prestação de informações e o assessoramento, nos casos de saldo devedor vencido de forma persistente ou recorrente;\nIV - ser aprovada pelo conselho de administração ou, caso inexistente, pela diretoria da instituição;\nV - ser objeto de avaliação periódica;\nVI - definir papéis e responsabilidades no âmbito da instituição;\nVII - prever programa de treinamento de empregados e prestadores de serviços que desempenhem atividades afetas;\nVIII - prever a disseminação interna de suas disposições; e\nIX - ser formalizada em documento específico.\n..........................................................................................” (NR)\n\n",
+      "trechos_indexados": [
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1",
+          "tipo": "paragrafo",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1",
+          "inicio_caractere": 1610,
+          "fim_caractere_exclusivo": 1706,
+          "texto": "§ 1º ..........................................................................................."
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-I",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-I",
+          "inicio_caractere": 1707,
+          "fim_caractere_exclusivo": 1899,
+          "texto": "I - considerar as diversas fases do relacionamento das instituições com seus clientes e usuários na definição de rotinas e procedimentos para a implementação de medidas de educação financeira;"
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-II",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-II",
+          "inicio_caractere": 1900,
+          "fim_caractere_exclusivo": 2070,
+          "texto": "II - ser compatível com o modelo de negócio, com a natureza das atividades da instituição e com a complexidade dos produtos e serviços oferecidos aos clientes e usuários;"
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-III",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-III",
+          "inicio_caractere": 2071,
+          "fim_caractere_exclusivo": 2201,
+          "texto": "III - prever a prestação de informações e o assessoramento, nos casos de saldo devedor vencido de forma persistente ou recorrente;"
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-IV",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-IV",
+          "inicio_caractere": 2202,
+          "fim_caractere_exclusivo": 2303,
+          "texto": "IV - ser aprovada pelo conselho de administração ou, caso inexistente, pela diretoria da instituição;"
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-V",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-V",
+          "inicio_caractere": 2304,
+          "fim_caractere_exclusivo": 2342,
+          "texto": "V - ser objeto de avaliação periódica;"
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-VI",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-VI",
+          "inicio_caractere": 2343,
+          "fim_caractere_exclusivo": 2408,
+          "texto": "VI - definir papéis e responsabilidades no âmbito da instituição;"
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-VII",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-VII",
+          "inicio_caractere": 2409,
+          "fim_caractere_exclusivo": 2520,
+          "texto": "VII - prever programa de treinamento de empregados e prestadores de serviços que desempenhem atividades afetas;"
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-VIII",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-VIII",
+          "inicio_caractere": 2521,
+          "fim_caractere_exclusivo": 2580,
+          "texto": "VIII - prever a disseminação interna de suas disposições; e"
+        },
+        {
+          "id": "RC-20-2026:art-1:trecho:par-1:inc-IX",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-IX",
+          "inicio_caractere": 2581,
+          "fim_caractere_exclusivo": 2626,
+          "texto": "IX - ser formalizada em documento específico."
+        }
+      ]
+    },
+    {
+      "id": "RC-20-2026:art-2",
+      "numero": 2,
+      "referencia": "Art. 2º",
+      "inicio_caractere": 2725,
+      "fim_caractere_exclusivo": 2795,
+      "texto": "Art. 2º Esta Resolução Conjunta entra em vigor em 1º de julho de 2027.",
+      "trechos_indexados": []
+    }
+  ],
+  "fecho_e_assinatura": "\n\nGABRIEL MURICCA GALÍPOLO\nPresidente do Banco Central do Brasil",
+  "interpretacoes_de_produto": []
+}

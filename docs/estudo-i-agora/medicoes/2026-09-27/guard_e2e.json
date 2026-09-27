@@ -1,0 +1,789 @@
+{
+  "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+  "medido_em": "2026-09-27T04:06 BRT",
+  "autenticacao": "ADC",
+  "data_corte": "2025-12-22",
+  "limiar_surplus": 0.15,
+  "casos": [
+    {
+      "segmento": "Vulnerável",
+      "id_usuario": "60cc2c95-5326-43f4-a789-827cd2d29a01",
+      "segmento_sql": "Vulnerável",
+      "segmento_python": "Vulnerável",
+      "envios": {
+        "correto": {
+          "envio": {
+            "id_usuario": "60cc2c95-5326-43f4-a789-827cd2d29a01",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Vulnerável",
+            "topico": "dividas",
+            "dados": {
+              "compromisso_mensal": 4141.27,
+              "pct_inflow_comprometido": 52.24
+            },
+            "texto": "Sei que o mês está em aperto. Vamos organizar juntos, passo a passo: o compromisso financeiro soma R$ 4.141,27 por mês, 52,24% do que entra. O primeiro passo é renegociar esse valor com segurança."
+          },
+          "retorno": {
+            "veredito": "APROVADO",
+            "topico": "dividas",
+            "parametros": {
+              "id_usuario": "60cc2c95-5326-43f4-a789-827cd2d29a01",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "0a4a305e0a4fd1cb7c9ece42b06fc7f95944477fdb892b41aaf262e60ae69d27",
+            "segmento_t3": "Vulnerável",
+            "linha_fonte": {
+              "compromisso_total": 45553.96,
+              "compromisso_mensal": 4141.27,
+              "fatura_total": 16323.29,
+              "emprestimos_financiamentos_total": 27718.13,
+              "juros_pagos_total": 854.66,
+              "multas": 2,
+              "lancamentos_parcelados": 18,
+              "pct_inflow_comprometido": 52.24
+            },
+            "checagens": [
+              {
+                "nome": "dados.compromisso_mensal",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=4141.27 query=4141.27"
+              },
+              {
+                "nome": "dados.pct_inflow_comprometido",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=52.24 query=52.24"
+              },
+              {
+                "nome": "numero R$ 4.141,27",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=4141.27"
+              },
+              {
+                "nome": "numero 52,24%",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=52.24"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Vulnerável' query='Vulnerável'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "APROVADO",
+                "detalhe": "0 (máx 0)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=[]"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['vamos', 'juntos', 'passo', 'organizar'] (precisa de um de ['vamos', 'juntos', 'passo', 'organizar', 'proteger'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.00, faixa [0.0, 0.5]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        },
+        "adulterado": {
+          "envio": {
+            "id_usuario": "60cc2c95-5326-43f4-a789-827cd2d29a01",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Vulnerável",
+            "topico": "dividas",
+            "dados": {
+              "compromisso_mensal": 4241.27,
+              "pct_inflow_comprometido": 52.24
+            },
+            "texto": "Sei que o mês está em aperto. Vamos organizar juntos, passo a passo: o compromisso financeiro soma R$ 4.141,27 por mês, 52,24% do que entra. O primeiro passo é renegociar esse valor com segurança."
+          },
+          "retorno": {
+            "veredito": "REPROVADO",
+            "topico": "dividas",
+            "parametros": {
+              "id_usuario": "60cc2c95-5326-43f4-a789-827cd2d29a01",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "0a4a305e0a4fd1cb7c9ece42b06fc7f95944477fdb892b41aaf262e60ae69d27",
+            "segmento_t3": "Vulnerável",
+            "linha_fonte": {
+              "compromisso_total": 45553.96,
+              "compromisso_mensal": 4141.27,
+              "fatura_total": 16323.29,
+              "emprestimos_financiamentos_total": 27718.13,
+              "juros_pagos_total": 854.66,
+              "multas": 2,
+              "lancamentos_parcelados": 18,
+              "pct_inflow_comprometido": 52.24
+            },
+            "checagens": [
+              {
+                "nome": "dados.compromisso_mensal",
+                "resultado": "REPROVADO",
+                "detalhe": "enviado=4241.27 query=4141.27"
+              },
+              {
+                "nome": "dados.pct_inflow_comprometido",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=52.24 query=52.24"
+              },
+              {
+                "nome": "numero R$ 4.141,27",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=4141.27"
+              },
+              {
+                "nome": "numero 52,24%",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=52.24"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Vulnerável' query='Vulnerável'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "APROVADO",
+                "detalhe": "0 (máx 0)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=[]"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['vamos', 'juntos', 'passo', 'organizar'] (precisa de um de ['vamos', 'juntos', 'passo', 'organizar', 'proteger'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.00, faixa [0.0, 0.5]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        },
+        "fora_do_tom": {
+          "envio": {
+            "id_usuario": "60cc2c95-5326-43f4-a789-827cd2d29a01",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Vulnerável",
+            "topico": "dividas",
+            "dados": {
+              "compromisso_mensal": 4141.27,
+              "pct_inflow_comprometido": 52.24
+            },
+            "texto": "Sei que o mês está em aperto. Vamos organizar juntos, passo a passo: o compromisso financeiro soma R$ 4.141,27 por mês, 52,24% do que entra. O primeiro passo é renegociar esse valor com segurança. Aproveite, é incrível e fantástico, sem risco!!"
+          },
+          "retorno": {
+            "veredito": "REPROVADO",
+            "topico": "dividas",
+            "parametros": {
+              "id_usuario": "60cc2c95-5326-43f4-a789-827cd2d29a01",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "0a4a305e0a4fd1cb7c9ece42b06fc7f95944477fdb892b41aaf262e60ae69d27",
+            "segmento_t3": "Vulnerável",
+            "linha_fonte": {
+              "compromisso_total": 45553.96,
+              "compromisso_mensal": 4141.27,
+              "fatura_total": 16323.29,
+              "emprestimos_financiamentos_total": 27718.13,
+              "juros_pagos_total": 854.66,
+              "multas": 2,
+              "lancamentos_parcelados": 18,
+              "pct_inflow_comprometido": 52.24
+            },
+            "checagens": [
+              {
+                "nome": "dados.compromisso_mensal",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=4141.27 query=4141.27"
+              },
+              {
+                "nome": "dados.pct_inflow_comprometido",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=52.24 query=52.24"
+              },
+              {
+                "nome": "numero R$ 4.141,27",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=4141.27"
+              },
+              {
+                "nome": "numero 52,24%",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=52.24"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Vulnerável' query='Vulnerável'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "REPROVADO",
+                "detalhe": "2 (máx 0)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "REPROVADO",
+                "detalhe": "encontrados=['aproveite', 'sem risco']"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['vamos', 'juntos', 'passo', 'organizar'] (precisa de um de ['vamos', 'juntos', 'passo', 'organizar', 'proteger'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.20, faixa [0.0, 0.5]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        }
+      }
+    },
+    {
+      "segmento": "Esbanjador",
+      "id_usuario": "67e4940a-2276-48f6-ab39-985ac56a678b",
+      "segmento_sql": "Esbanjador",
+      "segmento_python": "Esbanjador",
+      "envios": {
+        "correto": {
+          "envio": {
+            "id_usuario": "67e4940a-2276-48f6-ab39-985ac56a678b",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Esbanjador",
+            "topico": "discricionario",
+            "dados": {
+              "discricionario_mensal": 1283.94,
+              "maior_categoria_discricionaria": "Restaurantes"
+            },
+            "texto": "Há folga possível: o discricionário soma R$ 1.283,94 por mês, e Restaurantes é a maior parte. Uma meta de reduzir esse grupo alivia o aperto e diminui o risco."
+          },
+          "retorno": {
+            "veredito": "APROVADO",
+            "topico": "discricionario",
+            "parametros": {
+              "id_usuario": "67e4940a-2276-48f6-ab39-985ac56a678b",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "d10f974740cd7c22988446255698e281d3a9341c2d72c2b50ef8006abcd1628c",
+            "segmento_t3": "Esbanjador",
+            "linha_fonte": {
+              "maior_categoria_discricionaria": "Restaurantes",
+              "maior_categoria_total": 3879.13,
+              "discricionario_mensal": 1283.94,
+              "categorias_discricionarias": 7
+            },
+            "checagens": [
+              {
+                "nome": "dados.discricionario_mensal",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=1283.94 query=1283.94"
+              },
+              {
+                "nome": "dados.maior_categoria_discricionaria",
+                "resultado": "APROVADO",
+                "detalhe": "enviado='Restaurantes' query='Restaurantes'"
+              },
+              {
+                "nome": "numero R$ 1.283,94",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=1283.94"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Esbanjador' query='Esbanjador'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "APROVADO",
+                "detalhe": "0 (máx 1)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=[]"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['reduzir', 'meta'] (precisa de um de ['reduzir', 'cortar', 'ajustar', 'meta', 'limite'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.00, faixa [-0.2, 0.4]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        },
+        "adulterado": {
+          "envio": {
+            "id_usuario": "67e4940a-2276-48f6-ab39-985ac56a678b",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Esbanjador",
+            "topico": "discricionario",
+            "dados": {
+              "discricionario_mensal": 1383.94,
+              "maior_categoria_discricionaria": "Restaurantes"
+            },
+            "texto": "Há folga possível: o discricionário soma R$ 1.283,94 por mês, e Restaurantes é a maior parte. Uma meta de reduzir esse grupo alivia o aperto e diminui o risco."
+          },
+          "retorno": {
+            "veredito": "REPROVADO",
+            "topico": "discricionario",
+            "parametros": {
+              "id_usuario": "67e4940a-2276-48f6-ab39-985ac56a678b",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "d10f974740cd7c22988446255698e281d3a9341c2d72c2b50ef8006abcd1628c",
+            "segmento_t3": "Esbanjador",
+            "linha_fonte": {
+              "maior_categoria_discricionaria": "Restaurantes",
+              "maior_categoria_total": 3879.13,
+              "discricionario_mensal": 1283.94,
+              "categorias_discricionarias": 7
+            },
+            "checagens": [
+              {
+                "nome": "dados.discricionario_mensal",
+                "resultado": "REPROVADO",
+                "detalhe": "enviado=1383.94 query=1283.94"
+              },
+              {
+                "nome": "dados.maior_categoria_discricionaria",
+                "resultado": "APROVADO",
+                "detalhe": "enviado='Restaurantes' query='Restaurantes'"
+              },
+              {
+                "nome": "numero R$ 1.283,94",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=1283.94"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Esbanjador' query='Esbanjador'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "APROVADO",
+                "detalhe": "0 (máx 1)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=[]"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['reduzir', 'meta'] (precisa de um de ['reduzir', 'cortar', 'ajustar', 'meta', 'limite'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.00, faixa [-0.2, 0.4]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        },
+        "fora_do_tom": {
+          "envio": {
+            "id_usuario": "67e4940a-2276-48f6-ab39-985ac56a678b",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Esbanjador",
+            "topico": "discricionario",
+            "dados": {
+              "discricionario_mensal": 1283.94,
+              "maior_categoria_discricionaria": "Restaurantes"
+            },
+            "texto": "Há folga possível: o discricionário soma R$ 1.283,94 por mês, e Restaurantes é a maior parte. Uma meta de reduzir esse grupo alivia o aperto e diminui o risco. Aproveite, é incrível e fantástico, sem risco!!"
+          },
+          "retorno": {
+            "veredito": "REPROVADO",
+            "topico": "discricionario",
+            "parametros": {
+              "id_usuario": "67e4940a-2276-48f6-ab39-985ac56a678b",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "d10f974740cd7c22988446255698e281d3a9341c2d72c2b50ef8006abcd1628c",
+            "segmento_t3": "Esbanjador",
+            "linha_fonte": {
+              "maior_categoria_discricionaria": "Restaurantes",
+              "maior_categoria_total": 3879.13,
+              "discricionario_mensal": 1283.94,
+              "categorias_discricionarias": 7
+            },
+            "checagens": [
+              {
+                "nome": "dados.discricionario_mensal",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=1283.94 query=1283.94"
+              },
+              {
+                "nome": "dados.maior_categoria_discricionaria",
+                "resultado": "APROVADO",
+                "detalhe": "enviado='Restaurantes' query='Restaurantes'"
+              },
+              {
+                "nome": "numero R$ 1.283,94",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=1283.94"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Esbanjador' query='Esbanjador'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "REPROVADO",
+                "detalhe": "2 (máx 1)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "REPROVADO",
+                "detalhe": "encontrados=['sem risco']"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['reduzir', 'meta'] (precisa de um de ['reduzir', 'cortar', 'ajustar', 'meta', 'limite'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.14, faixa [-0.2, 0.4]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        }
+      }
+    },
+    {
+      "segmento": "Livre",
+      "id_usuario": "e0b3af5e-20de-4f43-b22a-c050dc60b70d",
+      "segmento_sql": "Livre",
+      "segmento_python": "Livre",
+      "envios": {
+        "correto": {
+          "envio": {
+            "id_usuario": "e0b3af5e-20de-4f43-b22a-c050dc60b70d",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Livre",
+            "topico": "perfil_t3",
+            "dados": {
+              "surplus_mensal": 2814.07,
+              "taxa_surplus_pct": 23.36
+            },
+            "texto": "Sua sobra média é de R$ 2.814,07 por mês (23,36% da renda). É uma boa base para planejar uma reserva, sem promessa de retorno; o risco de cada aplicação precisa ser avaliado."
+          },
+          "retorno": {
+            "veredito": "APROVADO",
+            "topico": "perfil_t3",
+            "parametros": {
+              "id_usuario": "e0b3af5e-20de-4f43-b22a-c050dc60b70d",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "09a50f6bc417a656a8cc9ea37be52952cce956f220665804361ab56a2870b5ec",
+            "segmento_t3": "Livre",
+            "linha_fonte": {
+              "meses": 11,
+              "inflow_mensal": 12047.94,
+              "outflow_mensal": 9233.87,
+              "surplus_mensal": 2814.07,
+              "taxa_surplus_pct": 23.36,
+              "essencial_mensal": 2280.25,
+              "compromisso_mensal": 4970.17,
+              "discricionario_mensal": 1280.82,
+              "nao_classificado_mensal": 702.63,
+              "saidas_sem_grupo": 0,
+              "segmento_t3": "Livre"
+            },
+            "checagens": [
+              {
+                "nome": "dados.surplus_mensal",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=2814.07 query=2814.07"
+              },
+              {
+                "nome": "dados.taxa_surplus_pct",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=23.36 query=23.36"
+              },
+              {
+                "nome": "numero R$ 2.814,07",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=2814.07"
+              },
+              {
+                "nome": "numero 23,36%",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=23.36"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Livre' query='Livre'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "APROVADO",
+                "detalhe": "0 (máx 1)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=[]"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['reserva', 'planejar'] (precisa de um de ['reserva', 'investir', 'aplicar', 'planejar', 'objetivo'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.33, faixa [0.2, 0.7]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        },
+        "adulterado": {
+          "envio": {
+            "id_usuario": "e0b3af5e-20de-4f43-b22a-c050dc60b70d",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Livre",
+            "topico": "perfil_t3",
+            "dados": {
+              "surplus_mensal": 2914.07,
+              "taxa_surplus_pct": 23.36
+            },
+            "texto": "Sua sobra média é de R$ 2.814,07 por mês (23,36% da renda). É uma boa base para planejar uma reserva, sem promessa de retorno; o risco de cada aplicação precisa ser avaliado."
+          },
+          "retorno": {
+            "veredito": "REPROVADO",
+            "topico": "perfil_t3",
+            "parametros": {
+              "id_usuario": "e0b3af5e-20de-4f43-b22a-c050dc60b70d",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "09a50f6bc417a656a8cc9ea37be52952cce956f220665804361ab56a2870b5ec",
+            "segmento_t3": "Livre",
+            "linha_fonte": {
+              "meses": 11,
+              "inflow_mensal": 12047.94,
+              "outflow_mensal": 9233.87,
+              "surplus_mensal": 2814.07,
+              "taxa_surplus_pct": 23.36,
+              "essencial_mensal": 2280.25,
+              "compromisso_mensal": 4970.17,
+              "discricionario_mensal": 1280.82,
+              "nao_classificado_mensal": 702.63,
+              "saidas_sem_grupo": 0,
+              "segmento_t3": "Livre"
+            },
+            "checagens": [
+              {
+                "nome": "dados.surplus_mensal",
+                "resultado": "REPROVADO",
+                "detalhe": "enviado=2914.07 query=2814.07"
+              },
+              {
+                "nome": "dados.taxa_surplus_pct",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=23.36 query=23.36"
+              },
+              {
+                "nome": "numero R$ 2.814,07",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=2814.07"
+              },
+              {
+                "nome": "numero 23,36%",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=23.36"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Livre' query='Livre'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "APROVADO",
+                "detalhe": "0 (máx 1)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=[]"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['reserva', 'planejar'] (precisa de um de ['reserva', 'investir', 'aplicar', 'planejar', 'objetivo'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.33, faixa [0.2, 0.7]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        },
+        "fora_do_tom": {
+          "envio": {
+            "id_usuario": "e0b3af5e-20de-4f43-b22a-c050dc60b70d",
+            "data_corte": "2025-12-22",
+            "segmento_t3": "Livre",
+            "topico": "perfil_t3",
+            "dados": {
+              "surplus_mensal": 2814.07,
+              "taxa_surplus_pct": 23.36
+            },
+            "texto": "Sua sobra média é de R$ 2.814,07 por mês (23,36% da renda). É uma boa base para planejar uma reserva, sem promessa de retorno; o risco de cada aplicação precisa ser avaliado. Aproveite, é incrível e fantástico, sem risco!!"
+          },
+          "retorno": {
+            "veredito": "REPROVADO",
+            "topico": "perfil_t3",
+            "parametros": {
+              "id_usuario": "e0b3af5e-20de-4f43-b22a-c050dc60b70d",
+              "data_corte": "2025-12-22"
+            },
+            "sql_sha256": "09a50f6bc417a656a8cc9ea37be52952cce956f220665804361ab56a2870b5ec",
+            "segmento_t3": "Livre",
+            "linha_fonte": {
+              "meses": 11,
+              "inflow_mensal": 12047.94,
+              "outflow_mensal": 9233.87,
+              "surplus_mensal": 2814.07,
+              "taxa_surplus_pct": 23.36,
+              "essencial_mensal": 2280.25,
+              "compromisso_mensal": 4970.17,
+              "discricionario_mensal": 1280.82,
+              "nao_classificado_mensal": 702.63,
+              "saidas_sem_grupo": 0,
+              "segmento_t3": "Livre"
+            },
+            "checagens": [
+              {
+                "nome": "dados.surplus_mensal",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=2814.07 query=2814.07"
+              },
+              {
+                "nome": "dados.taxa_surplus_pct",
+                "resultado": "APROVADO",
+                "detalhe": "enviado=23.36 query=23.36"
+              },
+              {
+                "nome": "numero R$ 2.814,07",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=2814.07"
+              },
+              {
+                "nome": "numero 23,36%",
+                "resultado": "APROVADO",
+                "detalhe": "fonte=23.36"
+              },
+              {
+                "nome": "segmento",
+                "resultado": "APROVADO",
+                "detalhe": "declarado='Livre' query='Livre'"
+              },
+              {
+                "nome": "mapa_grupos",
+                "resultado": "APROVADO",
+                "detalhe": "saídas sem grupo no mapa T3: 0"
+              },
+              {
+                "nome": "tom.exclamacoes",
+                "resultado": "REPROVADO",
+                "detalhe": "2 (máx 1)"
+              },
+              {
+                "nome": "tom.proibidos",
+                "resultado": "REPROVADO",
+                "detalhe": "encontrados=['sem risco']"
+              },
+              {
+                "nome": "tom.exigidos",
+                "resultado": "APROVADO",
+                "detalhe": "encontrados=['reserva', 'planejar'] (precisa de um de ['reserva', 'investir', 'aplicar', 'planejar', 'objetivo'])"
+              },
+              {
+                "nome": "sentimento",
+                "resultado": "APROVADO",
+                "detalhe": "escore léxico 0.33, faixa [0.2, 0.7]"
+              }
+            ],
+            "verificado_em": "2026-09-27T04:06 BRT"
+          }
+        }
+      }
+    }
+  ]
+}

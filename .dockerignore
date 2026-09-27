@@ -1,0 +1,26 @@
+# Contexto do docker build (2026-09-27). Nada de banco local, venv, arquivo morto, saída de execução ou segredo.
+db.sqlite3
+*.sqlite3
+.venv/
+.venv-*/
+venv/
+archive/
+relatorios/
+notebooks/
+skills/
+.claude/
+.git/
+.gitignore
+.gitattributes
+__pycache__/
+*.py[cod]
+.secrets
+.secrets.*
+.env
+.env.*
+*.pem
+*.key
+credentials*.json
+service-account*.json
+Dockerfile
+.dockerignore

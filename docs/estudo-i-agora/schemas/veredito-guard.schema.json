@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Veredito do guard de inclusão do dado",
+  "description": "Retorno de guard.verificar_envio. REPROVADO se qualquer checagem reprovou; NAO_MEDIDO se nada reprovou mas algo não pôde ser medido (ex.: texto sem palavra do léxico de sentimento); APROVADO só com tudo aprovado.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["veredito", "topico", "parametros", "sql_sha256", "segmento_t3", "linha_fonte", "checagens", "verificado_em"],
+  "properties": {
+    "veredito": { "enum": ["APROVADO", "REPROVADO", "NAO_MEDIDO"] },
+    "topico": { "type": "string" },
+    "parametros": {
+      "type": "object",
+      "required": ["id_usuario", "data_corte"],
+      "properties": {
+        "id_usuario": { "type": "string" },
+        "data_corte": { "type": "string", "format": "date" },
+        "categoria": { "type": "string" }
+      }
+    },
+    "sql_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Hash do SQL final executado: prova de que a comparação usou a mesma query." },
+    "segmento_t3": { "enum": ["Vulnerável", "Esbanjador", "Livre"], "description": "Segmento calculado pelo SQL de visao_perfil_t3, não o declarado." },
+    "linha_fonte": { "type": "object", "description": "A linha que a visão devolveu na reexecução." },
+    "checagens": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["nome", "resultado", "detalhe"],
+        "properties": {
+          "nome": { "type": "string", "description": "dados.<campo>, numero <bruto>, segmento, mapa_grupos, tom.exclamacoes, tom.proibidos, tom.exigidos, sentimento." },
+          "resultado": { "enum": ["APROVADO", "REPROVADO", "NAO_MEDIDO"] },
+          "detalhe": { "type": "string" }
+        }
+      }
+    },
+    "verificado_em": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2} BRT$" }
+  }
+}

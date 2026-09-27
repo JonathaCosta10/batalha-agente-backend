@@ -1,0 +1,27 @@
+{
+  "consulta": "q01_volumetria.sql",
+  "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+  "medido_em": "2026-09-27T03:48 BRT",
+  "autenticacao": "ADC",
+  "job_id": "bccf98ca-ba01-4087-a036-98027ba4f459",
+  "bytes_processados": 37340434,
+  "linhas": [
+    {
+      "linhas": 467585,
+      "clientes": 1000,
+      "primeira_data": "2025-01-01 00:00:00+00:00",
+      "ultima_data": "2025-12-31 00:00:00+00:00",
+      "meses_distintos": 12,
+      "linhas_entrada": 35077,
+      "linhas_saida": 432508,
+      "linhas_tipo_fora_de_e_s": 0,
+      "linhas_vlr_negativo": 0,
+      "nulos_id_usuario": 0,
+      "nulos_anomesdia": 0,
+      "nulos_vlr": 0,
+      "nulos_macro": 0,
+      "linhas_parceladas": 29847,
+      "linhas_apos_corte_tese": 7956
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chave ON/OFF inteiração-tela-iai: retorno",
+  "description": "GET e POST /api/v1/chave-interacao-tela-iai/: 200 retorna o estado; 400 e 500 retornam {erro}.",
+  "$defs": {
+    "exemplo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cliente",
+        "saudacao",
+        "tag_ativa"
+      ],
+      "properties": {
+        "cliente": {
+          "type": "string"
+        },
+        "saudacao": {
+          "type": "string"
+        },
+        "tag_ativa": {
+          "enum": [
+            "TEXTO_1[NEUTRO]",
+            "TEXTO_2[MASCULINO]",
+            "TEXTO_3[FEMININO]"
+          ]
+        }
+      }
+    },
+    "retorno_get": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "codigo",
+        "nome",
+        "estado",
+        "chave_ativa",
+        "comportamento",
+        "exemplos"
+      ],
+      "description": "GET, HTTP 200.",
+      "properties": {
+        "codigo": {
+          "const": "CHAVE_INTEIRACAO_TELA_IAI"
+        },
+        "nome": {
+          "const": "Ponto de Inteiração Tela-IAI"
+        },
+        "estado": {
+          "enum": [
+            "ON",
+            "OFF"
+          ]
+        },
+        "chave_ativa": {
+          "type": "boolean",
+          "description": "Lida pelo ORM (FeatureFlagInteracaoTelaIAI); true por omissão se a linha faltar. init_database.py cria a linha ON."
+        },
+        "comportamento": {
+          "enum": [
+            "MODO_NEUTRO_UNIVERSAL",
+            "MODO_BIFURCACAO_GENERO_ESTRITA"
+          ]
+        },
+        "exemplos": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "feminino_exemplo",
+            "masculino_exemplo"
+          ],
+          "properties": {
+            "feminino_exemplo": {
+              "$ref": "#/$defs/exemplo"
+            },
+            "masculino_exemplo": {
+              "$ref": "#/$defs/exemplo"
+            }
+          }
+        }
+      }
+    },
+    "retorno_post": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mensagem",
+        "chave_ativa",
+        "estado",
+        "modo_ativo"
+      ],
+      "description": "POST, HTTP 200: a gravação foi confirmada.",
+      "properties": {
+        "mensagem": {
+          "const": "Chave atualizada com sucesso no backend Django"
+        },
+        "chave_ativa": {
+          "type": "boolean",
+          "description": "Estado relido do banco após a gravação."
+        },
+        "estado": {
+          "enum": [
+            "ON",
+            "OFF"
+          ]
+        },
+        "modo_ativo": {
+          "enum": [
+            "NEUTRO",
+            "SEGMENTADO"
+          ]
+        }
+      }
+    },
+    "retorno_erro": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "erro"
+      ],
+      "description": "POST, HTTP 400: corpo não-objeto ou 'chave_ativa' que não é JSON boolean (\"false\", 0, null...); estado inalterado. HTTP 500: a gravação falhou; estado inalterado.",
+      "properties": {
+        "erro": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/retorno_get"
+    },
+    {
+      "$ref": "#/$defs/retorno_post"
+    },
+    {
+      "$ref": "#/$defs/retorno_erro"
+    }
+  ]
+}

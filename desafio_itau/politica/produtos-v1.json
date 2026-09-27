@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "id": "catalogo-produtos-i-agora",
+  "versao": "1.0.0",
+  "natureza": "status_de_catalogo",
+  "status": "SEM_CATALOGO_APROVADO",
+  "verificado_em": "2026-09-27",
+  "aviso": "Não existe catálogo de produtos aprovado no repositório. Ausência de produto, taxa ou tarifa aqui NÃO significa custo zero, isenção, disponibilidade nem aprovação. O chat não cita, recomenda nem contrata produto: rules.safe_text + lexico (promessa.aprovacao) + politica.produto em interacao_avaliacao.",
+  "regra_de_uso": {
+    "chat_pode_citar_produto": false,
+    "chat_pode_citar_taxa": false,
+    "ausencia_significa": "NAO_MEDIDO",
+    "para_liberar": "catálogo com fonte oficial por item (URL/documento, data de vigência, dono aprovador) e schema validado; até lá, perguntas sobre produto recebem educação geral ou recusa segura"
+  },
+  "fontes_nao_homologadas": [
+    {"arquivo": "init_database.py", "conteudo": "produtos e taxas de semente do SQLite demo", "fonte_da_taxa": "AUSENTE", "usado_pelo_chat": false},
+    {"arquivo": "apps/recomendacao/services/template_engine.py", "conteudo": "textos de recomendação com produtos", "fonte_da_taxa": "AUSENTE", "usado_pelo_chat": false},
+    {"arquivo": "apps/context_agent_datadriven/pastas_raiz/estudos/i_agora/consultas.py", "conteudo": "MATRIZ_PRODUTOS (estudo)", "fonte_da_taxa": "AUSENTE", "usado_pelo_chat": false},
+    {"arquivo": "apps/context_agent_datadriven/rotas/templates/rotas_base.yaml", "conteudo": "\"112% CDI\" em template de rota", "fonte_da_taxa": "AUSENTE", "usado_pelo_chat": false}
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Base de rotas do Harness",
+  "description": "Forma de apps/context_agent_datadriven/rotas/templates/rotas_base.yaml e do dicionário devolvido por BaseDeRotasManager.carregar_rotas(). ATENÇÃO: rotas/manager.py:10-97 (parse_simple_yaml) NÃO interpreta o YAML — lê as linhas e devolve um dicionário fixo no código; editar o YAML não muda nada em execução (só a ausência do ficheiro muda: devolve {}). O dicionário fixo omite 'segmentos_prioritarios', por isso esse campo é opcional aqui.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["versao_schema", "data_corte_fixa", "janela_temporal_horario", "protocolo_negociacao_padrao", "categorias"],
+  "properties": {
+    "versao_schema": { "type": "string", "description": "Ex.: '2.4.0-datadriven'. Exposto em status-harness." },
+    "data_corte_fixa": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "description": "O motor usa a sua própria constante AgenteNegotiatorEngine.DATA_CORTE_FIXA, não este valor (só manager.py:142 o lê)." },
+    "janela_temporal_horario": { "type": "string", "description": "Nenhum código lê este campo (NAO_VERIFICADO: sem uso encontrado)." },
+    "protocolo_negociacao_padrao": { "type": "string", "description": "Nenhum código lê este campo (NAO_VERIFICADO: sem uso encontrado)." },
+    "categorias": {
+      "type": "object",
+      "description": "Mapa chave -> categoria. O roteador (manager.py:129-138) só conhece as quatro chaves obrigatórias e usa 'atendimento_consultivo_geral' como fallback.",
+      "required": ["investimentos_e_patrimonio", "credito_e_limites", "seguranca_e_reserva_emergencia", "atendimento_consultivo_geral"],
+      "propertyNames": { "pattern": "^[a-z_]+$" },
+      "additionalProperties": { "$ref": "#/$defs/categoria" }
+    }
+  },
+  "$defs": {
+    "provedor": {
+      "enum": ["google", "antropic", "openIa"],
+      "description": "Chaves de PROVEDORES_REGISTRADOS (agentes/LLM_Models/__init__.py)."
+    },
+    "categoria": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nome", "score_minimo", "protocolo_negociacao", "diretriz_template"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^CAT-[A-Z]+-[0-9]{2}$" },
+        "nome": { "type": "string" },
+        "score_minimo": { "type": "integer", "minimum": 0, "description": "Declarado mas NÃO aplicado: identificar_categoria recebe o score e não o usa." },
+        "segmentos_prioritarios": { "type": "array", "items": { "type": "string" }, "description": "Só existe no YAML; ausente do dicionário que o código usa." },
+        "protocolo_negociacao": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provedor_primario", "modelo_primario", "provedores_alternativos", "sla_latencia_max_ms", "temperatura", "max_tokens"],
+          "properties": {
+            "provedor_primario": { "$ref": "#/$defs/provedor" },
+            "modelo_primario": { "type": "string" },
+            "provedores_alternativos": { "type": "array", "items": { "$ref": "#/$defs/provedor" } },
+            "sla_latencia_max_ms": { "type": "integer", "minimum": 0 },
+            "temperatura": { "type": "number", "minimum": 0 },
+            "max_tokens": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "diretriz_template": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["foco", "sigilo"],
+          "properties": {
+            "foco": { "type": "string", "description": "Entra no prompt de sistema (agente.py:57, 64)." },
+            "sigilo": { "type": "string", "description": "Nenhum código lê este campo (NAO_VERIFICADO: sem uso encontrado)." }
+          }
+        }
+      }
+    }
+  }
+}

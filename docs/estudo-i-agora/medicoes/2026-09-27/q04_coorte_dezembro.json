@@ -1,0 +1,142 @@
+{
+  "consulta": "q04_coorte_dezembro.sql",
+  "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+  "medido_em": "2026-09-27T03:48 BRT",
+  "autenticacao": "ADC",
+  "job_id": "9153a162-1cbb-4637-90e6-ca352c566d53",
+  "bytes_processados": 26652345,
+  "linhas": [
+    {
+      "anomes": 202501,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 6521.31,
+      "saidas_medias": 7309.69,
+      "saldo_medio": -788.38
+    },
+    {
+      "anomes": 202502,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 7777.59,
+      "saidas_medias": 8208.44,
+      "saldo_medio": -430.85
+    },
+    {
+      "anomes": 202503,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 7716.49,
+      "saidas_medias": 8505.73,
+      "saldo_medio": -789.24
+    },
+    {
+      "anomes": 202504,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 6635.78,
+      "saidas_medias": 8292.8,
+      "saldo_medio": -1657.02
+    },
+    {
+      "anomes": 202505,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 6534.3,
+      "saidas_medias": 8421.35,
+      "saldo_medio": -1887.05
+    },
+    {
+      "anomes": 202506,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 6561.25,
+      "saidas_medias": 8287.18,
+      "saldo_medio": -1725.93
+    },
+    {
+      "anomes": 202507,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 6584.82,
+      "saidas_medias": 7894.8,
+      "saldo_medio": -1309.98
+    },
+    {
+      "anomes": 202508,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 6595.89,
+      "saidas_medias": 8564.1,
+      "saldo_medio": -1968.21
+    },
+    {
+      "anomes": 202509,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 6581.32,
+      "saidas_medias": 8627.02,
+      "saldo_medio": -2045.69
+    },
+    {
+      "anomes": 202510,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 6542.22,
+      "saidas_medias": 8724.92,
+      "saldo_medio": -2182.7
+    },
+    {
+      "anomes": 202511,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 8297.3,
+      "saidas_medias": 9219.4,
+      "saldo_medio": -922.1
+    },
+    {
+      "anomes": 202512,
+      "clientes_coorte": 316,
+      "clientes_base": 1000,
+      "divida_media_dezembro": 2573.41,
+      "divida_mediana_dezembro": 1638.49,
+      "clientes_com_movimento_no_mes": 316,
+      "entradas_medias": 8068.21,
+      "saidas_medias": 10641.62,
+      "saldo_medio": -2573.41
+    }
+  ]
+}

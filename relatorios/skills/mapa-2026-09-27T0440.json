@@ -1,0 +1,1310 @@
+{
+  "skills": [
+    {
+      "nome": "guard-inclusao-do-dado",
+      "repo": "desafio-itau-batalha-de-agentes-time2",
+      "dir": "C:\\Users\\ACER\\Desktop\\itaú-agentes---app-demo-&-backend-django\\desafio-itau-batalha-de-agentes-time2\\.claude\\skills\\guard-inclusao-do-dado",
+      "ficheiros": [
+        {
+          "caminho": "evals/adversarial/correto-reprovado.json",
+          "bytes": 527,
+          "sha256": "248584df5368b2076703d0d5af62aaf51cefe71ebc0c32a796790cf7e4a613b5",
+          "mtime": "2026-09-27T07:24:43.146Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/dado-trocado.json",
+          "bytes": 379,
+          "sha256": "99b7091f8e6697f7d6e0f68a4210533643c981afe07030bce59b84e037b6b90c",
+          "mtime": "2026-09-27T07:24:43.141Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/envio-sem-dados.json",
+          "bytes": 341,
+          "sha256": "08fa05793f7f9075afecb7a0f35e06bffbb3232987728c060893b0dd00547aab",
+          "mtime": "2026-09-27T07:24:43.143Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/euforia-no-correto.json",
+          "bytes": 413,
+          "sha256": "766a25c12b8eb298040019c242995c59146cee22cb77525d86bd676419337e99",
+          "mtime": "2026-09-27T07:24:43.142Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/numero-sem-fonte.json",
+          "bytes": 492,
+          "sha256": "43c0090e0d58b924e420d1971b184aac104b591655d5334631332040e3850a6a",
+          "mtime": "2026-09-27T07:24:43.140Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/segmento-divergente.json",
+          "bytes": 358,
+          "sha256": "7a5eb1899ac38aa4d38fd75303b558894afc109abe6fa81e109dce92229147dd",
+          "mtime": "2026-09-27T07:24:43.145Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/sql-mudou.json",
+          "bytes": 431,
+          "sha256": "245b340e40243244f3f29b835c3a09df07dde2d36ef459a02abaf5504d2f744f",
+          "mtime": "2026-09-27T07:24:43.139Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/veredito-contradiz.json",
+          "bytes": 383,
+          "sha256": "1314d20cbc32246f4a3db4e0ad5399a777c72edc48218a8db4ca0bf4b057cfb2",
+          "mtime": "2026-09-27T07:24:43.138Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/golden/guard-e2e-2026-09-27.json",
+          "bytes": 181,
+          "sha256": "066709f3c23700722a7b1366b145f750577de389ee6627bd2641c662693843c0",
+          "mtime": "2026-09-27T07:24:43.137Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "manifest.yaml",
+          "bytes": 952,
+          "sha256": "9c6fb00feeda8f40964a994e143ac7fa99aa5e30f9f623ab23be6d62b76b5d65",
+          "mtime": "2026-09-27T07:25:29.110Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "policies/gates.yaml",
+          "bytes": 661,
+          "sha256": "f31932d4d9c0b09bab58a3c57796961b5dbd7e950b733de503768f3461fdfdc8",
+          "mtime": "2026-09-27T07:24:09.658Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "routes/router.yaml",
+          "bytes": 934,
+          "sha256": "f9e156b0f29bea8c53e4ffb490d08e2363c75cb3e9d306d6c113b15caed66284",
+          "mtime": "2026-09-27T07:24:08.469Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "schemas/prova-e2e.schema.json",
+          "bytes": 1093,
+          "sha256": "69375abfaa5d99b1591c25e77387c31e39ba54607fceac981ad46a7ceeab2bc0",
+          "mtime": "2026-09-27T07:24:09.978Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "SKILL.md",
+          "bytes": 1901,
+          "sha256": "1a035b4d24c6250f89f77f3a4faaa0050dbeaab9a71c49350eb2b362fc6329bb",
+          "mtime": "2026-09-27T07:24:08.015Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "templates/envio.md",
+          "bytes": 887,
+          "sha256": "bb2e7586ff01309eacc9ebedaf34eb1756ba5bc51fc9a7e4f590d18eaf9c147b",
+          "mtime": "2026-09-27T07:24:10.266Z",
+          "classe": "saida"
+        },
+        {
+          "caminho": "tools/__pycache__/comum.cpython-312.pyc",
+          "bytes": 6363,
+          "sha256": "7cc0a79350f7cc0392f1fdcb7740752228e3399449ea677416070518106090f1",
+          "mtime": "2026-09-27T07:24:44.283Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/__pycache__/verificar-veredito.cpython-312.pyc",
+          "bytes": 6009,
+          "sha256": "dee8efc955d5cab291c3bc18ade5d8438a6dd4132ae9b2caac1e61b6df5e61ad",
+          "mtime": "2026-09-27T07:24:44.293Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/comum.py",
+          "bytes": 3366,
+          "sha256": "03026aa505ad63deacecab12eeda095f92d2ed83ddfaa8cafc36da3b79968cf5",
+          "mtime": "2026-09-27T07:23:04.737Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/evals.py",
+          "bytes": 655,
+          "sha256": "887208689eb3c01781b0ee8afec8bac03b7ae113f0485da18354fbb09aca54d0",
+          "mtime": "2026-09-27T07:22:35.763Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/gate.mjs",
+          "bytes": 1147,
+          "sha256": "b1fc8ebf72d58bafddfdcab1ac090efb7f54f84c8b080342fe3004990aa5f9a2",
+          "mtime": "2026-09-27T07:26:08.594Z",
+          "classe": "zero_token"
+        },
+        {
+          "caminho": "tools/verificar-envio.py",
+          "bytes": 1504,
+          "sha256": "8622469373ded46eceb5a24e53ed6318d0bd564628d982e829b037a340a15d19",
+          "mtime": "2026-09-27T07:24:41.998Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/verificar-veredito.py",
+          "bytes": 3546,
+          "sha256": "d9482e4fd4565ecee15a8b8ee06eb7919f52a8612f9565bedc61349948c64cab",
+          "mtime": "2026-09-27T07:24:41.693Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "workflows/ligar-ao-agente.md",
+          "bytes": 965,
+          "sha256": "040b2c39b6ea5a7eddaa73e0d99ca6cbdf1ae930e5c0ec25e109e7ba87adc40b",
+          "mtime": "2026-09-27T07:24:09.317Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "workflows/verificar-envio.md",
+          "bytes": 834,
+          "sha256": "4e65363b5f6b7977340b3df493024b1633e96099fdfec7e8122f6b8b704236cf",
+          "mtime": "2026-09-27T07:24:08.727Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "workflows/verificar.md",
+          "bytes": 916,
+          "sha256": "058a1fbd7d52af4e33b32a3372d2cbff6f27472ffad3ad09931a17e79e079650",
+          "mtime": "2026-09-27T07:24:08.968Z",
+          "classe": "rota"
+        }
+      ],
+      "total_bytes": 35238,
+      "sempre_bytes": 3787,
+      "enderecavel_bytes": 26799,
+      "zero_token_bytes": 1147,
+      "tokens_carregaveis": 7653,
+      "rotas": [
+        {
+          "id": "guard.verificar-envio",
+          "workflow": "workflows/verificar-envio.md",
+          "loads": [
+            "templates/envio.md",
+            "policies/gates.yaml"
+          ],
+          "loads_em_falta": [],
+          "bytes": 2382
+        },
+        {
+          "id": "guard.verificar",
+          "workflow": "workflows/verificar.md",
+          "loads": [
+            "schemas/prova-e2e.schema.json",
+            "policies/gates.yaml"
+          ],
+          "loads_em_falta": [],
+          "bytes": 2670
+        },
+        {
+          "id": "guard.ligar-ao-agente",
+          "workflow": "workflows/ligar-ao-agente.md",
+          "loads": [
+            "templates/envio.md"
+          ],
+          "loads_em_falta": [],
+          "bytes": 1852
+        }
+      ],
+      "ambiguity_rule": "ask whether to check one live envio (touches BigQuery) or the recorded proof offline, do not choose",
+      "fallback": "for segments and thresholds use segmentacao-t3; for sealing and ADC use medicao-selada-bigquery",
+      "frontmatter": {
+        "campos": [
+          "name",
+          "description",
+          "triggers",
+          "allowed-tools",
+          "state",
+          "version",
+          "owner",
+          "escopo",
+          "grupo"
+        ],
+        "name": "guard-inclusao-do-dado",
+        "description": "Check an agent answer before it reaches the client - re-run the same view SQL, normalize both sides and compare data, every R$/% in the text, the T3 segment and the tone/sentiment range. Use when an agent cites client numbers or when changing guard.py, visoes.py or the view SQL.",
+        "desc_chars": 279,
+        "triggers": [
+          "guard de inclusao do dado",
+          "verificar resposta do agente",
+          "reexecutar a query",
+          "envio do agente",
+          "veredito do guard",
+          "normalizacao",
+          "agent answer check"
+        ],
+        "allowed_tools": [
+          "Read",
+          "Bash"
+        ]
+      },
+      "partes": {
+        "routes": true,
+        "workflows": true,
+        "schemas": true,
+        "policies": true,
+        "templates": true,
+        "tools": true,
+        "evals": true
+      },
+      "omissoes_declaradas": [
+        "references",
+        "examples",
+        "docs"
+      ],
+      "evals": {
+        "golden": 1,
+        "adversariais": 8
+      },
+      "dimensoes": {
+        "custo": {
+          "nota": 100,
+          "motivos": []
+        },
+        "router": {
+          "nota": 100,
+          "motivos": []
+        },
+        "frontmatter": {
+          "nota": 100,
+          "motivos": []
+        },
+        "colisao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "anatomia": {
+          "nota": 100,
+          "motivos": []
+        },
+        "verificacao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "kernel": {
+          "nota": 100,
+          "motivos": []
+        }
+      },
+      "nota": 100,
+      "correcoes": [],
+      "fonte": "ferramentas/avaliador-skills.mjs; fs.readFileSync, fs.statSync e REGUA",
+      "medido_em": "2026-09-27T07:40:48.721Z",
+      "tokens_reais": "NAO_MEDIDO",
+      "tokens_reais_motivo": "Estimativa ceil(bytes/4); nao houve chamada a modelo.",
+      "gates_executados": "NAO_MEDIDO",
+      "gates_executados_motivo": "Inspeccao estatica; os tools e evals nao foram executados."
+    },
+    {
+      "nome": "medicao-selada-bigquery",
+      "repo": "desafio-itau-batalha-de-agentes-time2",
+      "dir": "C:\\Users\\ACER\\Desktop\\itaú-agentes---app-demo-&-backend-django\\desafio-itau-batalha-de-agentes-time2\\.claude\\skills\\medicao-selada-bigquery",
+      "ficheiros": [
+        {
+          "caminho": "evals/adversarial/bytes-acima.json",
+          "bytes": 373,
+          "sha256": "b8d5656d0935f0684df98fe8c6093b2262d4fd2187f7e0e01a2d8ca2986e5338",
+          "mtime": "2026-09-27T07:21:09.443Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/chave-de-api.json",
+          "bytes": 352,
+          "sha256": "c08d36bd9826cf1da576e2419d3adb7f69f5723c8dc614feacc9179d3a692016",
+          "mtime": "2026-09-27T07:21:09.440Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/fonte-fora.json",
+          "bytes": 367,
+          "sha256": "55c63b9fafe3bf9733016e3437f5096a935d4d2b5365e088aa8e7d9f3a8cde6c",
+          "mtime": "2026-09-27T07:21:09.442Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/hora-sem-brt.json",
+          "bytes": 328,
+          "sha256": "bae5cd5417322bee126181d1943d7e957dc014335cdbad7ceebf72bd2f6c8820",
+          "mtime": "2026-09-27T07:21:09.439Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/q-sem-linhas.json",
+          "bytes": 323,
+          "sha256": "be085295f0cb1348d7e7561876855a7e5f94036a6b898e33637b1e08b7bc8c92",
+          "mtime": "2026-09-27T07:21:09.444Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/sem-job-id.json",
+          "bytes": 316,
+          "sha256": "8d70e455156b37cbe56c8df2ca00f76e50ff4d295468523a8278a4f26fb4f2e6",
+          "mtime": "2026-09-27T07:21:09.439Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/golden/estatistica-t3.json",
+          "bytes": 172,
+          "sha256": "9d329c077997acdf18d85b4ec5aa2781cbc6915cc53b0bd7fef5664db0da13bc",
+          "mtime": "2026-09-27T07:21:09.438Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/golden/q01-volumetria.json",
+          "bytes": 170,
+          "sha256": "7a8234a2476977a1d906b4ca2bd6f986eaa74506c8246144cc5ed8785cd8f721",
+          "mtime": "2026-09-27T07:21:09.436Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/golden/q06-composicao.json",
+          "bytes": 172,
+          "sha256": "f3a1fa245c261a5741506670e480622b3b1f39bbfd8fe0e465feddff05265236",
+          "mtime": "2026-09-27T07:21:09.437Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "manifest.yaml",
+          "bytes": 813,
+          "sha256": "b392e2942b46ed6c60a6f154762bf2d33bfe27e9f5fac478d28139a1374a5dd2",
+          "mtime": "2026-09-27T07:25:21.887Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "policies/gates.yaml",
+          "bytes": 738,
+          "sha256": "56504e0e70eac4ed5119bbcb10919d703ab49ae09333a0667a2cd8fcdc63c706",
+          "mtime": "2026-09-27T07:19:13.206Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "routes/router.yaml",
+          "bytes": 843,
+          "sha256": "ca11857541e94572ca6f1fa949555b76bca303a15fcbb2183f75d44d717f32c1",
+          "mtime": "2026-09-27T07:19:11.942Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "schemas/selo.schema.json",
+          "bytes": 767,
+          "sha256": "baf37249193722b0087f0011f254588530fe6a7445e3b8320d468afa80340cc8",
+          "mtime": "2026-09-27T07:19:13.433Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "SKILL.md",
+          "bytes": 1826,
+          "sha256": "aefad32aa21f92ab88894565ceaae03ddea31434c692cb9bafec0385b087f54b",
+          "mtime": "2026-09-27T07:19:11.444Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "templates/afirmacao.md",
+          "bytes": 535,
+          "sha256": "afa513a2711604daff6a16b8e55ed46acab6c52a5314cf5ee7a692242132d7fe",
+          "mtime": "2026-09-27T07:19:13.739Z",
+          "classe": "saida"
+        },
+        {
+          "caminho": "tools/__pycache__/comum.cpython-312.pyc",
+          "bytes": 6364,
+          "sha256": "6b356ece431bb0c9668a913e8c1d4dd222ca937eded6fb2a905a871d50425130",
+          "mtime": "2026-09-27T07:23:10.200Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/__pycache__/verificar-medicao.cpython-312.pyc",
+          "bytes": 3262,
+          "sha256": "2edaaa6d0cb9feb1db89e50555bd2df66591dc0abb6e8854959d69f4c47135c7",
+          "mtime": "2026-09-27T07:21:10.505Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/comum.py",
+          "bytes": 3366,
+          "sha256": "03026aa505ad63deacecab12eeda095f92d2ed83ddfaa8cafc36da3b79968cf5",
+          "mtime": "2026-09-27T07:23:04.618Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/evals.py",
+          "bytes": 637,
+          "sha256": "5f9fb9fa4bcd9528011603e36c393fc72cb25f9544753f884d24f649d8eff503",
+          "mtime": "2026-09-27T07:20:52.479Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/gate.mjs",
+          "bytes": 1147,
+          "sha256": "b1fc8ebf72d58bafddfdcab1ac090efb7f54f84c8b080342fe3004990aa5f9a2",
+          "mtime": "2026-09-27T07:26:08.511Z",
+          "classe": "zero_token"
+        },
+        {
+          "caminho": "tools/verificar-medicao.py",
+          "bytes": 1833,
+          "sha256": "61022f67c801e983f3e395dcbebba0dca1cce3708f6416504193466c861929d5",
+          "mtime": "2026-09-27T07:21:09.376Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "workflows/autenticar.md",
+          "bytes": 1010,
+          "sha256": "9362f9c75aa29c8be0ff69b20f3ff82ab6f49c9e456a95c8139a424cebf8823a",
+          "mtime": "2026-09-27T07:19:12.881Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "workflows/medir.md",
+          "bytes": 970,
+          "sha256": "09f61f667f01ca38f01fca9d37b9fc0333cdffbb30584a97c86c368eb1eb557a",
+          "mtime": "2026-09-27T07:19:12.238Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "workflows/verificar.md",
+          "bytes": 806,
+          "sha256": "a988d485ba02caa7e72eb95ac5408e051fb5f6af04374cf197cfffa8f55d7952",
+          "mtime": "2026-09-27T07:19:12.585Z",
+          "classe": "rota"
+        }
+      ],
+      "total_bytes": 27490,
+      "sempre_bytes": 3482,
+      "enderecavel_bytes": 20288,
+      "zero_token_bytes": 1147,
+      "tokens_carregaveis": 5949,
+      "rotas": [
+        {
+          "id": "medicao.medir",
+          "workflow": "workflows/medir.md",
+          "loads": [
+            "policies/gates.yaml",
+            "templates/afirmacao.md"
+          ],
+          "loads_em_falta": [],
+          "bytes": 2243
+        },
+        {
+          "id": "medicao.verificar",
+          "workflow": "workflows/verificar.md",
+          "loads": [
+            "schemas/selo.schema.json",
+            "policies/gates.yaml"
+          ],
+          "loads_em_falta": [],
+          "bytes": 2311
+        },
+        {
+          "id": "medicao.autenticar",
+          "workflow": "workflows/autenticar.md",
+          "loads": [
+            "policies/gates.yaml"
+          ],
+          "loads_em_falta": [],
+          "bytes": 1748
+        }
+      ],
+      "ambiguity_rule": "ask whether to measure (touches BigQuery) or only verify a sealed file, do not choose",
+      "fallback": "for T3 segments and statistics use segmentacao-t3; for an agent answer use guard-inclusao-do-dado",
+      "frontmatter": {
+        "campos": [
+          "name",
+          "description",
+          "triggers",
+          "allowed-tools",
+          "state",
+          "version",
+          "owner",
+          "escopo",
+          "grupo"
+        ],
+        "name": "medicao-selada-bigquery",
+        "description": "Measure a claim on the hackathon BigQuery table with ADC and write it sealed (value, source, BRT time, job_id, bytes). Use before publishing any number about the extrato_sintetico base, or to check that a sealed measurement is valid.",
+        "desc_chars": 233,
+        "triggers": [
+          "medir no bigquery",
+          "selar medicao",
+          "numero com selo",
+          "verificar medicao",
+          "autenticar adc",
+          "measure on bigquery",
+          "sealed measurement"
+        ],
+        "allowed_tools": [
+          "Read",
+          "Bash"
+        ]
+      },
+      "partes": {
+        "routes": true,
+        "workflows": true,
+        "schemas": true,
+        "policies": true,
+        "templates": true,
+        "tools": true,
+        "evals": true
+      },
+      "omissoes_declaradas": [
+        "references",
+        "examples",
+        "docs"
+      ],
+      "evals": {
+        "golden": 3,
+        "adversariais": 6
+      },
+      "dimensoes": {
+        "custo": {
+          "nota": 100,
+          "motivos": []
+        },
+        "router": {
+          "nota": 100,
+          "motivos": []
+        },
+        "frontmatter": {
+          "nota": 100,
+          "motivos": []
+        },
+        "colisao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "anatomia": {
+          "nota": 100,
+          "motivos": []
+        },
+        "verificacao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "kernel": {
+          "nota": 100,
+          "motivos": []
+        }
+      },
+      "nota": 100,
+      "correcoes": [],
+      "fonte": "ferramentas/avaliador-skills.mjs; fs.readFileSync, fs.statSync e REGUA",
+      "medido_em": "2026-09-27T07:40:48.728Z",
+      "tokens_reais": "NAO_MEDIDO",
+      "tokens_reais_motivo": "Estimativa ceil(bytes/4); nao houve chamada a modelo.",
+      "gates_executados": "NAO_MEDIDO",
+      "gates_executados_motivo": "Inspeccao estatica; os tools e evals nao foram executados."
+    },
+    {
+      "nome": "revisao-gemini",
+      "repo": "desafio-itau-batalha-de-agentes-time2",
+      "dir": "C:\\Users\\ACER\\Desktop\\itaú-agentes---app-demo-&-backend-django\\desafio-itau-batalha-de-agentes-time2\\.claude\\skills\\revisao-gemini",
+      "ficheiros": [
+        {
+          "caminho": "evals/adversarial/achado-inventado.json",
+          "bytes": 429,
+          "sha256": "3cd8938ac5427c9d86abba6f843493f40f60313adab71026b0e738b4da6c36bb",
+          "mtime": "2026-09-27T07:38:17.650Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/arquivo-mudou.json",
+          "bytes": 463,
+          "sha256": "567b8cc66f4123158a37437b75e0684cf2bfb6f12bb65b58dc02619f0d3ae734",
+          "mtime": "2026-09-27T07:38:17.648Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/bytes-acima.json",
+          "bytes": 384,
+          "sha256": "f5b4655a42c5e5d0f53bfd45b0626f33a4e154d52f3d1d85f80fd2a34333d9da",
+          "mtime": "2026-09-27T07:38:17.656Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/chave-vazada.json",
+          "bytes": 423,
+          "sha256": "ad9a5cc6ce0cbad78dac36a3858999ad11253feb71c6d18055f8013ca8a2bb90",
+          "mtime": "2026-09-27T07:38:17.650Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/hora-sem-brt.json",
+          "bytes": 365,
+          "sha256": "86c8bef43f4226ce6b3b86c1c140cf18418cc6b42507343be93699f887f3e996",
+          "mtime": "2026-09-27T07:38:17.654Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/modelo-fora.json",
+          "bytes": 388,
+          "sha256": "fc1d7b1a77863c1d84666d161114d8e026e0dfa2f6519818e16dd0eded405d96",
+          "mtime": "2026-09-27T07:38:17.653Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/papel-de-aprovador.json",
+          "bytes": 363,
+          "sha256": "1aeed352b9037670ebeefc6dea0822dcbfbb0a180da2c29f597b939dfa3295eb",
+          "mtime": "2026-09-27T07:38:17.649Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/sem-arquivos.json",
+          "bytes": 365,
+          "sha256": "09c0964bc468ac697595c18b111659ccec5e5611efa29ab8cdd7cd684b2790ec",
+          "mtime": "2026-09-27T07:38:17.655Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/veredito-fora.json",
+          "bytes": 362,
+          "sha256": "f285995110758d2c631d3e83829102f82db729aae23ed462de472693ea903536",
+          "mtime": "2026-09-27T07:38:17.652Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/golden/revisao-sintetica.json",
+          "bytes": 200,
+          "sha256": "d264178b75bf36bd59535802f894daf7fa9de58c8d43befcf1df2e88e1df9a70",
+          "mtime": "2026-09-27T07:38:17.647Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "examples/arquivo-revisado.md",
+          "bytes": 258,
+          "sha256": "16ee532aef09f5c8b96f35b0ebce5540b65622c1db6b7a61a76186cd18277166",
+          "mtime": "2026-09-27T07:35:10.420Z",
+          "classe": "sob_condicao"
+        },
+        {
+          "caminho": "examples/revisao-sintetica.json",
+          "bytes": 901,
+          "sha256": "9872e7b489fa076541e0af8aa1d63bb379cb21507a91121d4dd4c0a0400c1dc3",
+          "mtime": "2026-09-27T07:38:17.646Z",
+          "classe": "sob_condicao"
+        },
+        {
+          "caminho": "manifest.yaml",
+          "bytes": 839,
+          "sha256": "eaabe742a0f58f8ad12378a7fea35589c4a9375127cc71ef4cd1854f36f92c3c",
+          "mtime": "2026-09-27T07:35:08.530Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "policies/gates.yaml",
+          "bytes": 712,
+          "sha256": "5cf002e41846504d96420fb21d0426c61e80a3a9756ad1a17665041c533ac010",
+          "mtime": "2026-09-27T07:38:16.527Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "routes/router.yaml",
+          "bytes": 929,
+          "sha256": "fca18d921eca086f87f49bb6ef091cbc68de3b222f84895636489ebb0e47b4e9",
+          "mtime": "2026-09-27T07:35:08.793Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "schemas/revisao.schema.json",
+          "bytes": 1946,
+          "sha256": "d8fe8491d0529217e219fa389dc1cf56e0697501a06133a3ddc6ffed03bb9642",
+          "mtime": "2026-09-27T07:35:09.352Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "SKILL.md",
+          "bytes": 2028,
+          "sha256": "39d3ec03258273925c4dc51b65f323d74a3a34940639fcdaae7ea1995934c716",
+          "mtime": "2026-09-27T07:38:16.483Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "templates/pedido.md",
+          "bytes": 536,
+          "sha256": "755cde9f4f24e2d9fc9851fd2e4c31214c3232b49a7bcf3b02c063089aa082a5",
+          "mtime": "2026-09-27T07:35:10.748Z",
+          "classe": "saida"
+        },
+        {
+          "caminho": "tools/__pycache__/comum.cpython-312.pyc",
+          "bytes": 6355,
+          "sha256": "8733dce69a29baa72eb135ad537ec31daa371ec9828fa74cdc1247cfba362548",
+          "mtime": "2026-09-27T07:35:50.003Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/__pycache__/verificar-revisao.cpython-312.pyc",
+          "bytes": 4944,
+          "sha256": "1870111b354c64cd3c3bb39f33fd7d4e077d6002cacf8e945ae84e5e87ce6dbd",
+          "mtime": "2026-09-27T07:35:50.020Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/comum.py",
+          "bytes": 3366,
+          "sha256": "03026aa505ad63deacecab12eeda095f92d2ed83ddfaa8cafc36da3b79968cf5",
+          "mtime": "2026-09-27T07:34:09.988Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/evals.py",
+          "bytes": 630,
+          "sha256": "23b5ecc01d4a2e63b9408dded047b51471031de2aa994bda888baa5f3f06396e",
+          "mtime": "2026-09-27T07:35:09.966Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/gate.mjs",
+          "bytes": 1147,
+          "sha256": "b1fc8ebf72d58bafddfdcab1ac090efb7f54f84c8b080342fe3004990aa5f9a2",
+          "mtime": "2026-09-27T07:34:09.993Z",
+          "classe": "zero_token"
+        },
+        {
+          "caminho": "tools/verificar-revisao.py",
+          "bytes": 2681,
+          "sha256": "439d6001a0f4cad5d020771b068e14c04d955bfd77171d318a1e8335f86cab9c",
+          "mtime": "2026-09-27T07:35:09.674Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "workflows/desbloquear.md",
+          "bytes": 780,
+          "sha256": "8b3ecda0a8c9ec3cb5371215695f7ff0202e7d80636b326c9460d7b1241a269d",
+          "mtime": "2026-09-27T07:35:11.565Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "workflows/enviar.md",
+          "bytes": 756,
+          "sha256": "e6e97c79c795af68cac5682ab95fd13e2ac7f7bd7c09af8d0349cff146a24410",
+          "mtime": "2026-09-27T07:35:11.053Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "workflows/verificar.md",
+          "bytes": 804,
+          "sha256": "0d26de77285abb86734bb029d51c23f4d9f5dddf47565dd60d1b7acfe04ac11f",
+          "mtime": "2026-09-27T07:35:11.328Z",
+          "classe": "rota"
+        }
+      ],
+      "total_bytes": 33354,
+      "sempre_bytes": 3796,
+      "enderecavel_bytes": 24669,
+      "zero_token_bytes": 1147,
+      "tokens_carregaveis": 7121,
+      "rotas": [
+        {
+          "id": "revisao.enviar",
+          "workflow": "workflows/enviar.md",
+          "loads": [
+            "policies/gates.yaml",
+            "templates/pedido.md"
+          ],
+          "loads_em_falta": [],
+          "bytes": 2004
+        },
+        {
+          "id": "revisao.verificar",
+          "workflow": "workflows/verificar.md",
+          "loads": [
+            "schemas/revisao.schema.json",
+            "policies/gates.yaml"
+          ],
+          "loads_em_falta": [],
+          "bytes": 3462
+        },
+        {
+          "id": "revisao.desbloquear",
+          "workflow": "workflows/desbloquear.md",
+          "loads": [
+            "policies/gates.yaml"
+          ],
+          "loads_em_falta": [],
+          "bytes": 1492
+        }
+      ],
+      "ambiguity_rule": "ask whether to send files (costs quota, leaves the machine) or only verify a stored review, do not choose",
+      "fallback": "for a number use medicao-selada-bigquery; for T3 use segmentacao-t3; for an agent answer use guard-inclusao-do-dado",
+      "frontmatter": {
+        "campos": [
+          "name",
+          "description",
+          "triggers",
+          "allowed-tools",
+          "state",
+          "version",
+          "owner",
+          "escopo",
+          "grupo"
+        ],
+        "name": "revisao-gemini",
+        "description": "Send a construction (code, SQL, skills, plan) to Gemini as an independent reviewer and check the sealed review record (model, BRT time, sha256 of each file sent, reviewer role). Use to get a second opinion before implementing, or to check whether a stored review is still valid for the current files.",
+        "desc_chars": 300,
+        "triggers": [
+          "revisao gemini",
+          "mandar para o gemini revisar",
+          "segunda opiniao",
+          "verificar revisao",
+          "revisao desatualizada",
+          "gemini review",
+          "independent review"
+        ],
+        "allowed_tools": [
+          "Read",
+          "Bash"
+        ]
+      },
+      "partes": {
+        "routes": true,
+        "workflows": true,
+        "schemas": true,
+        "policies": true,
+        "templates": true,
+        "tools": true,
+        "evals": true
+      },
+      "omissoes_declaradas": [
+        "references",
+        "docs"
+      ],
+      "evals": {
+        "golden": 1,
+        "adversariais": 9
+      },
+      "dimensoes": {
+        "custo": {
+          "nota": 100,
+          "motivos": []
+        },
+        "router": {
+          "nota": 100,
+          "motivos": []
+        },
+        "frontmatter": {
+          "nota": 100,
+          "motivos": []
+        },
+        "colisao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "anatomia": {
+          "nota": 100,
+          "motivos": []
+        },
+        "verificacao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "kernel": {
+          "nota": 100,
+          "motivos": []
+        }
+      },
+      "nota": 100,
+      "correcoes": [],
+      "fonte": "ferramentas/avaliador-skills.mjs; fs.readFileSync, fs.statSync e REGUA",
+      "medido_em": "2026-09-27T07:40:48.738Z",
+      "tokens_reais": "NAO_MEDIDO",
+      "tokens_reais_motivo": "Estimativa ceil(bytes/4); nao houve chamada a modelo.",
+      "gates_executados": "NAO_MEDIDO",
+      "gates_executados_motivo": "Inspeccao estatica; os tools e evals nao foram executados."
+    },
+    {
+      "nome": "segmentacao-t3",
+      "repo": "desafio-itau-batalha-de-agentes-time2",
+      "dir": "C:\\Users\\ACER\\Desktop\\itaú-agentes---app-demo-&-backend-django\\desafio-itau-batalha-de-agentes-time2\\.claude\\skills\\segmentacao-t3",
+      "ficheiros": [
+        {
+          "caminho": "evals/adversarial/esbanjador-acima.json",
+          "bytes": 391,
+          "sha256": "ae52e14bd8a5c612be5fca4c284b3cc62ff92fb57ddbd35ce3023e269de584d5",
+          "mtime": "2026-09-27T07:23:04.860Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/ic-sem-ponto.json",
+          "bytes": 364,
+          "sha256": "cc6721e4e95663b8102f8a28ff69589540874d17f6e416ae739cea59dead4c31",
+          "mtime": "2026-09-27T07:23:04.873Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/id-de-cliente.json",
+          "bytes": 330,
+          "sha256": "c0d00f0548dea22abdf02325988227bba4e764f2e0b177b58396abbef96af83f",
+          "mtime": "2026-09-27T07:23:04.887Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/limiar-divergente.json",
+          "bytes": 352,
+          "sha256": "7154ae88c63bb3c03948b994f375e1f49fd1869ead61dbc6b8726f06b1f27ae3",
+          "mtime": "2026-09-27T07:23:04.899Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/livre-abaixo.json",
+          "bytes": 382,
+          "sha256": "a7b16500f773d999c8dcb012f28994a09074f4a7a2288ae430de8e7f5fba8d88",
+          "mtime": "2026-09-27T07:23:04.903Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/n-nao-soma.json",
+          "bytes": 347,
+          "sha256": "eb02e1de6fad40b3fe57ccb3d906703771cf1b0ed7fc0fbcaeea2b2a0fe44221",
+          "mtime": "2026-09-27T07:23:04.914Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/pct-inflado.json",
+          "bytes": 341,
+          "sha256": "e6551b142bce3be20e1ae57ad68e4a397423936c7c9399b50a9081c18998449f",
+          "mtime": "2026-09-27T07:23:04.926Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/saida-sem-grupo.json",
+          "bytes": 340,
+          "sha256": "40066d8f9e00b0254e57464d86d2de5f4c66d576aa5db547ecaedacda9f88f2d",
+          "mtime": "2026-09-27T07:23:04.937Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/adversarial/sensibilidade-invertida.json",
+          "bytes": 369,
+          "sha256": "3da87ad29ecbfd222d2b64787134b4e2eb6ba32323a8b9e79776cca9d2b4476c",
+          "mtime": "2026-09-27T07:23:04.949Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "evals/golden/estatistica-2026-09-27.json",
+          "bytes": 181,
+          "sha256": "8bac170f7f1454670f6a4be06d555d1cf33c10280e253543bbb3f7ec630b0ddf",
+          "mtime": "2026-09-27T07:22:50.136Z",
+          "classe": "ci"
+        },
+        {
+          "caminho": "manifest.yaml",
+          "bytes": 879,
+          "sha256": "5d0434dac28d99a9ae08af73d419d6e889a3f99a8c6fcc2d91232a7d7f392fdd",
+          "mtime": "2026-09-27T07:25:25.223Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "policies/gates.yaml",
+          "bytes": 512,
+          "sha256": "e88080e37c1a2f8c7e64a59a5aa83daca8671e14244f70864bbc81efa5e1cc2d",
+          "mtime": "2026-09-27T07:22:15.560Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "routes/router.yaml",
+          "bytes": 848,
+          "sha256": "b034c665d8adf37b807f28b98d626bf7cc4601e2b29c549ef2938b9e073197e7",
+          "mtime": "2026-09-27T07:22:14.379Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "schemas/estatistica-t3.schema.json",
+          "bytes": 1501,
+          "sha256": "ebdb14c9285c8baea59a16651a55bf2f45ce28d9055b2f0f8b8db27a6be5e70e",
+          "mtime": "2026-09-27T07:22:15.803Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "SKILL.md",
+          "bytes": 1991,
+          "sha256": "27e613d5b276a38cfcd1f95cdc3260d3625c8d11155a9f6a6564f24fbb2e137f",
+          "mtime": "2026-09-27T07:22:13.665Z",
+          "classe": "sempre"
+        },
+        {
+          "caminho": "templates/leitura.md",
+          "bytes": 493,
+          "sha256": "f44abc0229ba67e27136c7ebd24c820a5f226863983afd8deb518cc6acc09cb5",
+          "mtime": "2026-09-27T07:22:16.047Z",
+          "classe": "saida"
+        },
+        {
+          "caminho": "tools/__pycache__/comum.cpython-312.pyc",
+          "bytes": 6355,
+          "sha256": "c89e87e1a54613dfc1c333826ba3d563f85b67a5fd7eedd1a0c879beb4faefca",
+          "mtime": "2026-09-27T07:23:06.474Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/__pycache__/verificar-t3.cpython-312.pyc",
+          "bytes": 5405,
+          "sha256": "b408d1a2a15272fdf06260d75f68d32498f929c503f0d19621021369336646fb",
+          "mtime": "2026-09-27T07:22:51.515Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/comum.py",
+          "bytes": 3366,
+          "sha256": "03026aa505ad63deacecab12eeda095f92d2ed83ddfaa8cafc36da3b79968cf5",
+          "mtime": "2026-09-27T07:23:04.678Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/evals.py",
+          "bytes": 616,
+          "sha256": "4ce7ee5351601e1ee81f636d9fd1ff6e19ddc84c794bd02c2b27bf3c4f89906a",
+          "mtime": "2026-09-27T07:22:35.725Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "tools/gate.mjs",
+          "bytes": 1147,
+          "sha256": "b1fc8ebf72d58bafddfdcab1ac090efb7f54f84c8b080342fe3004990aa5f9a2",
+          "mtime": "2026-09-27T07:26:08.558Z",
+          "classe": "zero_token"
+        },
+        {
+          "caminho": "tools/verificar-t3.py",
+          "bytes": 2921,
+          "sha256": "f325f202ffd7773a16ca1edddbe9eb986c73a883bda6d31ced551cfdf9fea45e",
+          "mtime": "2026-09-27T07:22:36.616Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "workflows/medir.md",
+          "bytes": 803,
+          "sha256": "7776d0e7f004ca5310fe15b8e2db4f2000e2d8c6ccd36f21ffd84b2516273e23",
+          "mtime": "2026-09-27T07:22:14.782Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "workflows/mudar-regra.md",
+          "bytes": 808,
+          "sha256": "64ea5633e0db0acaf2e0745febf928022e7d63d11d43af87ee100ce518383b7e",
+          "mtime": "2026-09-27T07:22:15.059Z",
+          "classe": "rota"
+        },
+        {
+          "caminho": "workflows/verificar.md",
+          "bytes": 714,
+          "sha256": "4798650148540aadf6e278605ce3b646714b8c141571d5cedcc1d5ce2fa6d0d9",
+          "mtime": "2026-09-27T07:22:15.314Z",
+          "classe": "rota"
+        }
+      ],
+      "total_bytes": 31756,
+      "sempre_bytes": 3718,
+      "enderecavel_bytes": 23494,
+      "zero_token_bytes": 1147,
+      "tokens_carregaveis": 6808,
+      "rotas": [
+        {
+          "id": "t3.medir",
+          "workflow": "workflows/medir.md",
+          "loads": [
+            "policies/gates.yaml"
+          ],
+          "loads_em_falta": [],
+          "bytes": 1315
+        },
+        {
+          "id": "t3.mudar-regra",
+          "workflow": "workflows/mudar-regra.md",
+          "loads": [
+            "policies/gates.yaml",
+            "templates/leitura.md"
+          ],
+          "loads_em_falta": [],
+          "bytes": 1813
+        },
+        {
+          "id": "t3.verificar",
+          "workflow": "workflows/verificar.md",
+          "loads": [
+            "schemas/estatistica-t3.schema.json",
+            "policies/gates.yaml"
+          ],
+          "loads_em_falta": [],
+          "bytes": 2727
+        }
+      ],
+      "ambiguity_rule": "ask whether the request changes the rule (owner decision) or only measures it, do not choose",
+      "fallback": "for sealing and auth use medicao-selada-bigquery; for an agent answer use guard-inclusao-do-dado",
+      "frontmatter": {
+        "campos": [
+          "name",
+          "description",
+          "triggers",
+          "allowed-tools",
+          "state",
+          "version",
+          "owner",
+          "escopo",
+          "grupo"
+        ],
+        "name": "segmentacao-t3",
+        "description": "Segment clients into T3 (Vulnerável, Esbanjador, Livre) by Inflow/Outflow/Surplus and check the applied statistics (bootstrap CI, threshold sensitivity, Spearman). Use when changing the T3 rule, the macro group map, or reading which segment and tone a client gets.",
+        "desc_chars": 264,
+        "triggers": [
+          "segmentacao t3",
+          "vulneravel esbanjador livre",
+          "inflow outflow surplus",
+          "limiar de surplus",
+          "mapa de grupos",
+          "estatistica t3",
+          "t3 segmentation"
+        ],
+        "allowed_tools": [
+          "Read",
+          "Bash"
+        ]
+      },
+      "partes": {
+        "routes": true,
+        "workflows": true,
+        "schemas": true,
+        "policies": true,
+        "templates": true,
+        "tools": true,
+        "evals": true
+      },
+      "omissoes_declaradas": [
+        "references",
+        "examples",
+        "docs"
+      ],
+      "evals": {
+        "golden": 1,
+        "adversariais": 9
+      },
+      "dimensoes": {
+        "custo": {
+          "nota": 100,
+          "motivos": []
+        },
+        "router": {
+          "nota": 100,
+          "motivos": []
+        },
+        "frontmatter": {
+          "nota": 100,
+          "motivos": []
+        },
+        "colisao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "anatomia": {
+          "nota": 100,
+          "motivos": []
+        },
+        "verificacao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "kernel": {
+          "nota": 100,
+          "motivos": []
+        }
+      },
+      "nota": 100,
+      "correcoes": [],
+      "fonte": "ferramentas/avaliador-skills.mjs; fs.readFileSync, fs.statSync e REGUA",
+      "medido_em": "2026-09-27T07:40:48.746Z",
+      "tokens_reais": "NAO_MEDIDO",
+      "tokens_reais_motivo": "Estimativa ceil(bytes/4); nao houve chamada a modelo.",
+      "gates_executados": "NAO_MEDIDO",
+      "gates_executados_motivo": "Inspeccao estatica; os tools e evals nao foram executados."
+    }
+  ],
+  "colisoes": [],
+  "gerado_em": "2026-09-27T07:40:48.747Z",
+  "regua": {
+    "pesos": {
+      "custo": 10,
+      "router": 25,
+      "frontmatter": 15,
+      "colisao": 10,
+      "anatomia": 10,
+      "verificacao": 20,
+      "kernel": 10
+    },
+    "sempre_ideal": 6144,
+    "sempre_teto": 49152,
+    "desc_min_chars": 40,
+    "desc_max_chars": 300,
+    "desc_min_palavras": 6,
+    "limiar_colisao": 0.5,
+    "router": {
+      "rotas": 20,
+      "workflow": 20,
+      "loads": 20,
+      "existentes": 20,
+      "ambiguity_rule": 10,
+      "fallback": 10
+    },
+    "frontmatter": {
+      "name": 20,
+      "description": 40,
+      "triggers": 20,
+      "allowed_tools": 20
+    },
+    "triggers_parciais": 0.5,
+    "partes": [
+      "routes",
+      "workflows",
+      "schemas",
+      "policies",
+      "templates",
+      "tools",
+      "evals"
+    ],
+    "verificacao": {
+      "tools": 40,
+      "golden": 30,
+      "adversariais": 30
+    },
+    "kernel": {
+      "policy": 35,
+      "schema": 35,
+      "docs": 30
+    },
+    "policy_min_linhas": 2,
+    "schema_min_linhas": 3,
+    "colisao_penalidade": 100,
+    "palavras_genericas": [
+      "help",
+      "helps",
+      "helper",
+      "assist",
+      "assistant",
+      "tasks",
+      "task",
+      "general",
+      "generic",
+      "useful",
+      "various",
+      "things",
+      "stuff",
+      "ajuda",
+      "ajudar",
+      "assistente",
+      "tarefas",
+      "tarefa",
+      "geral",
+      "generico",
+      "diversas",
+      "coisas"
+    ]
+  }
+}

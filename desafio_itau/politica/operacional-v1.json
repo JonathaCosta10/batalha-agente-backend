@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0",
+  "id": "politica-operacional-i-agora",
+  "versao": "1.0.0",
+  "natureza": "politica_operacional",
+  "aviso": "Limiares, referências e hipóteses de ENGENHARIA do protótipo. Não são fatos externos, não são normas do BCB/CMN e não foram aprovados pelo Itaú. Cada valor aponta para o arquivo de onde foi migrado.",
+  "aprovacao": {"status": "PENDENTE", "responsavel": null, "observacao": "Sem aprovação institucional documentada; decisão do dono do protótipo."},
+  "regras": [
+    {
+      "rule_id": "situacao.equilibrio",
+      "versao": "1.0.0",
+      "tipo": "limiar",
+      "descricao": "Situação do mês/da média é EQUILIBRIO quando |entradas − saídas| fica abaixo deste % das entradas.",
+      "parametros": {"limiar_pct": {"valor": "1.0", "unidade": "pct"}},
+      "condicao": {"indicador": "abs_saldo_pct_entradas", "operador": "<", "parametro": "limiar_pct"},
+      "acao": "situacao=EQUILIBRIO",
+      "prioridade": 10,
+      "justificativa_publica": "Diferenças muito pequenas entre entradas e saídas são tratadas como equilíbrio.",
+      "origem": [{"arquivo": "apps/conversas/interacao_dados.py", "secao": "LIMIAR_EQUILIBRIO_PCT (docstring §Situação)"}],
+      "testes": ["tests/test_politica_operacional.py::Equivalencia", "tests/test_politica_operacional.py::Limites"]
+    },
+    {
+      "rule_id": "divida.relevante",
+      "versao": "1.0.0",
+      "tipo": "limiar",
+      "descricao": "Dívida relevante: empréstimos + juros pagos >= limiar da entrada média mensal, OU pelo menos uma multa por atraso na janela.",
+      "parametros": {"limiar_pct_entradas": {"valor": "10.0", "unidade": "pct"}, "multas_min": {"valor": "1", "unidade": "contagem"}},
+      "condicao": {"qualquer": [
+        {"indicador": "divida_pct_entrada_media", "operador": ">=", "parametro": "limiar_pct_entradas"},
+        {"indicador": "multas_por_atraso_na_janela", "operador": ">=", "parametro": "multas_min"}
+      ]},
+      "acao": "cenario_candidato=consolidacao_divida",
+      "prioridade": 20,
+      "justificativa_publica": "Pagamentos de dívida que pesam na entrada, ou multa por atraso, levam a falar de prevenção ao inadimplemento.",
+      "origem": [{"arquivo": "apps/conversas/interacao_dados.py", "secao": "LIMIAR_DIVIDA_PCT_ENTRADAS / resumir_divida"},
+                 {"arquivo": "docs/desenho-respostas-por-interacao.md", "secao": "Cenários"}],
+      "testes": ["tests/test_politica_operacional.py::Limites::test_divida_limite_exato_10"]
+    },
+    {
+      "rule_id": "t3.limiar_surplus",
+      "versao": "1.0.0",
+      "tipo": "limiar",
+      "descricao": "Segmento T3 Livre quando (entradas − saídas)/entradas >= limiar. Mesmo limiar decide Esbanjador vs Vulnerável somando o discricionário.",
+      "parametros": {"limiar_fracao": {"valor": "0.15", "unidade": "fracao"}},
+      "condicao": {"indicador": "taxa_surplus_fracao", "operador": ">=", "parametro": "limiar_fracao"},
+      "acao": "segmento=Livre",
+      "prioridade": 30,
+      "justificativa_publica": "Quando sobra uma parte relevante da entrada, a conversa trata de manter o hábito.",
+      "origem": [{"arquivo": "apps/context_agent_datadriven/pastas_raiz/estudos/i_agora/t3.py", "secao": "LIMIAR_SURPLUS"},
+                 {"arquivo": "apps/context_agent_datadriven/pastas_raiz/estudos/i_agora/consultas.py", "secao": "LIMIAR_SOBRA_SAUDAVEL_PCT (mesmo valor em %)"},
+                 {"arquivo": "apps/context_agent_datadriven/services/plano_proposta.py", "secao": "docstring passo 2"}],
+      "testes": ["tests/test_politica_operacional.py::Equivalencia"]
+    },
+    {
+      "rule_id": "gasto.inclinacao",
+      "versao": "1.0.0",
+      "tipo": "limiar",
+      "descricao": "Inclinação de gasto: média dos meses_recentes vs média mensal da janela inteira; |variação| >= variacao_min_pct E |diferença| >= diferenca_min_reais; só subcategorias de desejos ou Mercado com média >= media_min_reais.",
+      "parametros": {"meses_recentes": {"valor": "3", "unidade": "meses"},
+                     "variacao_min_pct": {"valor": "15.0", "unidade": "pct"},
+                     "diferenca_min_reais": {"valor": "30.0", "unidade": "reais"},
+                     "media_min_reais": {"valor": "50.0", "unidade": "reais"}},
+      "condicao": null,
+      "acao": "cenario_candidato=inclinacao_gasto",
+      "prioridade": 40,
+      "justificativa_publica": "Só se comenta uma mudança de gasto quando ela é grande o bastante para não ser ruído.",
+      "origem": [{"arquivo": "apps/conversas/interacao_dados.py", "secao": "INCLINACAO"}],
+      "testes": ["tests/test_politica_operacional.py::Equivalencia"]
+    },
+    {
+      "rule_id": "orcamento.referencia_50_30_20",
+      "versao": "1.0.0",
+      "tipo": "referencia",
+      "descricao": "Referência educativa de orçamento (necessidades/desejos/futuro). Heurística opcional, NÃO é norma do BCB nem regra do Itaú.",
+      "parametros": {"necessidades": {"valor": "50", "unidade": "pct"}, "desejos": {"valor": "30", "unidade": "pct"}, "futuro": {"valor": "20", "unidade": "pct"}},
+      "condicao": null,
+      "acao": "apresentar_como_referencia_opcional",
+      "prioridade": 50,
+      "justificativa_publica": "É um guia comum de organização do orçamento, não uma obrigação.",
+      "origem": [{"arquivo": "apps/conversas/interacao_dados.py", "secao": "REFERENCIA_50_30_20"},
+                 {"arquivo": "apps/conversas/prompts/partials/financial_distinctions.liquid", "secao": "Não atribua 15%, 20% ou 50/30/20 a normas"}],
+      "testes": ["tests/test_politica_operacional.py::Equivalencia"]
+    },
+    {
+      "rule_id": "projecao.hipoteses_reducao",
+      "versao": "1.0.0",
+      "tipo": "hipotese",
+      "descricao": "Hipóteses constantes de redução mensal composta do gasto na simulação (G(n)=G_atual*(1-r)^n). Não são taxas de crédito nem probabilidade.",
+      "parametros": {"r_5": {"valor": "0.05", "unidade": "fracao"}, "r_8": {"valor": "0.08", "unidade": "fracao"}},
+      "condicao": null,
+      "acao": "simular_prazo",
+      "prioridade": 60,
+      "justificativa_publica": "A simulação usa dois ritmos de redução como cenários, não como promessa.",
+      "origem": [{"arquivo": "apps/conversas/projection.py", "secao": "project()"},
+                 {"arquivo": "apps/conversas/prompts/partials/spending_projection.liquid", "secao": "redução composta mensal de 5% e 8%"}],
+      "testes": ["tests/test_politica_operacional.py::Equivalencia"]
+    }
+  ],
+  "estados": {
+    "versao": "1.0.0",
+    "origem": [{"arquivo": "apps/conversas/estado.py", "secao": "decidir"}],
+    "tabela": {
+      "ENCAMINHAMENTO":      {"acoes_permitidas": ["encaminhar_humano"], "descricao": "Extremo detectado por regra antes do modelo."},
+      "RECUSA_SEGURA":       {"acoes_permitidas": ["oferecer_alternativa_segura"], "descricao": "Pedido de terceiro ou finalidade prejudicial."},
+      "ESCLARECIMENTO":      {"acoes_permitidas": ["perguntar"], "descricao": "Intenção ambígua ou dado a confirmar."},
+      "IDENTIFICACAO":       {"acoes_permitidas": ["informar_identidade_da_sessao"], "descricao": "Pergunta do titular sobre a própria identidade; resposta do cadastro de demonstração."},
+      "DADOS_INSUFICIENTES": {"acoes_permitidas": ["educacao_geral", "perguntar"], "descricao": "Pergunta pessoal sem dados medidos do titular."},
+      "EDUCACAO_GERAL":      {"acoes_permitidas": ["educacao_geral", "perguntar"], "descricao": "Orientação sem números do titular."},
+      "ANALISE_DESCRITIVA":  {"acoes_permitidas": ["descrever_fatos_medidos", "educacao_geral", "perguntar"], "descricao": "Descreve fatos medidos do extrato, cada número com evidence_id."},
+      "SIMULACAO":           {"acoes_permitidas": ["apresentar_simulacao_com_premissas", "perguntar"], "descricao": "Projeção determinística após confirmação explícita."},
+      "INDISPONIVEL":        {"acoes_permitidas": [], "descricao": "Falha técnica ou validação reprovada: resposta segura predefinida."}
+    }
+  }
+}

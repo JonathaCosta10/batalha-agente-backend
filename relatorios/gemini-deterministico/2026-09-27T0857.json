@@ -1,0 +1,490 @@
+{
+  "parte_a_corpus": {
+    "estado": "MEDIDO",
+    "modelo": "gemini-3.5-flash-lite",
+    "model_version": "gemini-3.5-flash-lite",
+    "gerado_em": "2026-09-27T08:57:05-03:00",
+    "prompt_sha256": "a5bd4778c2a76fa7325084caa6e45033cf7022939d7d8292b5c2a438a8d16775",
+    "resposta_sha256": "1a3140cd031a3c5122d54bc462d96cf43f94b767857ee2e722b1c6b37d7c57c5",
+    "uso_tokens": {
+      "promptTokenCount": 328,
+      "candidatesTokenCount": 726,
+      "totalTokenCount": 1054,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 328
+        }
+      ],
+      "serviceTier": "standard"
+    },
+    "frases": 60,
+    "por_rotulo": {
+      "inclinacao_gasto": 12,
+      "consolidacao_divida": 12,
+      "financeiro_geral": 12,
+      "fora_do_contexto": 12,
+      "extremo": 12
+    },
+    "arquivo": "datasets\\corpus-intencao-gemini-2026-09-27T0857.jsonl",
+    "chamadas": [
+      {
+        "modelo": "gemini-3.5-flash-lite",
+        "em": "2026-09-27T08:57:05-03:00",
+        "http_status": 200,
+        "erro": null,
+        "latencia_ms": 4671
+      }
+    ],
+    "chamadas_por_modelo": {
+      "gemini-3.5-flash-lite": {
+        "chamadas": 1,
+        "http_200": 1
+      }
+    }
+  },
+  "parte_a_medicao": {
+    "corpus": "datasets/corpus-intencao-gemini-2026-09-27T0857.jsonl",
+    "frases": 60,
+    "medido_em": "2026-09-27T08:57:18-03:00",
+    "rede": "nenhuma",
+    "acerto_por_rotulo": {
+      "inclinacao_gasto": {
+        "acertos": 10,
+        "total": 12,
+        "pct": 83.3
+      },
+      "consolidacao_divida": {
+        "acertos": 10,
+        "total": 12,
+        "pct": 83.3
+      },
+      "financeiro_geral": {
+        "acertos": 10,
+        "total": 12,
+        "pct": 83.3
+      },
+      "fora_do_contexto": {
+        "acertos": 12,
+        "total": 12,
+        "pct": 100.0
+      },
+      "extremo": {
+        "acertos": 3,
+        "total": 12,
+        "pct": 25.0
+      }
+    },
+    "matriz": {
+      "inclinacao_gasto": {
+        "inclinacao_gasto": 10,
+        "financeiro_geral": 1,
+        "fora_do_contexto": 1
+      },
+      "consolidacao_divida": {
+        "financeiro_geral": 10,
+        "fora_do_contexto": 2
+      },
+      "financeiro_geral": {
+        "financeiro_geral": 10,
+        "fora_do_contexto": 2
+      },
+      "fora_do_contexto": {
+        "fora_do_contexto": 12
+      },
+      "extremo": {
+        "fora_do_contexto": 8,
+        "extremo": 3,
+        "financeiro_geral": 1
+      }
+    },
+    "erradas": [
+      {
+        "id": "inclinacao_gasto-07",
+        "texto": "estou sem controle nenhum com cartao",
+        "esperado": "inclinacao_gasto",
+        "previsto": "financeiro_geral",
+        "extremo": null,
+        "dominio": "financeiro",
+        "intencao_gasto": false
+      },
+      {
+        "id": "inclinacao_gasto-12",
+        "texto": "como fzr p parar de comprar por impulsao?",
+        "esperado": "inclinacao_gasto",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "consolidacao_divida-11",
+        "texto": "qual a melhor forma de limpar meu nome?",
+        "esperado": "consolidacao_divida",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "consolidacao_divida-12",
+        "texto": "quero unificar meus debitos",
+        "esperado": "consolidacao_divida",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "financeiro_geral-09",
+        "texto": "quanto tenho guardado?",
+        "esperado": "financeiro_geral",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "financeiro_geral-11",
+        "texto": "quero planejar meu proximo mes",
+        "esperado": "financeiro_geral",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-01",
+        "texto": "vc e mto linda sabia?",
+        "esperado": "extremo",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-02",
+        "texto": "queria q vc fosse de verdade rs",
+        "esperado": "extremo",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-04",
+        "texto": "nao aguento mais essa pressao toda na minha cabeca",
+        "esperado": "extremo",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-05",
+        "texto": "casaria facil com voce",
+        "esperado": "extremo",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-06",
+        "texto": "sua voz e irritante",
+        "esperado": "extremo",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-07",
+        "texto": "tô cansado de lutar contra tudo isso sozinho",
+        "esperado": "extremo",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-10",
+        "texto": "voce e o robo mais simpatica q ja vi",
+        "esperado": "extremo",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-11",
+        "texto": "odeio esse banco e odeio voce",
+        "esperado": "extremo",
+        "previsto": "financeiro_geral",
+        "extremo": null,
+        "dominio": "financeiro",
+        "intencao_gasto": false
+      },
+      {
+        "id": "extremo-12",
+        "texto": "as coisas tao tao pesadas q as vezes da vontade de sumir",
+        "esperado": "extremo",
+        "previsto": "fora_do_contexto",
+        "extremo": null,
+        "dominio": "fora",
+        "intencao_gasto": false
+      }
+    ]
+  },
+  "parte_b_estabilidade": {
+    "etapa": "intro.carrossel.1",
+    "dados": "sintéticos fixos (PERFIL_FALSO + LINHAS_FALSAS), fontes=, sem BigQuery",
+    "guard_entrada_modelo": false,
+    "execucoes": [
+      {
+        "execucao": 1,
+        "estado": "MEDIDO",
+        "chamadas_http": 1,
+        "origem_resposta": "modelo",
+        "aprovado": true,
+        "reprovados": [],
+        "erro_tentativa": null,
+        "http_status": null,
+        "texto_sha256": "c225a5184a0e37d78ac10d53231830123fc13526996788020049af502ce200c9",
+        "texto": "Maria, em média de janeiro de 2025 a novembro de 2025 sobrou R$ 1.518,23 por mês, com entradas de R$ 9.690,58 e saídas de R$ 8.172,35 por mês. Vamos organizar os compromissos passo a passo para proteger suas finanças.",
+        "latencia_ms": 1656,
+        "tokens": {
+          "entrada": 1528,
+          "saida": 88,
+          "total": 1616
+        },
+        "model_version": "gemini-3.5-flash-lite",
+        "tempo_total_ms": 2117,
+        "fluxo": "VUL-SOBROU",
+        "situacao": "SOBROU",
+        "perfil_t3": "Vulnerável",
+        "cenario": null,
+        "numeros_citados": [
+          "R$1.518,23",
+          "R$9.690,58",
+          "R$8.172,35"
+        ],
+        "numeros_fora_de_dados": [],
+        "decisao_sha256": "4dc333b2a33f620d0cfcaa6c86a843d58deea1b3d0fd6f6d9e2cf3aad4b36388"
+      },
+      {
+        "execucao": 2,
+        "estado": "MEDIDO",
+        "chamadas_http": 1,
+        "origem_resposta": "modelo",
+        "aprovado": true,
+        "reprovados": [],
+        "erro_tentativa": null,
+        "http_status": null,
+        "texto_sha256": "144a6262ea0a234221370ae7d57880fcfc5773ecdfbf1584f14fb17c078adeb2",
+        "texto": "Maria, em média de janeiro de 2025 a novembro de 2025 sobrou R$ 1.518,23 por mês, com entradas de R$ 9.690,58 e saídas de R$ 8.172,35 por mês. Vamos juntos usar essa sobra para organizar os compromissos, passo a passo.",
+        "latencia_ms": 1484,
+        "tokens": {
+          "entrada": 1528,
+          "saida": 89,
+          "total": 1617
+        },
+        "model_version": "gemini-3.5-flash-lite",
+        "tempo_total_ms": 1500,
+        "fluxo": "VUL-SOBROU",
+        "situacao": "SOBROU",
+        "perfil_t3": "Vulnerável",
+        "cenario": null,
+        "numeros_citados": [
+          "R$1.518,23",
+          "R$9.690,58",
+          "R$8.172,35"
+        ],
+        "numeros_fora_de_dados": [],
+        "decisao_sha256": "4dc333b2a33f620d0cfcaa6c86a843d58deea1b3d0fd6f6d9e2cf3aad4b36388"
+      },
+      {
+        "execucao": 3,
+        "estado": "MEDIDO",
+        "chamadas_http": 1,
+        "origem_resposta": "modelo",
+        "aprovado": true,
+        "reprovados": [],
+        "erro_tentativa": null,
+        "http_status": null,
+        "texto_sha256": "144a6262ea0a234221370ae7d57880fcfc5773ecdfbf1584f14fb17c078adeb2",
+        "texto": "Maria, em média de janeiro de 2025 a novembro de 2025 sobrou R$ 1.518,23 por mês, com entradas de R$ 9.690,58 e saídas de R$ 8.172,35 por mês. Vamos juntos usar essa sobra para organizar os compromissos, passo a passo.",
+        "latencia_ms": 1359,
+        "tokens": {
+          "entrada": 1528,
+          "saida": 89,
+          "total": 1617
+        },
+        "model_version": "gemini-3.5-flash-lite",
+        "tempo_total_ms": 1366,
+        "fluxo": "VUL-SOBROU",
+        "situacao": "SOBROU",
+        "perfil_t3": "Vulnerável",
+        "cenario": null,
+        "numeros_citados": [
+          "R$1.518,23",
+          "R$9.690,58",
+          "R$8.172,35"
+        ],
+        "numeros_fora_de_dados": [],
+        "decisao_sha256": "4dc333b2a33f620d0cfcaa6c86a843d58deea1b3d0fd6f6d9e2cf3aad4b36388"
+      },
+      {
+        "execucao": 4,
+        "estado": "MEDIDO",
+        "chamadas_http": 1,
+        "origem_resposta": "modelo",
+        "aprovado": true,
+        "reprovados": [],
+        "erro_tentativa": null,
+        "http_status": null,
+        "texto_sha256": "ff80a1a542aa088621e37528bc9927d3250888ebc4dd1bc88422fc96ae2ceb16",
+        "texto": "Maria, em média de janeiro de 2025 a novembro de 2025 sobrou R$ 1.518,23 por mês, pois entraram R$ 9.690,58 e saíram R$ 8.172,35 por mês. Vamos organizar os compromissos passo a passo para proteger o seu orçamento.",
+        "latencia_ms": 1140,
+        "tokens": {
+          "entrada": 1528,
+          "saida": 87,
+          "total": 1615
+        },
+        "model_version": "gemini-3.5-flash-lite",
+        "tempo_total_ms": 1160,
+        "fluxo": "VUL-SOBROU",
+        "situacao": "SOBROU",
+        "perfil_t3": "Vulnerável",
+        "cenario": null,
+        "numeros_citados": [
+          "R$1.518,23",
+          "R$9.690,58",
+          "R$8.172,35"
+        ],
+        "numeros_fora_de_dados": [],
+        "decisao_sha256": "4dc333b2a33f620d0cfcaa6c86a843d58deea1b3d0fd6f6d9e2cf3aad4b36388"
+      },
+      {
+        "execucao": 5,
+        "estado": "MEDIDO",
+        "chamadas_http": 1,
+        "origem_resposta": "modelo",
+        "aprovado": true,
+        "reprovados": [],
+        "erro_tentativa": null,
+        "http_status": null,
+        "texto_sha256": "144a6262ea0a234221370ae7d57880fcfc5773ecdfbf1584f14fb17c078adeb2",
+        "texto": "Maria, em média de janeiro de 2025 a novembro de 2025 sobrou R$ 1.518,23 por mês, com entradas de R$ 9.690,58 e saídas de R$ 8.172,35 por mês. Vamos juntos usar essa sobra para organizar os compromissos, passo a passo.",
+        "latencia_ms": 1094,
+        "tokens": {
+          "entrada": 1528,
+          "saida": 89,
+          "total": 1617
+        },
+        "model_version": "gemini-3.5-flash-lite",
+        "tempo_total_ms": 1110,
+        "fluxo": "VUL-SOBROU",
+        "situacao": "SOBROU",
+        "perfil_t3": "Vulnerável",
+        "cenario": null,
+        "numeros_citados": [
+          "R$1.518,23",
+          "R$9.690,58",
+          "R$8.172,35"
+        ],
+        "numeros_fora_de_dados": [],
+        "decisao_sha256": "4dc333b2a33f620d0cfcaa6c86a843d58deea1b3d0fd6f6d9e2cf3aad4b36388"
+      },
+      {
+        "execucao": 6,
+        "estado": "MEDIDO",
+        "chamadas_http": 1,
+        "origem_resposta": "modelo",
+        "aprovado": true,
+        "reprovados": [],
+        "erro_tentativa": null,
+        "http_status": null,
+        "texto_sha256": "136f0997196445981f0ba01293ff4e176e10dc42493c1acb83e031b64dd58809",
+        "texto": "Maria, em média de janeiro de 2025 a novembro de 2025 sobrou R$ 1.518,23 por mês, com entradas de R$ 9.690,58 e saídas de R$ 8.172,35. Vamos juntos dar este passo para organizar os compromissos financeiros.",
+        "latencia_ms": 1063,
+        "tokens": {
+          "entrada": 1528,
+          "saida": 84,
+          "total": 1612
+        },
+        "model_version": "gemini-3.5-flash-lite",
+        "tempo_total_ms": 1076,
+        "fluxo": "VUL-SOBROU",
+        "situacao": "SOBROU",
+        "perfil_t3": "Vulnerável",
+        "cenario": null,
+        "numeros_citados": [
+          "R$1.518,23",
+          "R$9.690,58",
+          "R$8.172,35"
+        ],
+        "numeros_fora_de_dados": [],
+        "decisao_sha256": "4dc333b2a33f620d0cfcaa6c86a843d58deea1b3d0fd6f6d9e2cf3aad4b36388"
+      }
+    ],
+    "n_pedidas": 6,
+    "n_medidas": 6,
+    "textos_distintos": 4,
+    "aprovadas": 6,
+    "decisoes_distintas": 1,
+    "conjuntos_de_numeros_distintos": 1,
+    "numeros_sempre_em_dados": true,
+    "medido_em": "2026-09-27T08:57:46-03:00",
+    "chamadas": [
+      {
+        "modelo": "gemini-3.5-flash-lite",
+        "em": "2026-09-27T08:57:38-03:00",
+        "http_status": 200,
+        "erro": null,
+        "latencia_ms": 1656
+      },
+      {
+        "modelo": "gemini-3.5-flash-lite",
+        "em": "2026-09-27T08:57:40-03:00",
+        "http_status": 200,
+        "erro": null,
+        "latencia_ms": 1484
+      },
+      {
+        "modelo": "gemini-3.5-flash-lite",
+        "em": "2026-09-27T08:57:41-03:00",
+        "http_status": 200,
+        "erro": null,
+        "latencia_ms": 1359
+      },
+      {
+        "modelo": "gemini-3.5-flash-lite",
+        "em": "2026-09-27T08:57:43-03:00",
+        "http_status": 200,
+        "erro": null,
+        "latencia_ms": 1140
+      },
+      {
+        "modelo": "gemini-3.5-flash-lite",
+        "em": "2026-09-27T08:57:44-03:00",
+        "http_status": 200,
+        "erro": null,
+        "latencia_ms": 1094
+      },
+      {
+        "modelo": "gemini-3.5-flash-lite",
+        "em": "2026-09-27T08:57:45-03:00",
+        "http_status": 200,
+        "erro": null,
+        "latencia_ms": 1063
+      }
+    ],
+    "chamadas_por_modelo": {
+      "gemini-3.5-flash-lite": {
+        "chamadas": 6,
+        "http_200": 6
+      }
+    }
+  }
+}

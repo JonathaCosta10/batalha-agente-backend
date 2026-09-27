@@ -1,0 +1,260 @@
+{
+  "schema_version": "1.0",
+  "id": "RC-08-2023",
+  "identificacao": {
+    "tipo": "Resolução Conjunta",
+    "numero": 8,
+    "ano": 2023,
+    "data_ato": "2023-12-21",
+    "titulo": "RESOLUÇÃO CONJUNTA Nº 8, DE 21 DE DEZEMBRO DE 2023",
+    "ementa": "Dispõe sobre medidas de educação financeira a serem adotadas por instituições financeiras, instituições de pagamento e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.",
+    "orgaos": [
+      "Conselho Monetário Nacional",
+      "Banco Central do Brasil"
+    ]
+  },
+  "natureza": "ato_original",
+  "proveniencia": {
+    "url_registro_oficial": "https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?numero=8&tipo=Resolu%C3%A7%C3%A3o%20Conjunta",
+    "url_copia_consultada": "https://data.sbfnetwork.org/sites/default/files/survey-attachments/2025-07/Brazil%20-%20BCB%20-%20Resolu%C3%A7%C3%A3o%20Conjunta%208.pdf",
+    "tipo_copia": "pdf_espelhado_extraido",
+    "data_consulta_registrada_na_pesquisa": "2026-09-27",
+    "snapshot_arquivo": "fontes/RC08-2023-texto-integral.txt",
+    "snapshot_sha256": "585fe28e8798e27e84d6c0517558f0d339b9453c5ff5d8f7076c47a04d4a0941",
+    "texto_sha256": "bea7a8c6d1a945fb679ab57155bc524709dae9be3968f5e2144126a6c854df9e",
+    "transformacoes": [
+      "Remoção somente do cabeçalho e da nota editorial que envolviam o ato no snapshot.",
+      "Segmentação por offsets de caracteres Unicode; preservadas palavras, sinais e quebras de linha do texto recuperado."
+    ],
+    "status": "fiel_ao_snapshot_recuperado_nao_certificado",
+    "limitacoes": [
+      "Não autenticado contra cópia certificada do BCB/Imprensa Nacional nesta conversão.",
+      "Extração prévia pode não preservar diagramação e pode conter erros; hashes provam integridade local, não autenticidade legal.",
+      "Cadeia de alterações não certificada como exaustiva."
+    ]
+  },
+  "temporalidade": {
+    "inicio_vigencia_declarado_no_ato": "2024-07-01",
+    "dispositivo_fonte": "RC-08-2023:art-7",
+    "data_corte_pesquisa": "2026-09-27",
+    "status_na_data_corte": "vigente_segundo_pesquisa",
+    "revalidar_atos_supervenientes": true
+  },
+  "relacoes": [],
+  "texto_integral_recuperado": "RESOLUÇÃO CONJUNTA Nº 8, DE 21 DE DEZEMBRO DE 2023\nDispõe sobre medidas de educação financeira a serem adotadas por instituições financeiras, instituições de pagamento e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.\n\nO Banco Central do Brasil, na forma do art. 9º da Lei nº 4.595, de 31 de dezembro de 1964, torna público que sua Diretoria Colegiada, em sessão realizada em 14 de dezembro de 2023, com base nos arts. 9º-A da Lei nº 4.728, de 14 de julho de 1965, 9º, incisos II e X, da Lei nº 12.865, de 9 de outubro de 2013, e 7º da Lei nº 11.795, de 8 de outubro de 2008, e o Conselho Monetário Nacional, em sessão realizada em 21 de dezembro de 2023, com base nos arts. 4º, inciso VIII, da Lei nº 4.595, de 1964, 20, § 1º, da Lei nº 4.864, de 29 de novembro de 1965, 1º do Decreto-Lei nº 70, de 21 de novembro de 1966, 7º e 23, alínea \"a\", da Lei nº 6.099, de 12 de setembro de 1974, 1º, inciso II, da Lei nº 10.194, de 14 de fevereiro de 2001, 1º, § 1º, da Lei Complementar nº 130, de 17 de abril de 2009, e 27, § 3º, da Lei nº 14.690, de 3 de outubro de 2023, resolveram:\n\nArt. 1º Esta Resolução Conjunta dispõe sobre medidas de educação financeira a serem adotadas por instituições financeiras, instituições de pagamento e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.\n\nArt. 2º As instituições financeiras e demais instituições autorizadas a funcionar pelo Banco Central do Brasil devem adotar medidas de educação financeira direcionadas a seus clientes e usuários pessoas naturais, incluindo empresários individuais.\n§ 1º As medidas de que trata o caput incluem as que contribuem para:\nI - organização e planejamento do orçamento pessoal e familiar;\nII - formação de poupança e resiliência financeira;\nIII - prevenção ao inadimplemento de operações e ao superendividamento.\n§ 2º Para fins desta Resolução Conjunta, o consorciado de administradora de consórcio é considerado cliente.\n\nArt. 3º Para fins de atendimento ao art. 2º, as instituições devem manter política de educação financeira baseada na ética, responsabilidade, transparência e diligência e nos seguintes princípios norteadores:\nI - valor para o cliente: proporcionar a clientes e usuários ações de educação financeira úteis e relevantes para sua vida financeira;\nII - amplo alcance: garantir acesso às medidas de educação financeira ao universo de seus clientes e usuários; e\nIII - adequação e personalização: disponibilizar conteúdo e ferramentas, em linguagem, canal e momento mais adequados frente às características e às necessidades de educação financeira dos clientes e usuários, considerando o perfil do público-alvo.\n§ 1º A política de educação financeira de que trata o caput deve, no mínimo:\nI - considerar as diversas fases do relacionamento das instituições com seus clientes e usuários na definição de rotinas e procedimentos para a implementação de medidas de educação financeira; e\nII - ser compatível com o modelo de negócio, com a natureza das atividades da instituição e com a complexidade dos produtos e serviços oferecidos aos clientes e usuários.\n§ 2º Admite-se que a política de que trata o caput seja unificada por:\nI - conglomerado; ou\nII - sistema cooperativo de crédito.\n§ 3º As instituições que não instituírem política própria em decorrência da faculdade prevista no § 2º devem formalizar a decisão em reunião do conselho de administração ou da diretoria.\n\nArt. 4º Em relação à política prevista no art. 3º, as instituições devem instituir mecanismos de acompanhamento e controle com vistas a assegurar, no mínimo:\nI - a implementação de suas disposições;\nII - o monitoramento do seu cumprimento e sua efetividade, inclusive por meio de métricas e indicadores adequados; e\nIII - a identificação e correção de eventuais ineficiências.\n\nArt. 5º As instituições de que trata o art. 1º devem indicar ao Banco Central do Brasil diretor responsável pelo cumprimento das obrigações previstas nesta Resolução Conjunta.\n\nArt. 6º O Banco Central do Brasil poderá adotar, no âmbito de suas atribuições legais, medidas necessárias para implementar o disposto nesta Resolução Conjunta.\n\nArt. 7º Esta Resolução Conjunta entra em vigor em 1º de julho de 2024.\n\nROBERTO DE OLIVEIRA CAMPOS NETO\nPresidente do Banco Central do Brasil",
+  "cabecalho_e_preambulo": "RESOLUÇÃO CONJUNTA Nº 8, DE 21 DE DEZEMBRO DE 2023\nDispõe sobre medidas de educação financeira a serem adotadas por instituições financeiras, instituições de pagamento e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.\n\nO Banco Central do Brasil, na forma do art. 9º da Lei nº 4.595, de 31 de dezembro de 1964, torna público que sua Diretoria Colegiada, em sessão realizada em 14 de dezembro de 2023, com base nos arts. 9º-A da Lei nº 4.728, de 14 de julho de 1965, 9º, incisos II e X, da Lei nº 12.865, de 9 de outubro de 2013, e 7º da Lei nº 11.795, de 8 de outubro de 2008, e o Conselho Monetário Nacional, em sessão realizada em 21 de dezembro de 2023, com base nos arts. 4º, inciso VIII, da Lei nº 4.595, de 1964, 20, § 1º, da Lei nº 4.864, de 29 de novembro de 1965, 1º do Decreto-Lei nº 70, de 21 de novembro de 1966, 7º e 23, alínea \"a\", da Lei nº 6.099, de 12 de setembro de 1974, 1º, inciso II, da Lei nº 10.194, de 14 de fevereiro de 2001, 1º, § 1º, da Lei Complementar nº 130, de 17 de abril de 2009, e 27, § 3º, da Lei nº 14.690, de 3 de outubro de 2023, resolveram:\n\n",
+  "artigos": [
+    {
+      "id": "RC-08-2023:art-1",
+      "numero": 1,
+      "referencia": "Art. 1º",
+      "inicio_caractere": 1106,
+      "fim_caractere_exclusivo": 1332,
+      "texto": "Art. 1º Esta Resolução Conjunta dispõe sobre medidas de educação financeira a serem adotadas por instituições financeiras, instituições de pagamento e demais instituições autorizadas a funcionar pelo Banco Central do Brasil.\n\n",
+      "trechos_indexados": []
+    },
+    {
+      "id": "RC-08-2023:art-2",
+      "numero": 2,
+      "referencia": "Art. 2º",
+      "inicio_caractere": 1332,
+      "fim_caractere_exclusivo": 1947,
+      "texto": "Art. 2º As instituições financeiras e demais instituições autorizadas a funcionar pelo Banco Central do Brasil devem adotar medidas de educação financeira direcionadas a seus clientes e usuários pessoas naturais, incluindo empresários individuais.\n§ 1º As medidas de que trata o caput incluem as que contribuem para:\nI - organização e planejamento do orçamento pessoal e familiar;\nII - formação de poupança e resiliência financeira;\nIII - prevenção ao inadimplemento de operações e ao superendividamento.\n§ 2º Para fins desta Resolução Conjunta, o consorciado de administradora de consórcio é considerado cliente.\n\n",
+      "trechos_indexados": [
+        {
+          "id": "RC-08-2023:art-2:trecho:par-1",
+          "tipo": "paragrafo",
+          "alvo_estrutural": "RC-08-2023:art-2:par-1",
+          "inicio_caractere": 1580,
+          "fim_caractere_exclusivo": 1648,
+          "texto": "§ 1º As medidas de que trata o caput incluem as que contribuem para:"
+        },
+        {
+          "id": "RC-08-2023:art-2:trecho:par-1:inc-I",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-2:par-1:inc-I",
+          "inicio_caractere": 1649,
+          "fim_caractere_exclusivo": 1712,
+          "texto": "I - organização e planejamento do orçamento pessoal e familiar;"
+        },
+        {
+          "id": "RC-08-2023:art-2:trecho:par-1:inc-II",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-2:par-1:inc-II",
+          "inicio_caractere": 1713,
+          "fim_caractere_exclusivo": 1764,
+          "texto": "II - formação de poupança e resiliência financeira;"
+        },
+        {
+          "id": "RC-08-2023:art-2:trecho:par-1:inc-III",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-2:par-1:inc-III",
+          "inicio_caractere": 1765,
+          "fim_caractere_exclusivo": 1836,
+          "texto": "III - prevenção ao inadimplemento de operações e ao superendividamento."
+        },
+        {
+          "id": "RC-08-2023:art-2:trecho:par-2",
+          "tipo": "paragrafo",
+          "alvo_estrutural": "RC-08-2023:art-2:par-2",
+          "inicio_caractere": 1837,
+          "fim_caractere_exclusivo": 1945,
+          "texto": "§ 2º Para fins desta Resolução Conjunta, o consorciado de administradora de consórcio é considerado cliente."
+        }
+      ]
+    },
+    {
+      "id": "RC-08-2023:art-3",
+      "numero": 3,
+      "referencia": "Art. 3º",
+      "inicio_caractere": 1947,
+      "fim_caractere_exclusivo": 3413,
+      "texto": "Art. 3º Para fins de atendimento ao art. 2º, as instituições devem manter política de educação financeira baseada na ética, responsabilidade, transparência e diligência e nos seguintes princípios norteadores:\nI - valor para o cliente: proporcionar a clientes e usuários ações de educação financeira úteis e relevantes para sua vida financeira;\nII - amplo alcance: garantir acesso às medidas de educação financeira ao universo de seus clientes e usuários; e\nIII - adequação e personalização: disponibilizar conteúdo e ferramentas, em linguagem, canal e momento mais adequados frente às características e às necessidades de educação financeira dos clientes e usuários, considerando o perfil do público-alvo.\n§ 1º A política de educação financeira de que trata o caput deve, no mínimo:\nI - considerar as diversas fases do relacionamento das instituições com seus clientes e usuários na definição de rotinas e procedimentos para a implementação de medidas de educação financeira; e\nII - ser compatível com o modelo de negócio, com a natureza das atividades da instituição e com a complexidade dos produtos e serviços oferecidos aos clientes e usuários.\n§ 2º Admite-se que a política de que trata o caput seja unificada por:\nI - conglomerado; ou\nII - sistema cooperativo de crédito.\n§ 3º As instituições que não instituírem política própria em decorrência da faculdade prevista no § 2º devem formalizar a decisão em reunião do conselho de administração ou da diretoria.\n\n",
+      "trechos_indexados": [
+        {
+          "id": "RC-08-2023:art-3:trecho:caput:inc-I",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:caput:inc-I",
+          "inicio_caractere": 2156,
+          "fim_caractere_exclusivo": 2290,
+          "texto": "I - valor para o cliente: proporcionar a clientes e usuários ações de educação financeira úteis e relevantes para sua vida financeira;"
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:caput:inc-II",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:caput:inc-II",
+          "inicio_caractere": 2291,
+          "fim_caractere_exclusivo": 2403,
+          "texto": "II - amplo alcance: garantir acesso às medidas de educação financeira ao universo de seus clientes e usuários; e"
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:caput:inc-III",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:caput:inc-III",
+          "inicio_caractere": 2404,
+          "fim_caractere_exclusivo": 2652,
+          "texto": "III - adequação e personalização: disponibilizar conteúdo e ferramentas, em linguagem, canal e momento mais adequados frente às características e às necessidades de educação financeira dos clientes e usuários, considerando o perfil do público-alvo."
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:par-1",
+          "tipo": "paragrafo",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1",
+          "inicio_caractere": 2653,
+          "fim_caractere_exclusivo": 2729,
+          "texto": "§ 1º A política de educação financeira de que trata o caput deve, no mínimo:"
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:par-1:inc-I",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-I",
+          "inicio_caractere": 2730,
+          "fim_caractere_exclusivo": 2924,
+          "texto": "I - considerar as diversas fases do relacionamento das instituições com seus clientes e usuários na definição de rotinas e procedimentos para a implementação de medidas de educação financeira; e"
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:par-1:inc-II",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-1:inc-II",
+          "inicio_caractere": 2925,
+          "fim_caractere_exclusivo": 3095,
+          "texto": "II - ser compatível com o modelo de negócio, com a natureza das atividades da instituição e com a complexidade dos produtos e serviços oferecidos aos clientes e usuários."
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:par-2",
+          "tipo": "paragrafo",
+          "alvo_estrutural": "RC-08-2023:art-3:par-2",
+          "inicio_caractere": 3096,
+          "fim_caractere_exclusivo": 3166,
+          "texto": "§ 2º Admite-se que a política de que trata o caput seja unificada por:"
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:par-2:inc-I",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-2:inc-I",
+          "inicio_caractere": 3167,
+          "fim_caractere_exclusivo": 3187,
+          "texto": "I - conglomerado; ou"
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:par-2:inc-II",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-3:par-2:inc-II",
+          "inicio_caractere": 3188,
+          "fim_caractere_exclusivo": 3224,
+          "texto": "II - sistema cooperativo de crédito."
+        },
+        {
+          "id": "RC-08-2023:art-3:trecho:par-3",
+          "tipo": "paragrafo",
+          "alvo_estrutural": "RC-08-2023:art-3:par-3",
+          "inicio_caractere": 3225,
+          "fim_caractere_exclusivo": 3411,
+          "texto": "§ 3º As instituições que não instituírem política própria em decorrência da faculdade prevista no § 2º devem formalizar a decisão em reunião do conselho de administração ou da diretoria."
+        }
+      ]
+    },
+    {
+      "id": "RC-08-2023:art-4",
+      "numero": 4,
+      "referencia": "Art. 4º",
+      "inicio_caractere": 3413,
+      "fim_caractere_exclusivo": 3791,
+      "texto": "Art. 4º Em relação à política prevista no art. 3º, as instituições devem instituir mecanismos de acompanhamento e controle com vistas a assegurar, no mínimo:\nI - a implementação de suas disposições;\nII - o monitoramento do seu cumprimento e sua efetividade, inclusive por meio de métricas e indicadores adequados; e\nIII - a identificação e correção de eventuais ineficiências.\n\n",
+      "trechos_indexados": [
+        {
+          "id": "RC-08-2023:art-4:trecho:caput:inc-I",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-4:caput:inc-I",
+          "inicio_caractere": 3571,
+          "fim_caractere_exclusivo": 3611,
+          "texto": "I - a implementação de suas disposições;"
+        },
+        {
+          "id": "RC-08-2023:art-4:trecho:caput:inc-II",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-4:caput:inc-II",
+          "inicio_caractere": 3612,
+          "fim_caractere_exclusivo": 3728,
+          "texto": "II - o monitoramento do seu cumprimento e sua efetividade, inclusive por meio de métricas e indicadores adequados; e"
+        },
+        {
+          "id": "RC-08-2023:art-4:trecho:caput:inc-III",
+          "tipo": "inciso",
+          "alvo_estrutural": "RC-08-2023:art-4:caput:inc-III",
+          "inicio_caractere": 3729,
+          "fim_caractere_exclusivo": 3789,
+          "texto": "III - a identificação e correção de eventuais ineficiências."
+        }
+      ]
+    },
+    {
+      "id": "RC-08-2023:art-5",
+      "numero": 5,
+      "referencia": "Art. 5º",
+      "inicio_caractere": 3791,
+      "fim_caractere_exclusivo": 3968,
+      "texto": "Art. 5º As instituições de que trata o art. 1º devem indicar ao Banco Central do Brasil diretor responsável pelo cumprimento das obrigações previstas nesta Resolução Conjunta.\n\n",
+      "trechos_indexados": []
+    },
+    {
+      "id": "RC-08-2023:art-6",
+      "numero": 6,
+      "referencia": "Art. 6º",
+      "inicio_caractere": 3968,
+      "fim_caractere_exclusivo": 4130,
+      "texto": "Art. 6º O Banco Central do Brasil poderá adotar, no âmbito de suas atribuições legais, medidas necessárias para implementar o disposto nesta Resolução Conjunta.\n\n",
+      "trechos_indexados": []
+    },
+    {
+      "id": "RC-08-2023:art-7",
+      "numero": 7,
+      "referencia": "Art. 7º",
+      "inicio_caractere": 4130,
+      "fim_caractere_exclusivo": 4200,
+      "texto": "Art. 7º Esta Resolução Conjunta entra em vigor em 1º de julho de 2024.",
+      "trechos_indexados": []
+    }
+  ],
+  "fecho_e_assinatura": "\n\nROBERTO DE OLIVEIRA CAMPOS NETO\nPresidente do Banco Central do Brasil",
+  "interpretacoes_de_produto": []
+}

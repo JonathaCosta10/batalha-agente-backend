@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "id": "lexico-contextual-i-agora",
+  "versao": "1.1.0",
+  "natureza": "orientacao_de_comunicacao",
+  "aviso": "Triagem determinística por regex sobre texto normalizado (NFKC, sem acento, minúsculas, sem caracteres invisíveis). Não é classificação semântica completa: pode deixar passar paráfrases e bloquear casos legítimos raros. Não substitui a validação factual nem o output_guard.",
+  "negadores": ["nao", "nunca", "nenhum", "nenhuma", "nem", "jamais", "ninguem", "nada"],
+  "janela_negacao_palavras": 6,
+  "negacoes_que_nao_negam": ["nao se preocupe", "nao tem erro", "nao ha duvida", "nao tenha duvida", "nao tem como perder", "nao ha como perder", "nada a perder", "nao perca", "nao fique de fora", "nem pense duas vezes"],
+  "marcadores_de_citacao": ["palavra", "termo", "expressao", "frase", "frases", "promessa", "promessas", "desconfie", "cuidado com", "anuncio", "anuncios", "golpe", "golpes", "quem diz", "quem promete", "prometem", "promete"],
+  "entradas": [
+    {
+      "id": "promessa.garantia",
+      "categoria": "promessa",
+      "acao": "bloquear_se_afirmativo",
+      "padroes": ["garantid[oa]s?", "garantia de (?:retorno|rendimento|lucro|aprovacao|resultado|economia)", "sem (?:nenhum )?risco", "risco zero", "lucro certo", "resultado certo", "retorno certo", "100 ?% (?:de )?(?:certeza|seguro|garantido)", "com certeza (?:vai|voce vai|vai conseguir)", "(?:vai|voce vai) (?:ficar ric[oa]|enriquecer)"],
+      "permite_negacao": true,
+      "permite_citacao": true,
+      "motivo": "Promessa de rendimento, economia ou resultado sem evidência nem autorização.",
+      "exemplos_bloqueados": ["O rendimento é garantido.", "Você vai economizar sem risco."],
+      "exemplos_permitidos": ["Nenhum rendimento é garantido.", "Não existe investimento sem risco.", "Desconfie de quem promete lucro \"garantido\"."]
+    },
+    {
+      "id": "promessa.aprovacao",
+      "categoria": "promessa",
+      "acao": "bloquear_se_afirmativo",
+      "padroes": ["pre[- ]?aprovad[oa]s?", "(?:credito|emprestimo|limite|cartao|financiamento) (?:ja )?(?:esta |foi |sera )?aprovad[oa]", "voce (?:foi|esta|ja esta|sera) aprovad[oa]", "aprovacao (?:garantida|certa|imediata)"],
+      "permite_negacao": true,
+      "permite_citacao": true,
+      "motivo": "Afirmar aprovação de crédito exige decisão de crédito real, que este protótipo não tem.",
+      "exemplos_bloqueados": ["Seu crédito já está aprovado.", "Você tem um empréstimo pré-aprovado."],
+      "exemplos_permitidos": ["Nesta conversa não existe crédito pré-aprovado.", "Não posso dizer que você foi aprovado."]
+    },
+    {
+      "id": "julgamento.pessoal",
+      "categoria": "julgamento",
+      "acao": "bloquear_se_afirmativo",
+      "padroes": ["voce e (?:muito |bem |uma? )?(?:irresponsavel|descontrolad[oa]|gastador[a]?|esbanjador[a]?|consumista|desorganizad[oa]|preguicos[oa]|imprudente|relaxad[oa])", "(?:sua|tua) (?:falta de|ausencia de) (?:controle|disciplina|responsabilidade)", "(?:a )?culpa e (?:sua|tua|toda sua)", "voce (?:nao tem|tem zero) (?:controle|disciplina|juizo)", "vergonha de (?:gastar|dever)"],
+      "permite_negacao": true,
+      "permite_citacao": false,
+      "motivo": "Julgamento moral da pessoa; substituir por observação objetiva sustentada pelos dados.",
+      "exemplos_bloqueados": ["Você é irresponsável com dinheiro.", "A culpa é sua."],
+      "exemplos_permitidos": ["Isso não é culpa sua.", "Neste período, as saídas registradas superaram as entradas."]
+    },
+    {
+      "id": "pressao.urgencia",
+      "categoria": "pressao_comercial",
+      "acao": "bloquear_se_afirmativo",
+      "padroes": ["(?:so|somente|apenas) hoje", "ultima chance", "ultimas vagas", "imperdivel", "agora ou nunca", "nao perca (?:essa|esta) (?:oportunidade|chance)", "corra (?:e|para) (?:contrat|garant|aproveit)\\w*", "aproveite (?:ja|agora)"],
+      "permite_negacao": false,
+      "permite_citacao": true,
+      "motivo": "Urgência artificial e pressão comercial.",
+      "exemplos_bloqueados": ["Última chance: aproveite já!"],
+      "exemplos_permitidos": ["Desconfie de anúncios com \"última chance\"."]
+    },
+    {
+      "id": "rotulo.segmento_interno",
+      "categoria": "rotulo_interno",
+      "acao": "bloquear_se_afirmativo",
+      "padroes": ["\\bvulneravel\\b", "\\besbanjador[a]?\\b", "\\b(?:perfil|segmento|cluster|grupo) (?:t3|livre|saudavel|vulneravel|esbanjador[a]?)\\b", "\\bperfil_t3\\b", "\\bt3\\b"],
+      "permite_negacao": false,
+      "permite_citacao": false,
+      "motivo": "Rótulo interno de segmentação (t3.py: Vulnerável, Esbanjador, Livre). Orienta o tom no servidor; nunca aparece no texto ao cliente, nem negado (\"você não é vulnerável\" também expõe o rótulo). Achado D2 da sessão d9, 2026-09-27.",
+      "exemplos_bloqueados": ["Seu perfil é Vulnerável.", "Você não é esbanjador.", "Você está no segmento Livre."],
+      "exemplos_permitidos": ["Neste período, as saídas registradas superaram as entradas.", "Você tem tempo livre para revisar o orçamento."]
+    }
+  ],
+  "termos_descritivos_permitidos": {
+    "termos": ["divida", "dividas", "atraso", "atrasos", "negativo", "negativa", "inadimplencia", "juros", "multa"],
+    "condicao": "Permitidos quando sustentados por fato medido ou usados de forma educativa e descritiva. O léxico não os bloqueia; o guard factual (evidence_id/números) e o output_guard decidem a sustentação."
+  },
+  "linguagem_recomendada_exemplos": ["Você pode avaliar", "com os dados disponíveis", "se fizer sentido para seu objetivo"],
+  "linguagem_recomendada_nota": "Exemplos de tom permitido, sem repetição obrigatória. Nunca dispensam validação factual."
+}

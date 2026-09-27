@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Status do Harness: retorno",
+  "description": "Resposta do GET /api/v1/context-agent/status-harness/ (StatusHarnessAPI.get, apps/context_agent_datadriven/views.py:28-57). Sempre HTTP 200. base_de_rotas.categorias segue knowledge/rotas-base.schema.json ($defs/categoria) e pastas_raiz.controles_e_evals segue knowledge/evals.schema.json; as formas estão repetidas aqui para o contrato ser autossuficiente.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["app", "arquitetura", "base_de_rotas", "agente_distribuidor", "llm_models_provedores", "pastas_raiz"],
+  "properties": {
+    "app": { "const": "context-agent-datadriven" },
+    "arquitetura": { "const": "Harness com Base de Rotas YAML e Protocolo de Negociação" },
+    "base_de_rotas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template", "versao_schema", "total_categorias", "categorias"],
+      "properties": {
+        "template": { "const": "rotas/templates/rotas_base.yaml" },
+        "versao_schema": { "type": ["string", "null"], "description": "null se o ficheiro YAML não existir (parse_simple_yaml devolve {})." },
+        "total_categorias": { "type": "integer", "minimum": 0 },
+        "categorias": {
+          "type": ["object", "null"],
+          "description": "Dicionário FIXO em rotas/manager.py:10-97, não o conteúdo do YAML. null se o ficheiro YAML não existir.",
+          "additionalProperties": { "$ref": "#/$defs/categoria" }
+        }
+      }
+    },
+    "agente_distribuidor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modulo", "funcao", "data_corte_fixa"],
+      "properties": {
+        "modulo": { "const": "agentes/agente.py" },
+        "funcao": { "const": "distribuir_chamada (Protocolo de Negociação)" },
+        "data_corte_fixa": { "const": "2025-12-22" }
+      }
+    },
+    "llm_models_provedores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pastas_registradas", "secret_gsconsole"],
+      "properties": {
+        "pastas_registradas": {
+          "type": "array",
+          "items": { "enum": ["google", "antropic", "openIa"] },
+          "description": "Chaves de PROVEDORES_REGISTRADOS; registradas não quer dizer chamáveis — o motor só chama Google."
+        },
+        "secret_gsconsole": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "validacao", "origem", "variavel_identificada", "secret_mascarado", "modelo_padrao", "modelos_disponiveis", "capacidade"],
+          "description": "AgenteSecretService.verificar_status_secret. Sem ?validar=1 relata apenas presença da chave; com o parâmetro faz GET de validação à Google. Nunca devolve a chave inteira.",
+          "properties": {
+            "status": { "enum": ["AUSENTE", "CONFIGURADA", "VALIDADA", "INVALIDA", "NAO_MEDIDO"], "description": "VALIDADA/INVALIDA requer ?validar=1. NAO_MEDIDO indica resposta ambígua ou falha de rede." },
+            "validacao": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["solicitada", "executada", "http_status", "detalhe"],
+              "properties": {
+                "solicitada": { "type": "boolean" },
+                "executada": { "type": "boolean" },
+                "http_status": { "type": ["integer", "null"] },
+                "detalhe": { "type": "string" }
+              }
+            },
+            "origem": { "const": "Google Cloud Console Secret Manager (gsconsole)", "description": "Texto fixo, independente da origem real (que está em variavel_identificada)." },
+            "variavel_identificada": { "type": ["string", "null"], "pattern": "^(env|\\.secrets):", "description": "Ex.: 'env:API_KEY_SECRECT' ou '.secrets:API_KEY_SECRECT'; null sem chave." },
+            "secret_mascarado": { "type": "string", "description": "Com 20+ caracteres: 6 primeiros + '...' + 4 últimos; caso contrário só o comprimento. Sem chave: 'NÃO_CONFIGURADO'." },
+            "modelo_padrao": { "const": "gemini-flash-latest" },
+            "modelos_disponiveis": { "type": "array", "items": { "type": "string" } },
+            "capacidade": { "const": "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API" }
+          }
+        }
+      }
+    },
+    "pastas_raiz": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docs", "controles_e_evals"],
+      "properties": {
+        "docs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["versao_tese", "fontes_evidencia"],
+          "properties": {
+            "versao_tese": { "type": "string" },
+            "fontes_evidencia": { "type": "integer", "minimum": 0, "description": "len(TESE_COMPLETA_CONTEXTUALIZADA['fontes_de_evidencia'])." }
+          }
+        },
+        "controles_e_evals": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/metrica" },
+          "required": ["groundedness", "leak_prevention_score", "temporal_alignment", "safety_financial_advice"],
+          "description": "EVAL_METRICAS_MERCADO inteiro; metas declaradas, não medições."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "provedor": { "enum": ["google", "antropic", "openIa"] },
+    "categoria": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nome", "score_minimo", "protocolo_negociacao", "diretriz_template"],
+      "properties": {
+        "id": { "type": "string" },
+        "nome": { "type": "string" },
+        "score_minimo": { "type": "integer" },
+        "segmentos_prioritarios": { "type": "array", "items": { "type": "string" }, "description": "Ausente hoje: o dicionário fixo do manager.py não o tem." },
+        "protocolo_negociacao": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provedor_primario", "modelo_primario", "provedores_alternativos", "sla_latencia_max_ms", "temperatura", "max_tokens"],
+          "properties": {
+            "provedor_primario": { "$ref": "#/$defs/provedor" },
+            "modelo_primario": { "type": "string" },
+            "provedores_alternativos": { "type": "array", "items": { "$ref": "#/$defs/provedor" } },
+            "sla_latencia_max_ms": { "type": "integer" },
+            "temperatura": { "type": "number" },
+            "max_tokens": { "type": "integer" }
+          }
+        },
+        "diretriz_template": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["foco", "sigilo"],
+          "properties": {
+            "foco": { "type": "string" },
+            "sigilo": { "type": "string" }
+          }
+        }
+      }
+    },
+    "metrica": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["descricao", "benchmark_minimo", "metodo"],
+      "properties": {
+        "descricao": { "type": "string" },
+        "benchmark_minimo": { "type": "number", "minimum": 0, "maximum": 1 },
+        "metodo": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "id": "comunicacao-i-agora",
+  "versao": "1.0.0",
+  "natureza": "orientacao_de_comunicacao",
+  "aviso": "Estilo, perfis e frases fixas. NÃO contém fatos financeiros, condições comerciais nem regras normativas. Não existe manual de marca aprovado no repositório (inventário de 2026-09-27): vale linguagem corporativa neutra, e o protótipo não se apresenta como canal oficial do Itaú.",
+  "manual_de_marca": {"status": "AUSENTE", "consequencia": "linguagem corporativa neutra; nenhum bordão entra como aprovado por dedução de publicidade pública"},
+  "perfis": {
+    "explicacao_objetiva": {"extensao_max_caracteres": 600, "vocabulario": "direto, termos técnicos explicados na primeira vez", "exemplos": "no máximo 1", "bordoes": false},
+    "acolhimento_sereno": {"extensao_max_caracteres": 500, "vocabulario": "calmo, sem entusiasmo promocional, sem exclamações", "exemplos": "nenhum ou 1 pequeno", "bordoes": false, "quando": "relato de dificuldade, fluxo negativo, dívida, perfil Vulnerável"},
+    "educacao_exploratoria": {"extensao_max_caracteres": 900, "vocabulario": "didático, perguntas abertas", "exemplos": "até 2, marcados como ilustrativos", "bordoes": false}
+  },
+  "regra_dos_perfis": "O perfil muda extensão, vocabulário e exemplos. NÃO muda permissões, fatos, números nem estado da conversa.",
+  "bordoes": [
+    {"texto": "Pequenas mudanças. Mais equilíbrio.", "origem": {"arquivo": "apps/context_agent_datadriven/conversa/roteiro.json", "fala_id": "card.tagline"},
+     "aprovacao": "NAO_APROVADO", "validade": null, "contexto_permitido": ["card compartilhável gerado pelo front"], "contexto_vedado": ["acolhimento_sereno", "resposta a relato de dificuldade", "texto redigido pela LLM"]}
+  ],
+  "frases_fixas": [
+    {"id": "fora_do_contexto", "origem": {"arquivo": "apps/conversas/interacao_cenarios.py", "constante": "FORA_DO_CONTEXTO"}, "status": "PROVISORIO", "observacao": "Redação a confirmar pelo dono (comentário no código)."},
+    {"id": "handoff_consolidacao", "origem": {"arquivo": "apps/conversas/interacao_cenarios.py", "constante": "HANDOFF_CONSOLIDACAO"}, "status": "EM_USO_SEM_APROVACAO", "observacao": "Ação de handoff aponta para NAO_IMPLEMENTADO."},
+    {"id": "fallback_tecnico", "origem": {"arquivo": "apps/conversas/service.py", "constante": "FALLBACKS['technical']"}, "status": "EM_USO_SEM_APROVACAO", "observacao": "Resposta segura predefinida."},
+    {"id": "extremos_provisorio", "origem": {"arquivo": "apps/conversas/extremos.py", "constante": "PROVISORIO"}, "status": "PROVISORIO", "observacao": "Divergência: roteiro diz 'sou uma máquina', PROVISORIO diz 'assistente virtual'."}
+  ],
+  "linguagem": {
+    "evitar": ["culpa", "paternalismo", "pressão comercial", "urgência artificial", "promessa de aprovação, rendimento ou economia"],
+    "catalogo_lexical": "desafio_itau/politica/lexico-v1.json"
+  }
+}

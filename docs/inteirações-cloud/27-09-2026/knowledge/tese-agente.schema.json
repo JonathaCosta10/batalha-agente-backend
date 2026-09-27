@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tese do agente",
+  "description": "Forma de TESE_COMPLETA_CONTEXTUALIZADA (apps/context_agent_datadriven/pastas_raiz/docs/tese_agente_docs.py:6-25). Usos: status-harness expõe versao_tese e len(fontes_de_evidencia) (views.py:52-53); o prompt do motor cita len(fontes_de_evidencia) (agente.py:66). Os restantes campos não são lidos por código.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["versao_tese", "data_corte", "premissas_fundamentais", "regras_corte_temporal", "fontes_de_evidencia"],
+  "properties": {
+    "versao_tese": { "type": "string" },
+    "data_corte": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "premissas_fundamentais": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "regras_corte_temporal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_fixa", "faixa_horario", "descricao"],
+      "properties": {
+        "data_fixa": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "faixa_horario": { "type": "string" },
+        "descricao": { "type": "string" }
+      }
+    },
+    "fontes_de_evidencia": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Só a contagem é usada pelo código; o conteúdo é descritivo, não há ligação a dados reais."
+    }
+  }
+}

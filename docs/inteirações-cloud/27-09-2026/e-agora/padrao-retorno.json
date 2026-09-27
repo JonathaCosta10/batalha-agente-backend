@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Botão 'E agora?': retorno",
+  "description": "Resposta do GET e do POST /api/v1/comunicacao/e-agora/<cliente_id>/ (ComunicacaoEAgoraAPI, apps/recomendacao/views.py:148-158; corpo de services/template_engine.py:190-232 e services/behavioral_score.py:16-65). O POST ignora o corpo e devolve o mesmo que o GET, por isso não há padrao-envio.",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template_id", "cliente", "contexto_agente", "planilha_fixa", "resumo_executivo"],
+      "description": "HTTP 200.",
+      "properties": {
+        "template_id": { "const": "TEMPLATE_3_FIXED_SPREADSHEET" },
+        "cliente": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "nome", "genero", "score_comportamental", "segmento"],
+          "properties": {
+            "id": { "type": "integer", "minimum": 1, "maximum": 1000 },
+            "nome": { "type": "string" },
+            "genero": { "enum": ["F", "M"] },
+            "score_comportamental": { "type": "integer" },
+            "segmento": { "type": "string", "description": "Vem da tabela recomendacao_clienteregistro ou do gerador determinístico." }
+          }
+        },
+        "contexto_agente": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["score", "nivel", "indice_code", "temperatura_agente", "foco_estrategico", "tom_comunicacao", "gatilho_acao", "prompt_contextualizacao"],
+          "description": "BehavioralScoreEngine.calcular_indice_contexto. Os três ramos são por score: >=750, >=450, resto.",
+          "properties": {
+            "score": { "type": "integer" },
+            "nivel": { "enum": ["ALTO", "MEDIO", "BAIXO"] },
+            "indice_code": { "enum": ["CTX-750-ALPHA", "CTX-450-BETA", "CTX-150-GAMMA"] },
+            "temperatura_agente": { "enum": [0.3, 0.5, 0.2] },
+            "foco_estrategico": { "type": "string" },
+            "tom_comunicacao": { "type": "string" },
+            "gatilho_acao": { "type": "string" },
+            "prompt_contextualizacao": { "type": "string", "description": "Prompt de sistema montado com score, id e nome em claro." }
+          }
+        },
+        "planilha_fixa": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "description": "PLANILHA_FIXA_PRODUTOS (5 itens) enriquecida e ordenada por score_propensao_cliente decrescente.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "codigo", "produto", "categoria", "taxa_ou_retorno", "carencia_prazo", "score_minimo", "publico_alvo",
+              "beneficio_chave", "afinidade_f", "afinidade_m", "score_propensao_cliente", "status_elegibilidade"
+            ],
+            "properties": {
+              "codigo": { "type": "string" },
+              "produto": { "type": "string" },
+              "categoria": { "type": "string" },
+              "taxa_ou_retorno": { "type": "string" },
+              "carencia_prazo": { "type": "string" },
+              "score_minimo": { "type": "integer" },
+              "publico_alvo": { "type": "string" },
+              "beneficio_chave": { "type": "string" },
+              "afinidade_f": { "type": "integer" },
+              "afinidade_m": { "type": "integer" },
+              "score_propensao_cliente": { "type": "integer", "description": "round(afinidade * (0.6 + 0.4 * min(1, score/1000)))." },
+              "status_elegibilidade": { "enum": ["Pré-Aprovado", "Em Análise"] }
+            }
+          }
+        },
+        "resumo_executivo": { "type": "string" }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["erro"],
+      "description": "HTTP 404: cliente_id fora de 1..1000 (ClienteForaDoRecorte; ex.: 1042, 1001, 0). HTTP 400: outra exceção capturada — com rota <int:> não se achou caminho que a dispare, NAO_VERIFICADO em execução.",
+      "properties": { "erro": { "type": "string", "minLength": 1 } }
+    }
+  ]
+}

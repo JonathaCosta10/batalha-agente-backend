@@ -1,0 +1,31 @@
+{
+  "pergunta": "Qual é o fluxo do cliente 1 da conversa até 'E agora?'?",
+  "resposta": "Alexandre vê a conversa em modo NEUTRO (TEXTO_1[NEUTRO]). Ao tocar em 'E agora?', o Template 3 apresenta 5 produtos; nenhum aparece como Pré-Aprovado.",
+  "estado": "COMPROVADO_NA_DEMO",
+  "fonte_oficial": "db.sqlite3 + TemplateEngine do backend Django",
+  "id_cliente_demo": 1,
+  "medido_em": "2026-09-27T04:04:53.564328-03:00",
+  "tempo_rotas_ms": {
+    "cliente": 206.96,
+    "chat": 4.97,
+    "e_agora": 0.81
+  },
+  "tempo_total_ms": 213.02,
+  "controles_factuais": {
+    "mesmo_cliente_nas_tres_rotas": true,
+    "nome_confere": true,
+    "tag_respeita_chave_e_genero": true,
+    "texto_exibido_confere": true,
+    "botao_do_fluxo": true,
+    "template_3_confere": true,
+    "score_interno_coerente": true,
+    "elegibilidade_coerente": true
+  },
+  "evidencias": {
+    "cliente": "/api/v1/cliente/1/",
+    "chat": "/api/v1/chat/variavel-1/1/",
+    "e_agora": "/api/v1/comunicacao/e-agora/1/"
+  },
+  "resposta_llm": "NAO_MEDIDO: este teste não chama LLM",
+  "vinculo_com_bigquery": "NAO_VERIFICADO: a demo usa ID inteiro; o extrato usa UUID"
+}

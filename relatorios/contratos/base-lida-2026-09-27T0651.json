@@ -1,0 +1,45 @@
+{
+ "gerado_em": "2026-09-27T06:51:54-03:00",
+ "gerado_por": "scripts/verificar_base_lida.py",
+ "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+ "autenticacao": "ADC",
+ "csv": {
+  "arquivo": "data/usuarios_verdade.csv",
+  "linhas": 1000,
+  "sha256_arquivo": "0c9f4464ff488a8bc1b9cc392b371e748aad93d84be4b291313ca962b2e91c3d",
+  "sha256_selo": "0c9f4464ff488a8bc1b9cc392b371e748aad93d84be4b291313ca962b2e91c3d",
+  "sha256_bate_com_selo": true
+ },
+ "estado": "MEDIDO",
+ "consulta": {
+  "agregado": {
+   "job_id": "5a7a4618-fd56-435f-a14d-1f14566a31ad",
+   "bytes_processados": 21508910,
+   "cache_hit": false,
+   "tempo_ms": 2025.8,
+   "medido_em": "2026-09-27T06:52:00-03:00"
+  },
+  "ids": {
+   "job_id": "5fd286e0-7ec6-4141-9f76-c582dc6a3e3d",
+   "bytes_processados": 17768230,
+   "cache_hit": false,
+   "tempo_ms": 920.5,
+   "medido_em": "2026-09-27T06:52:01-03:00"
+  }
+ },
+ "base": {
+  "linhas": 467585,
+  "usuarios_distintos": 1000,
+  "anomes_min": 202501,
+  "anomes_max": 202512,
+  "sha256_ids_ordenados": "cea0b9f6c3d16cf307beb125bacffd7e60eeb411e8317fb0f5d8fb7d96c837b7"
+ },
+ "comparacao": {
+  "ids_bq": 1000,
+  "ids_csv": 1000,
+  "mesmo_conjunto": true,
+  "mesma_ordem_indice": true,
+  "so_no_bq": [],
+  "so_no_csv": []
+ }
+}

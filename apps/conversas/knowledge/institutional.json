@@ -1,0 +1,21 @@
+{
+  "version": "2026-09-26",
+  "scope": "Resumo editorial dos trechos parcialmente verificados; não homologado pelo Itaú, não prova cumprimento nem leitura integral.",
+  "sources": [
+    {
+      "id": "ITAU-ETICA-2024:clientes",
+      "status": "partially_verified",
+      "text": "Código de Ética e Conduta Itaú Unibanco, revisão setembro de 2024, pp. 14–15: declara buscar relacionamento responsável, transparente e diligente, informação clara, correta e tempestiva e respeito à liberdade de escolha. Considera inaceitável discriminar, excluir ou restringir clientes por gênero, cultura/etnia, raça/cor, religião/crença, idade, orientação sexual, identidade de gênero, condição de saúde ou deficiência.",
+      "url": "https://www.itau.com.br/download-file/v2/d/57561cbd-c456-4e6d-b0f8-97d739129930/2d527bf0-6643-a345-6df3-f95117ab9bc9?origin=1",
+      "limitations": ["Extração parcial de páginas 3–21, não cobre documento integral.", "Descreve declaração publicada, não comprova eficácia, ausência de ocorrências ou resultado de reclamação.", "Confirmar versão vigente antes de uso material."]
+    },
+    {
+      "id": "ITAU-ETICA-2024:trabalho",
+      "status": "partially_verified",
+      "text": "Código de Ética e Conduta Itaú Unibanco, revisão setembro de 2024, pp. 10–11: declara promover e respeitar direitos humanos, diversidade, inclusão e equidade; prevenir e combater discriminação, assédio, preconceito e condições degradantes de trabalho. Declara oportunidades iguais de acesso ao trabalho, desenvolvimento e crescimento.",
+      "url": "https://www.itau.com.br/download-file/v2/d/57561cbd-c456-4e6d-b0f8-97d739129930/2d527bf0-6643-a345-6df3-f95117ab9bc9?origin=1",
+      "limitations": ["Extração parcial, compromisso não equivale a resultado comprovado; não homologado pelo Itaú."]
+    }
+  ],
+  "pending_not_evidence": ["metas ESG", "partidarismo e eleições", "política específica de privacidade/IA", "programas de educação/cultura", "impactos e elegibilidade de iniciativas", "documentos institucionais além dos trechos citados"]
+}

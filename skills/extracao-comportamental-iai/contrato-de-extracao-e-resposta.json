@@ -1,0 +1,31 @@
+{
+  "versao": "1.0.0",
+  "fonte": {
+    "tipo": "bigquery",
+    "projeto": "batalha-time-02-lxof",
+    "tabela": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+    "natureza": "sintetica",
+    "identificador_usuario": "UUID em id_usuario",
+    "data_corte": "2025-12-22",
+    "fuso_data_corte": "America/Sao_Paulo",
+    "limite_bytes_por_consulta": 100000000
+  },
+  "extracao": {
+    "campos_obrigatorios_da_linha": ["anomesdia", "anomes", "tipo", "vlr", "nom_cate_macro"],
+    "campo_de_valor": "vlr",
+    "tipos_movimento": ["E", "S"],
+    "comportamento": {"E": "entrada", "S": "saída"}
+  },
+  "proposta_do_agente": {
+    "campos_exatos": ["id_extracao", "numero_usuario", "id_usuario", "comportamento", "categoria", "campo", "valor"],
+    "regra": "JSON sem chaves extras, com valores exatamente iguais à evidência e à releitura do BigQuery. valor preserva tipo texto ou número."
+  },
+  "resposta_liberada": {
+    "campos_exatos": ["aprovado", "id_extracao", "numero_usuario", "id_usuario", "resposta"],
+    "modelo_de_texto": "Usuário sorteado nº {numero_usuario} (UUID {id_usuario}): o extrato sintético registra uma {comportamento} em {data_movimento}, na categoria {categoria}, com valor {valor}. Quer explorar esse movimento?"
+  },
+  "evidencia": {
+    "estados": ["AGUARDANDO_RESPOSTA", "APROVADO", "REPROVADO", "NAO_MEDIDO"],
+    "campos_obrigatorios": ["versao", "id_extracao", "criado_em_utc", "fonte", "selecao", "hash_linha_sha256", "consultas", "tempo_preparo_ms", "estado", "guard"]
+  }
+}

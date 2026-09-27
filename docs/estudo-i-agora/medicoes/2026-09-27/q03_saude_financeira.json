@@ -1,0 +1,40 @@
+{
+  "consulta": "q03_saude_financeira.sql",
+  "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+  "medido_em": "2026-09-27T03:48 BRT",
+  "autenticacao": "ADC",
+  "job_id": "7ac20b9c-a4c1-49d7-8380-2e31c64b2cdf",
+  "bytes_processados": 26652345,
+  "linhas": [
+    {
+      "cluster_financeiro": "1. Endividado (< 0)",
+      "clientes": 493,
+      "pct_base": 49.3,
+      "entrada_media_mensal": 7454.06,
+      "saida_media_mensal": 9190.56,
+      "saldo_medio_mensal": -1736.51,
+      "pct_sobra_medio": -31.27,
+      "meses_medios": 12.0
+    },
+    {
+      "cluster_financeiro": "2. Vulnerável (< 15%)",
+      "clientes": 279,
+      "pct_base": 27.9,
+      "entrada_media_mensal": 8979.65,
+      "saida_media_mensal": 8173.5,
+      "saldo_medio_mensal": 806.15,
+      "pct_sobra_medio": 5.84,
+      "meses_medios": 12.0
+    },
+    {
+      "cluster_financeiro": "3. Saudável (>= 15%)",
+      "clientes": 228,
+      "pct_base": 22.8,
+      "entrada_media_mensal": 9914.23,
+      "saida_media_mensal": 7263.36,
+      "saldo_medio_mensal": 2650.86,
+      "pct_sobra_medio": 25.4,
+      "meses_medios": 12.0
+    }
+  ]
+}

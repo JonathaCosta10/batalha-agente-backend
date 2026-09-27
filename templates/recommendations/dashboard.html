@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard do Projeto - Batalha de Agentes Time 2{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Banner de Apresentação da Arquitetura -->
+    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+            <span class="text-xs font-semibold text-[#EC7000] uppercase tracking-wider">Projeto Backend Django</span>
+            <h2 class="text-2xl font-bold text-[#001E62] mt-0.5">desafio-itau-batalha-de-agentes-time2</h2>
+            <p class="text-sm text-slate-600 mt-1 max-w-2xl">
+                Arquitetura de 3 camadas integrada ao App Demo Android: Recorte de 1.000 clientes,
+                ponto de índice por score comportamental, conversa pré-preenchida (Variável 1 F/M),
+                disparo "E agora?" e matriz de comunicação fixa (Template 3).
+            </p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{% url 'recomendacao:template_chat' cliente_atual.id %}" class="bg-[#001E62] text-white px-4 py-2 rounded-xl text-xs font-medium hover:bg-[#001440]">
+                Ver Chat Server-Side
+            </a>
+            <a href="{% url 'recomendacao:template_matrix' cliente_atual.id %}" class="bg-[#EC7000] text-white px-4 py-2 rounded-xl text-xs font-medium hover:bg-[#d86300]">
+                Ver Template 3
+            </a>
+        </div>
+    </div>
+
+    <!-- Cliente Ativo Selecionado -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs text-slate-400 block">Cliente Atual (ID)</span>
+            <p class="text-lg font-bold text-slate-900 mt-1">#{{ cliente_atual.id }} · {{ cliente_atual.nome }}</p>
+            <span class="text-xs font-semibold text-blue-600">Gênero: {{ cliente_atual.genero }}</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs text-slate-400 block">Score Comportamental</span>
+            <p class="text-lg font-bold text-[#EC7000] font-mono mt-1">{{ cliente_atual.score_comportamental }} / 1000</p>
+            <span class="text-xs text-emerald-600 font-medium">{{ cliente_atual.indice_corte }}</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs text-slate-400 block">Segmento Bancário</span>
+            <p class="text-lg font-bold text-slate-900 mt-1">{{ cliente_atual.segmento }}</p>
+            <span class="text-xs text-slate-500">Saldo: R$ {{ cliente_atual.saldo_estimado }}</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs text-slate-400 block">Recorte da Base</span>
+            <p class="text-lg font-bold text-slate-900 mt-1">1.000 Perfis</p>
+            <span class="text-xs text-slate-500">Amostragem Determinística</span>
+        </div>
+    </div>
+
+    <!-- URLs da Arquitetura -->
+    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="font-bold text-slate-900 text-sm">Arquitetura de URLs e Endpoints REST</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                <span class="font-mono text-emerald-600 font-bold">GET /api/v1/cliente/&lt;id&gt;/</span>
+                <p class="text-slate-600">Retorna perfil do cliente (1 a 1000) e gênero derivado (F/M).</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                <span class="font-mono text-emerald-600 font-bold">GET /api/v1/cliente/random/</span>
+                <p class="text-slate-600">Sorteio randômico de login entre os 1.000 clientes cadastrados.</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                <span class="font-mono text-emerald-600 font-bold">GET /api/v1/chat/variavel-1/&lt;id&gt;/</span>
+                <p class="text-slate-600">Retorna texto pré-preenchido exclusivo por gênero F ou M.</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                <span class="font-mono text-emerald-600 font-bold">POST /api/v1/comunicacao/e-agora/&lt;id&gt;/</span>
+                <p class="text-slate-600">Disparo do botão 'E agora?' com o Template 3 e contexto do agente.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

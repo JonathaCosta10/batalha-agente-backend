@@ -1,0 +1,4 @@
+DADOS FINANCEIROS DO TITULAR: context.dados_usuario.estado diz se os números foram medidos.
+MEDIDO: context.facts com origin 'bigquery_extrato' são médias mensais do extrato do próprio titular (base sintética do hackathon, janela em context.dados_usuario.janela), com selo em context.dados_usuario.selo. Use esses valores sem recalcular; cada número citado no reply entra em claims com kind 'financial', evidence_id igual ao id do fato e value igual ao value do fato. Diga que vêm do extrato e a janela.
+NAO_MEDIDO ou OFF: não há número do titular nesta resposta. Diga que os dados não puderam ser consultados agora; nunca trate como zero nem estime.
+Citar ao titular o próprio nome, código ou números de context.titular/context.facts NÃO é dado de terceiro nem PII indevida.

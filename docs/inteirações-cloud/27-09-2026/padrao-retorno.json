@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Primeira chamada: retorno",
+  "description": "Resposta do POST /api/v1/context-agent/primeira-chamada/.",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sucesso", "modelo", "resposta", "tempo_resposta_ms"],
+      "properties": {
+        "sucesso": { "const": true },
+        "modelo": { "type": "string", "description": "Modelo Google que respondeu." },
+        "resposta": { "type": "string", "minLength": 1, "description": "Texto devolvido pelo modelo." },
+        "tempo_resposta_ms": { "type": "number", "minimum": 0, "description": "Tempo medido dentro da view Django, incluindo a chamada ao provedor." }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["erro", "tempo_resposta_ms"],
+      "properties": {
+        "erro": { "type": "string", "minLength": 1, "description": "Falha explícita, sem resposta simulada." },
+        "tempo_resposta_ms": { "type": "number", "minimum": 0 }
+      }
+    }
+  ]
+}

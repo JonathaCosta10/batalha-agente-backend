@@ -1,0 +1,20 @@
+{
+  "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+  "natureza_da_base": "sintetica",
+  "autenticacao": "ADC",
+  "medido_em": "2026-09-27T05:26:06-03:00",
+  "jobs": {
+    "lista": "657ffebb-09f9-49e2-abef-8dedbed639bb"
+  },
+  "bytes_processados": 21508910,
+  "tempo_consulta_ms": 2797.9,
+  "cache": false,
+  "arquivo": "data/usuarios_verdade.csv",
+  "total": 1000,
+  "semente": "organizesee-usuarios-verdade-v1",
+  "colunas_inventadas": [
+    "nome",
+    "genero"
+  ],
+  "sha256": "0c9f4464ff488a8bc1b9cc392b371e748aad93d84be4b291313ca962b2e91c3d"
+}

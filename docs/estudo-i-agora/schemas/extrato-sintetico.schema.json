@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Linha de hackathon_dados.extrato_sintetico",
+  "description": "Forma de uma linha da tabela batalha-time-02-lxof.hackathon_dados.extrato_sintetico, lida por `bq show` em 2026-09-27 (467.585 linhas, 1.000 clientes, 2025-01-01 a 2025-12-31). Todos os campos são NULLABLE no BigQuery; os required abaixo foram medidos sem nulos (q01). Normalizada por consultas.normalizar_extrato.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id_usuario", "anomesdia", "anomes", "tipo", "vlr", "nom_cate_macro"],
+  "properties": {
+    "id_usuario": { "type": "string", "format": "uuid" },
+    "anomesdia": { "type": "string", "format": "date-time", "description": "TIMESTAMP. 7.956 linhas passam do corte da tese (2025-12-22)." },
+    "anomes": { "type": "integer", "minimum": 202501, "maximum": 202512, "description": "AAAAMM; é o 'mes' das consultas." },
+    "tipo": { "enum": ["E", "S"], "description": "E = entrada; S = saída. Nenhum outro valor medido (q01)." },
+    "descr": { "type": ["string", "null"], "description": "Texto livre do lançamento (ex.: 'assin amazon prime')." },
+    "vlr": { "type": "number", "minimum": 0, "description": "Sempre positivo (0 negativos em q01); o sentido vem de tipo." },
+    "nom_cate_macro": { "type": "string", "description": "21 macros de saída e 4 de entrada (q02, q06)." },
+    "nom_cate_micro": { "type": ["string", "null"] },
+    "saldo_apos": { "type": ["number", "null"], "description": "Saldo depois do lançamento. Não usado pelas consultas; NAO_VERIFICADO." },
+    "parcela_atual": { "type": ["number", "null"] },
+    "parcela_total": { "type": ["number", "null"], "description": "Preenchido em 29.847 linhas (q01)." }
+  }
+}

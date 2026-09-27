@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Medição selada de uma consulta",
+  "description": "Arquivo gravado por docs/estudo-i-agora/sql/medir.py em medicoes/<AAAA-MM-DD>/<consulta>.json. Número sem este selo (valor · fonte · data) não fundamenta afirmação.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["consulta", "fonte", "medido_em", "autenticacao", "job_id", "bytes_processados", "linhas"],
+  "properties": {
+    "consulta": { "type": "string", "pattern": "^q[0-9]{2}_[a-z0-9_]+\\.sql$" },
+    "fonte": { "type": "string", "description": "Tabela lida, com projeto e dataset." },
+    "medido_em": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2} BRT$" },
+    "autenticacao": { "const": "ADC" },
+    "job_id": { "type": "string", "minLength": 1, "description": "Job do BigQuery; permite reabrir a execução no console." },
+    "bytes_processados": { "type": "integer", "minimum": 0 },
+    "linhas": { "type": "array", "items": { "type": "object" } }
+  }
+}

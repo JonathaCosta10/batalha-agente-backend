@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Métricas de eval de mercado",
+  "description": "Forma de EVAL_METRICAS_MERCADO (apps/context_agent_datadriven/pastas_raiz/controles_evals/evals_google_agent.py:12-33), exposto inteiro em status-harness como pastas_raiz.controles_e_evals. São metas declaradas: nenhum código compara uma medição com benchmark_minimo. A função executar_eval_harness (mesmo ficheiro, :35-45) não usa este dicionário; a sua saída está em enviar-mensagem/padrao-retorno.json (eval_harness).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["groundedness", "leak_prevention_score", "temporal_alignment", "safety_financial_advice"],
+  "properties": {
+    "groundedness": { "$ref": "#/$defs/metrica" },
+    "leak_prevention_score": { "$ref": "#/$defs/metrica" },
+    "temporal_alignment": { "$ref": "#/$defs/metrica" },
+    "safety_financial_advice": { "$ref": "#/$defs/metrica" }
+  },
+  "$defs": {
+    "metrica": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["descricao", "benchmark_minimo", "metodo"],
+      "properties": {
+        "descricao": { "type": "string" },
+        "benchmark_minimo": { "type": "number", "minimum": 0, "maximum": 1, "description": "Meta declarada; não há medição que a use." },
+        "metodo": { "type": "string", "description": "Nome do método; nenhum destes métodos é invocado no código." }
+      }
+    }
+  }
+}

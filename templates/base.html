@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Itaú - Batalha de Agentes Time 2{% endblock %}</title>
+    <!-- Tailwind CSS CDN para renderização dos templates server-side -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --itau-orange: #EC7000;
+            --itau-navy: #001E62;
+            --itau-dark: #1F2937;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col">
+    <!-- Top Bar Institucional -->
+    <header class="bg-[#001E62] text-white px-6 py-4 border-b border-orange-500/30 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded bg-[#EC7000] flex items-center justify-center font-black text-white text-base">i</div>
+            <div>
+                <h1 class="text-base font-semibold leading-tight">Itaú · Batalha de Agentes Time 2</h1>
+                <p class="text-xs text-orange-200">desafio-itau-batalha-de-agentes-time2</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 text-xs">
+            <span class="text-slate-300">Recorte de Contexto: <strong>1.000 Clientes</strong></span>
+            <span class="bg-orange-500/20 text-orange-300 px-2 py-1 rounded border border-orange-500/40">Template Engine Ativo</span>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 max-w-6xl w-full mx-auto p-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="border-t border-slate-200 bg-white py-4 px-6 text-xs text-slate-500 text-center">
+        Projeto Desafio Itaú · Batalha de Agentes Time 2 · Contextualização Orientada a Dados Comportamentais
+    </footer>
+</body>
+</html>

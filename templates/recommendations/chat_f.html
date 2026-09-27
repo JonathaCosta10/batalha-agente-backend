@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Auditoria - {{ cliente.nome }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <!-- Header do Chat -->
+    <div class="bg-gradient-to-r from-[#001E62] to-[#0A2E80] text-white p-5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center font-bold text-white text-sm">
+                {{ cliente.primeiro_nome|slice:":1" }}
+            </div>
+            <div>
+                <h2 class="font-semibold text-sm">{{ cliente.nome }}</h2>
+                <div class="flex items-center gap-2 text-xs text-orange-200">
+                    <span>ID: #{{ cliente.id }}</span>
+                    <span>·</span>
+                    <span>Gênero: Feminino (F)</span>
+                    <span>·</span>
+                    <span>Score: {{ cliente.score_comportamental }}/1000</span>
+                </div>
+            </div>
+        </div>
+        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-400/30">
+            {{ cliente.indice_corte }}
+        </span>
+    </div>
+
+    <!-- Área de Mensagens -->
+    <div class="p-6 space-y-4 bg-slate-50/50 min-h-[340px]">
+        <div class="text-center">
+            <span class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
+                TEXTO_3[FEMININO] · AUDITORIA ITAÚ
+            </span>
+        </div>
+
+        <!-- Balão do Agente Especialista -->
+        <div class="flex gap-3 max-w-[90%]">
+            <div class="w-8 h-8 rounded-full bg-[#EC7000] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                i
+            </div>
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm space-y-3">
+                <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+                    <p class="text-sm font-bold text-[#001E62]">{{ chat.saudacao }}</p>
+                    <span class="text-[10px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">TEXTO_3[FEMININO]</span>
+                </div>
+                <p class="text-sm text-slate-700 leading-relaxed">{{ chat.texto_3_feminino.paragrafo_1 }}</p>
+                <p class="text-sm text-slate-800 leading-relaxed font-medium bg-orange-50/60 p-3 rounded-xl border border-orange-100">{{ chat.texto_3_feminino.paragrafo_2 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Ação Inferior com o Botão "E agora?" -->
+    <div class="p-4 bg-white border-t border-slate-200 flex items-center justify-between">
+        <div class="text-xs text-slate-500">
+            Ação esperada ao fim do diálogo:
+        </div>
+        <a href="{% url 'recomendacao:template_matrix' cliente.id %}" 
+           class="inline-flex items-center gap-2 bg-[#EC7000] hover:bg-[#d86300] text-white font-extrabold text-sm px-6 py-2.5 rounded-xl shadow-sm transition-all transform active:scale-95">
+            <span>{{ chat.botao_proximo }}</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+            </svg>
+        </a>
+    </div>
+</div>
+{% endblock %}

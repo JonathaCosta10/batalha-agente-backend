@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Enviar mensagem ao Harness: retorno",
+  "description": "Resposta do POST /api/v1/context-agent/enviar-mensagem/. HTTP 200 identifica texto do modelo; HTTP 503 identifica texto local de contingência; entrada inválida devolve HTTP 400. O banco anterior às migrações foi observado com HTTP 500 em 2026-09-27, registrado em docs/fluxos-de-conversacao.md.",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sessao_id", "cliente_id", "mensagem_enviada", "resposta_agente", "categoria_negociada",
+        "protocolo_negociacao", "temporalidade", "eval_harness", "sucesso", "origem_resposta", "tempo_resposta_ms"
+      ],
+      "description": "HTTP 200 quando um modelo responde; HTTP 503 se a resposta é contingência local.",
+      "properties": {
+        "sessao_id": { "type": "integer", "description": "PK de ConversaAgenteSessao (uma por cliente_id, via get_or_create)." },
+        "cliente_id": { "type": "integer" },
+        "mensagem_enviada": { "type": "string", "minLength": 1, "description": "A mensagem após .strip()." },
+        "resposta_agente": { "type": "string", "description": "Texto do modelo ou texto local de contingência, distinguido por origem_resposta." },
+        "origem_resposta": { "enum": ["modelo", "contingencia"] },
+        "tempo_resposta_ms": { "type": "number", "minimum": 0, "description": "Tempo medido dentro da view Django, incluindo banco e tentativas de modelo." },
+        "erro": { "type": "string", "description": "Presente quando origem_resposta é contingencia (HTTP 503)." },
+        "categoria_negociada": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "chave", "nome"],
+          "properties": {
+            "id": { "type": "string", "description": "id da categoria na base de rotas (ex.: CAT-INV-01)." },
+            "chave": { "enum": ["investimentos_e_patrimonio", "credito_e_limites", "seguranca_e_reserva_emergencia", "atendimento_consultivo_geral"], "description": "Chave escolhida por palavras-chave em rotas/manager.py:129-136." },
+            "nome": { "type": "string" }
+          }
+        },
+        "protocolo_negociacao": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provedor_utilizado", "modelo_utilizado", "provedores_alternativos_homologados", "sla_latencia_max_ms"],
+          "properties": {
+            "provedor_utilizado": { "type": ["string", "null"], "description": "null quando nenhum modelo respondeu." },
+            "modelo_utilizado": { "type": ["string", "null"], "description": "null na contingência; modelo primário ou o de contingência (desafio_itau/modelos_llm.py, hoje gemini-3.5-flash-lite) quando respondeu." },
+            "provedores_alternativos_homologados": { "type": "array", "items": { "type": "string" }, "description": "Lista da rota; nunca é usada para chamar outro provedor (agente.py:94-106 só tenta Google)." },
+            "sla_latencia_max_ms": { "type": "integer", "description": "Valor configurado na rota; não é medido." }
+          }
+        },
+        "temporalidade": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["data_corte_fixa", "horario_casado", "timestamp_completo"],
+          "properties": {
+            "data_corte_fixa": { "const": "2025-12-22" },
+            "horario_casado": { "type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$", "description": "Derivado de cliente_id (agente.py:25-30), não do relógio." },
+            "timestamp_completo": { "type": "string", "pattern": "^2025-12-22 [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$" }
+          }
+        },
+        "eval_harness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["passed", "temporal_validation", "groundedness_score", "eval_status", "controles_mecanicos", "motivo_groundedness"],
+          "properties": {
+            "passed": { "type": "boolean", "description": "Resultado apenas do filtro mecânico de vazamento de score." },
+            "temporal_validation": { "const": "NAO_MEDIDO" },
+            "groundedness_score": { "type": "null", "description": "Não há comparação da resposta com evidências da base." },
+            "eval_status": { "enum": ["NAO_MEDIDO", "REPROVADO_VAZAMENTO"] },
+            "controles_mecanicos": { "type": "object", "additionalProperties": false, "required": ["vazamento_score_aprovado"], "properties": { "vazamento_score_aprovado": { "type": "boolean" } } },
+            "motivo_groundedness": { "type": "string" }
+          }
+        },
+        "sucesso": { "type": "boolean", "description": "true apenas quando um modelo respondeu." }
+      },
+      "oneOf": [
+        { "properties": { "sucesso": { "const": true }, "origem_resposta": { "const": "modelo" } }, "not": { "required": ["erro"] } },
+        { "properties": { "sucesso": { "const": false }, "origem_resposta": { "const": "contingencia" } }, "required": ["erro"] }
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["erro", "tempo_resposta_ms"],
+      "description": "HTTP 400: corpo ou campos de entrada inválidos.",
+      "properties": {
+        "erro": { "type": "string" },
+        "tempo_resposta_ms": { "type": "number", "minimum": 0 }
+      }
+    }
+  ]
+}

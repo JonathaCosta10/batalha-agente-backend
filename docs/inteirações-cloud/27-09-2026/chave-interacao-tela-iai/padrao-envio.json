@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chave ON/OFF inteiração-tela-iai: envio",
+  "description": "POST /api/v1/chave-interacao-tela-iai/: campo ausente alterna; campo presente exige JSON boolean. Texto, número e null devolvem HTTP 400.",
+  "type": "object",
+  "properties": {
+    "chave_ativa": {
+      "type": "boolean",
+      "description": "true = ON, false = OFF; ausência = alternar."
+    }
+  }
+}

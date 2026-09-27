@@ -1,0 +1,29 @@
+{
+  "pergunta": "Como evoluiu o fluxo do usuário 1 até 2025-12-22?",
+  "id_usuario": "1",
+  "data_corte": "2025-12-22",
+  "estado": "VAZIO",
+  "fonte_oficial": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+  "natureza_da_base": "sintetica",
+  "data_base": null,
+  "ultima_atualizacao": "2026-09-27T03:59:14.314683-03:00",
+  "job_id": "ff794579-c3e6-4183-9f46-7f140392926f",
+  "bytes_processados": 33360978,
+  "tempo_consulta_ms": 1270,
+  "tempo_total_ms": 2687,
+  "controles_factuais": {},
+  "fatos": {
+    "total_movimentos": 0,
+    "movimentos_entrada": 0,
+    "movimentos_saida": 0,
+    "primeira_movimentacao": null,
+    "ultima_movimentacao": null,
+    "entradas_total": null,
+    "saidas_total": null,
+    "saldo_periodo": null,
+    "meses": [],
+    "categorias_saida": []
+  },
+  "avaliacao_semantica_llm": "NAO_MEDIDO",
+  "motivo": "Nenhum movimento encontrado para este ID literal e período."
+}

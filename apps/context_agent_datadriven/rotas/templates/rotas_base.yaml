@@ -1,0 +1,75 @@
+# ==============================================================================
+# BASE DE ROTAS DO HARNESS - TEMPLATE YAML
+# Aplicativo: context-agent-datadriven (Itaú - Batalha de Agentes Time 2)
+# Mapeamento mecânico de categorias e protocolo de negociação de modelos LLM
+# ==============================================================================
+
+versao_schema: "2.4.0-datadriven"
+data_corte_fixa: "2025-12-22"
+janela_temporal_horario: "24h"
+protocolo_negociacao_padrao: "consenso_prioritario_com_fallback"
+
+categorias:
+  investimentos_e_patrimonio:
+    id: "CAT-INV-01"
+    nome: "Investimentos & Alocação de Patrimônio"
+    score_minimo: 650
+    segmentos_prioritarios: ["Itaú Uniclass", "Itaú Personnalité"]
+    protocolo_negociacao:
+      provedor_primario: "google"
+      modelo_primario: "gemini-flash-latest"
+      provedores_alternativos: ["antropic", "openIa"]
+      sla_latencia_max_ms: 1200
+      temperatura: 0.35
+      max_tokens: 700
+    diretriz_template:
+      foco: "Otimização de patrimônio, CDB progressivo 112% CDI, liquidez seletiva."
+      sigilo: "Não expor scores ou tabelas numéricas. Linguagem de especialista consultivo."
+
+  credito_e_limites:
+    id: "CAT-CRED-02"
+    nome: "Crédito Consciente, Cartões e Remanejamento de Limites"
+    score_minimo: 450
+    segmentos_prioritarios: ["Itaú Varejo", "Itaú Uniclass"]
+    protocolo_negociacao:
+      provedor_primario: "google"
+      modelo_primario: "gemini-flash-latest"
+      provedores_alternativos: ["antropic", "openIa"]
+      sla_latencia_max_ms: 900
+      temperatura: 0.30
+      max_tokens: 650
+    diretriz_template:
+      foco: "Adequação de limites, prevenção a juros rotativos e remanejamento inteligente."
+      sigilo: "Preservar dados brutos internamente; apresentar soluções acessíveis."
+
+  seguranca_e_reserva_emergencia:
+    id: "CAT-RES-03"
+    nome: "Reserva de Emergência, Proteção e Liquidez Diária"
+    score_minimo: 0
+    segmentos_prioritarios: ["Itaú Varejo"]
+    protocolo_negociacao:
+      provedor_primario: "google"
+      modelo_primario: "gemini-3.5-flash-lite"
+      provedores_alternativos: ["antropic", "openIa"]
+      sla_latencia_max_ms: 800
+      temperatura: 0.30
+      max_tokens: 600
+    diretriz_template:
+      foco: "Aporte inicial seguro com garantia FGC, liquidez imediata e estabilidade financeira."
+      sigilo: "Tom acolhedor sem juízo de valor sobre o score de partida."
+
+  atendimento_consultivo_geral:
+    id: "CAT-GERAL-04"
+    nome: "Atendimento Consultivo Geral e Orientação Itaú"
+    score_minimo: 0
+    segmentos_prioritarios: ["Todos"]
+    protocolo_negociacao:
+      provedor_primario: "google"
+      modelo_primario: "gemini-flash-latest"
+      provedores_alternativos: ["antropic", "openIa"]
+      sla_latencia_max_ms: 1000
+      temperatura: 0.35
+      max_tokens: 600
+    diretriz_template:
+      foco: "Orientação transparente, escuta ativa e direcionamento para produtos convenientes."
+      sigilo: "Diálogo natural em linguagem clara."

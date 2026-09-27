@@ -1,0 +1,892 @@
+{
+  "consulta": "q02_categorias.sql",
+  "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+  "medido_em": "2026-09-27T03:48 BRT",
+  "autenticacao": "ADC",
+  "job_id": "688fe5ee-d459-4314-85b3-febd2fd5a891",
+  "bytes_processados": 37367611,
+  "linhas": [
+    {
+      "tipo": "E",
+      "nom_cate_macro": "Recebimentos diversos",
+      "nom_cate_micro": "Recebimentos diversos",
+      "registros": 18363,
+      "clientes": 999,
+      "soma_abs_vlr": 33417426.23,
+      "media_abs_vlr": 1819.82
+    },
+    {
+      "tipo": "E",
+      "nom_cate_macro": "Salarios e bonificacoes",
+      "nom_cate_micro": "Salario CLT",
+      "registros": 9600,
+      "clientes": 800,
+      "soma_abs_vlr": 52708565.88,
+      "media_abs_vlr": 5490.48
+    },
+    {
+      "tipo": "E",
+      "nom_cate_macro": "Rendimentos",
+      "nom_cate_micro": "Recebimento Aluguel",
+      "registros": 3600,
+      "clientes": 300,
+      "soma_abs_vlr": 4127524.47,
+      "media_abs_vlr": 1146.53
+    },
+    {
+      "tipo": "E",
+      "nom_cate_macro": "Salarios e bonificacoes",
+      "nom_cate_micro": "13o salario",
+      "registros": 1600,
+      "clientes": 800,
+      "soma_abs_vlr": 4392380.36,
+      "media_abs_vlr": 2745.24
+    },
+    {
+      "tipo": "E",
+      "nom_cate_macro": "Beneficios",
+      "nom_cate_micro": "Beneficio INSS",
+      "registros": 1200,
+      "clientes": 100,
+      "soma_abs_vlr": 3148129.08,
+      "media_abs_vlr": 2623.44
+    },
+    {
+      "tipo": "E",
+      "nom_cate_macro": "Salarios e bonificacoes",
+      "nom_cate_micro": "Bonus PLR",
+      "registros": 714,
+      "clientes": 540,
+      "soma_abs_vlr": 3493370.67,
+      "media_abs_vlr": 4892.68
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Mercado",
+      "nom_cate_micro": "Mercado",
+      "registros": 42513,
+      "clientes": 1000,
+      "soma_abs_vlr": 2619248.39,
+      "media_abs_vlr": 61.61
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Assinaturas",
+      "nom_cate_micro": "Assinaturas",
+      "registros": 36252,
+      "clientes": 1000,
+      "soma_abs_vlr": 1005603.28,
+      "media_abs_vlr": 27.74
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Delivery",
+      "nom_cate_micro": "Delivery",
+      "registros": 27886,
+      "clientes": 482,
+      "soma_abs_vlr": 1576423.37,
+      "media_abs_vlr": 56.53
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Transferencias diversas",
+      "nom_cate_micro": "Outras transferencias",
+      "registros": 23645,
+      "clientes": 1000,
+      "soma_abs_vlr": 4480825.7,
+      "media_abs_vlr": 189.5
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Restaurantes",
+      "nom_cate_micro": "Restaurantes",
+      "registros": 21365,
+      "clientes": 560,
+      "soma_abs_vlr": 967283.1,
+      "media_abs_vlr": 45.27
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Posto de combustivel",
+      "nom_cate_micro": "Posto de combustivel",
+      "registros": 19829,
+      "clientes": 575,
+      "soma_abs_vlr": 1484906.61,
+      "media_abs_vlr": 74.89
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Transporte por app",
+      "nom_cate_micro": "Transporte por app",
+      "registros": 18692,
+      "clientes": 485,
+      "soma_abs_vlr": 344398.62,
+      "media_abs_vlr": 18.42
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Produtos financeiros",
+      "nom_cate_micro": "Pagamento de fatura",
+      "registros": 12000,
+      "clientes": 1000,
+      "soma_abs_vlr": 18241986.03,
+      "media_abs_vlr": 1520.17
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Celular",
+      "registros": 12000,
+      "clientes": 1000,
+      "soma_abs_vlr": 521829.84,
+      "media_abs_vlr": 43.49
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Agua e esgoto",
+      "registros": 12000,
+      "clientes": 1000,
+      "soma_abs_vlr": 1404606.44,
+      "media_abs_vlr": 117.05
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "TV Internet celular e telefone",
+      "registros": 12000,
+      "clientes": 1000,
+      "soma_abs_vlr": 853920.73,
+      "media_abs_vlr": 71.16
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Energia eletrica",
+      "registros": 12000,
+      "clientes": 1000,
+      "soma_abs_vlr": 2255596.25,
+      "media_abs_vlr": 187.97
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Produtos financeiros",
+      "nom_cate_micro": "Anuidade e pacote de servico",
+      "registros": 12000,
+      "clientes": 1000,
+      "soma_abs_vlr": 435890.45,
+      "media_abs_vlr": 36.32
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Restaurantes",
+      "nom_cate_micro": "Padaria",
+      "registros": 11147,
+      "clientes": 445,
+      "soma_abs_vlr": 1157700.26,
+      "media_abs_vlr": 103.86
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lojas e sites",
+      "nom_cate_micro": "Compras",
+      "registros": 10968,
+      "clientes": 433,
+      "soma_abs_vlr": 1704779.77,
+      "media_abs_vlr": 155.43
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Gas",
+      "registros": 10632,
+      "clientes": 886,
+      "soma_abs_vlr": 841091.0,
+      "media_abs_vlr": 79.11
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lojas e sites",
+      "nom_cate_micro": "Vestuario e acessorios",
+      "registros": 8400,
+      "clientes": 478,
+      "soma_abs_vlr": 1443033.18,
+      "media_abs_vlr": 171.79
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Emprestimos e financiamentos",
+      "nom_cate_micro": "Financiamento de imovel",
+      "registros": 8400,
+      "clientes": 700,
+      "soma_abs_vlr": 23899067.63,
+      "media_abs_vlr": 2845.13
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Educacao",
+      "nom_cate_micro": "Mensalidade escolar",
+      "registros": 7000,
+      "clientes": 700,
+      "soma_abs_vlr": 7225261.33,
+      "media_abs_vlr": 1032.18
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Seguro residencial",
+      "registros": 5124,
+      "clientes": 427,
+      "soma_abs_vlr": 143833.25,
+      "media_abs_vlr": 28.07
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Condominio",
+      "registros": 5064,
+      "clientes": 422,
+      "soma_abs_vlr": 4051790.03,
+      "media_abs_vlr": 800.12
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Produtos financeiros",
+      "nom_cate_micro": "Juros pagos",
+      "registros": 4755,
+      "clientes": 695,
+      "soma_abs_vlr": 541191.8,
+      "media_abs_vlr": 113.82
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Veiculos",
+      "nom_cate_micro": "Estacionamento",
+      "registros": 4645,
+      "clientes": 262,
+      "soma_abs_vlr": 90399.13,
+      "media_abs_vlr": 19.46
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Restaurantes",
+      "nom_cate_micro": "Cafeteria",
+      "registros": 4633,
+      "clientes": 427,
+      "soma_abs_vlr": 268514.48,
+      "media_abs_vlr": 57.96
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "IPTU",
+      "registros": 4380,
+      "clientes": 438,
+      "soma_abs_vlr": 1296158.89,
+      "media_abs_vlr": 295.93
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Eletronicos",
+      "registros": 4159,
+      "clientes": 713,
+      "soma_abs_vlr": 2302746.44,
+      "media_abs_vlr": 553.68
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lojas e sites",
+      "nom_cate_micro": "Brinquedos e artigos infantis",
+      "registros": 3796,
+      "clientes": 400,
+      "soma_abs_vlr": 198351.16,
+      "media_abs_vlr": 52.25
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lojas e sites",
+      "nom_cate_micro": "Artigos esportivos",
+      "registros": 3665,
+      "clientes": 404,
+      "soma_abs_vlr": 423164.62,
+      "media_abs_vlr": 115.46
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Viagens",
+      "nom_cate_micro": "Hospedagem",
+      "registros": 3644,
+      "clientes": 398,
+      "soma_abs_vlr": 766951.34,
+      "media_abs_vlr": 210.47
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Viagens",
+      "nom_cate_micro": "Passagem aerea e taxas",
+      "registros": 3475,
+      "clientes": 378,
+      "soma_abs_vlr": 1310024.69,
+      "media_abs_vlr": 376.99
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lojas e sites",
+      "nom_cate_micro": "Moveis e decoracao",
+      "registros": 3428,
+      "clientes": 390,
+      "soma_abs_vlr": 778590.96,
+      "media_abs_vlr": 227.13
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Veiculos",
+      "nom_cate_micro": "Pedagio",
+      "registros": 3300,
+      "clientes": 275,
+      "soma_abs_vlr": 79311.34,
+      "media_abs_vlr": 24.03
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Veiculos",
+      "nom_cate_micro": "Seguro de automovel",
+      "registros": 3168,
+      "clientes": 264,
+      "soma_abs_vlr": 2497142.87,
+      "media_abs_vlr": 788.24
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Diversos",
+      "registros": 2818,
+      "clientes": 455,
+      "soma_abs_vlr": 233316.67,
+      "media_abs_vlr": 82.8
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Cuidados pessoais",
+      "nom_cate_micro": "Salao de beleza ou barbearia",
+      "registros": 2566,
+      "clientes": 418,
+      "soma_abs_vlr": 247536.12,
+      "media_abs_vlr": 96.47
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Transporte publico",
+      "nom_cate_micro": "Transporte publico",
+      "registros": 2554,
+      "clientes": 417,
+      "soma_abs_vlr": 45589.73,
+      "media_abs_vlr": 17.85
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Restaurantes",
+      "nom_cate_micro": "Outras comidas e bebidas",
+      "registros": 2539,
+      "clientes": 411,
+      "soma_abs_vlr": 113136.47,
+      "media_abs_vlr": 44.56
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Produtos financeiros",
+      "nom_cate_micro": "Outras tarifas financeiras",
+      "registros": 2487,
+      "clientes": 424,
+      "soma_abs_vlr": 123384.33,
+      "media_abs_vlr": 49.61
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Produtos financeiros",
+      "nom_cate_micro": "Outros seguros",
+      "registros": 1623,
+      "clientes": 423,
+      "soma_abs_vlr": 162181.16,
+      "media_abs_vlr": 99.93
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Frete e correios",
+      "registros": 1611,
+      "clientes": 417,
+      "soma_abs_vlr": 83193.15,
+      "media_abs_vlr": 51.64
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Emprestimos e financiamentos",
+      "nom_cate_micro": "Emprestimos",
+      "registros": 1556,
+      "clientes": 410,
+      "soma_abs_vlr": 511281.82,
+      "media_abs_vlr": 328.59
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Transporte publico",
+      "nom_cate_micro": "Passagem de onibus",
+      "registros": 1550,
+      "clientes": 420,
+      "soma_abs_vlr": 179491.04,
+      "media_abs_vlr": 115.8
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Saque",
+      "nom_cate_micro": "Saque",
+      "registros": 1527,
+      "clientes": 410,
+      "soma_abs_vlr": 593955.04,
+      "media_abs_vlr": 388.97
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Mercado",
+      "nom_cate_micro": "Casa de Carnes",
+      "registros": 1508,
+      "clientes": 403,
+      "soma_abs_vlr": 223036.29,
+      "media_abs_vlr": 147.9
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Cuidados pessoais",
+      "nom_cate_micro": "Outros cuidados pessoais",
+      "registros": 1480,
+      "clientes": 408,
+      "soma_abs_vlr": 384920.66,
+      "media_abs_vlr": 260.08
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Outros gastos",
+      "registros": 1464,
+      "clientes": 406,
+      "soma_abs_vlr": 211879.06,
+      "media_abs_vlr": 144.73
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Produtos financeiros",
+      "nom_cate_micro": "Seguros",
+      "registros": 1457,
+      "clientes": 397,
+      "soma_abs_vlr": 146543.78,
+      "media_abs_vlr": 100.58
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Boletos diversos",
+      "nom_cate_micro": "Boleto",
+      "registros": 1444,
+      "clientes": 399,
+      "soma_abs_vlr": 1230748.0,
+      "media_abs_vlr": 852.32
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Cinema",
+      "registros": 1423,
+      "clientes": 404,
+      "soma_abs_vlr": 90092.58,
+      "media_abs_vlr": 63.31
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Pagamento de aluguel",
+      "registros": 1200,
+      "clientes": 100,
+      "soma_abs_vlr": 1799151.38,
+      "media_abs_vlr": 1499.29
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Outros entretenimentos",
+      "registros": 1049,
+      "clientes": 397,
+      "soma_abs_vlr": 113083.67,
+      "media_abs_vlr": 107.8
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Mercado",
+      "nom_cate_micro": "Feira livre",
+      "registros": 1042,
+      "clientes": 399,
+      "soma_abs_vlr": 11986.94,
+      "media_abs_vlr": 11.5
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Cuidados pessoais",
+      "nom_cate_micro": "Produtos de beleza",
+      "registros": 1041,
+      "clientes": 380,
+      "soma_abs_vlr": 199107.0,
+      "media_abs_vlr": 191.27
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Educacao",
+      "nom_cate_micro": "Outras despesas de educacao",
+      "registros": 1038,
+      "clientes": 392,
+      "soma_abs_vlr": 345574.53,
+      "media_abs_vlr": 332.92
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Outras contas",
+      "registros": 1027,
+      "clientes": 391,
+      "soma_abs_vlr": 611504.54,
+      "media_abs_vlr": 595.43
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Empregados domesticos",
+      "registros": 1019,
+      "clientes": 376,
+      "soma_abs_vlr": 164887.17,
+      "media_abs_vlr": 161.81
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Livros musica e video",
+      "registros": 1006,
+      "clientes": 401,
+      "soma_abs_vlr": 94839.68,
+      "media_abs_vlr": 94.27
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lojas e sites",
+      "nom_cate_micro": "Manutencao da casa",
+      "registros": 999,
+      "clientes": 366,
+      "soma_abs_vlr": 264433.51,
+      "media_abs_vlr": 264.7
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Posto de combustivel",
+      "nom_cate_micro": "Loja de conveniencia",
+      "registros": 973,
+      "clientes": 268,
+      "soma_abs_vlr": 27444.41,
+      "media_abs_vlr": 28.21
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Emprestimos e financiamentos",
+      "nom_cate_micro": "Outros emprestimos",
+      "registros": 971,
+      "clientes": 376,
+      "soma_abs_vlr": 550496.34,
+      "media_abs_vlr": 566.94
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Veiculos",
+      "nom_cate_micro": "Manutencao e reparo",
+      "registros": 946,
+      "clientes": 594,
+      "soma_abs_vlr": 531308.49,
+      "media_abs_vlr": 561.64
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Outras despesas com impostos",
+      "registros": 938,
+      "clientes": 368,
+      "soma_abs_vlr": 21826.87,
+      "media_abs_vlr": 23.27
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Videogames",
+      "registros": 832,
+      "clientes": 396,
+      "soma_abs_vlr": 39494.18,
+      "media_abs_vlr": 47.47
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Educacao",
+      "nom_cate_micro": "Curso de idiomas",
+      "registros": 828,
+      "clientes": 365,
+      "soma_abs_vlr": 246297.99,
+      "media_abs_vlr": 297.46
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Pagamento de impostos",
+      "registros": 790,
+      "clientes": 358,
+      "soma_abs_vlr": 309362.61,
+      "media_abs_vlr": 391.6
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Outros servicos",
+      "registros": 741,
+      "clientes": 335,
+      "soma_abs_vlr": 118367.13,
+      "media_abs_vlr": 159.74
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Ingresso de shows",
+      "registros": 741,
+      "clientes": 358,
+      "soma_abs_vlr": 203652.04,
+      "media_abs_vlr": 274.83
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Outras despesas de moradia",
+      "registros": 725,
+      "clientes": 346,
+      "soma_abs_vlr": 307424.39,
+      "media_abs_vlr": 424.03
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Associacoes e clubes",
+      "registros": 713,
+      "clientes": 348,
+      "soma_abs_vlr": 50409.98,
+      "media_abs_vlr": 70.7
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Mercado",
+      "nom_cate_micro": "Outros mercados",
+      "registros": 700,
+      "clientes": 345,
+      "soma_abs_vlr": 194462.58,
+      "media_abs_vlr": 277.8
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Produtos financeiros",
+      "nom_cate_micro": "Titulo de capitalizacao",
+      "registros": 550,
+      "clientes": 298,
+      "soma_abs_vlr": 34620.47,
+      "media_abs_vlr": 62.95
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Pets",
+      "nom_cate_micro": "Pet shop",
+      "registros": 535,
+      "clientes": 85,
+      "soma_abs_vlr": 64380.24,
+      "media_abs_vlr": 120.34
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Cuidados pessoais",
+      "nom_cate_micro": "Outros esportes",
+      "registros": 531,
+      "clientes": 308,
+      "soma_abs_vlr": 113657.77,
+      "media_abs_vlr": 214.04
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Contabilidade",
+      "registros": 520,
+      "clientes": 302,
+      "soma_abs_vlr": 142191.03,
+      "media_abs_vlr": 273.44
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Eventos e festas",
+      "registros": 512,
+      "clientes": 303,
+      "soma_abs_vlr": 1312379.78,
+      "media_abs_vlr": 2563.24
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Lazer",
+      "nom_cate_micro": "Museu e teatro",
+      "registros": 496,
+      "clientes": 290,
+      "soma_abs_vlr": 32819.88,
+      "media_abs_vlr": 66.17
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Jardinagem",
+      "registros": 489,
+      "clientes": 297,
+      "soma_abs_vlr": 53902.35,
+      "media_abs_vlr": 110.23
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Casa",
+      "nom_cate_micro": "Lavanderia",
+      "registros": 488,
+      "clientes": 295,
+      "soma_abs_vlr": 30330.44,
+      "media_abs_vlr": 62.15
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Multa por atraso",
+      "registros": 481,
+      "clientes": 287,
+      "soma_abs_vlr": 4490.42,
+      "media_abs_vlr": 9.34
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Produtos financeiros",
+      "nom_cate_micro": "Consorcio",
+      "registros": 466,
+      "clientes": 286,
+      "soma_abs_vlr": 336464.95,
+      "media_abs_vlr": 722.03
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Viagens",
+      "nom_cate_micro": "Outros gastos de viagem",
+      "registros": 446,
+      "clientes": 285,
+      "soma_abs_vlr": 292840.17,
+      "media_abs_vlr": 656.59
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Pets",
+      "nom_cate_micro": "Outros gastos de animais",
+      "registros": 361,
+      "clientes": 91,
+      "soma_abs_vlr": 42299.32,
+      "media_abs_vlr": 117.17
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Veiculos",
+      "nom_cate_micro": "Licenciamento IPVA e DPVAT",
+      "registros": 260,
+      "clientes": 260,
+      "soma_abs_vlr": 134411.76,
+      "media_abs_vlr": 516.97
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Publicidade",
+      "registros": 259,
+      "clientes": 196,
+      "soma_abs_vlr": 240464.78,
+      "media_abs_vlr": 928.44
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Veiculos",
+      "nom_cate_micro": "Outros gastos com transporte",
+      "registros": 252,
+      "clientes": 189,
+      "soma_abs_vlr": 74215.73,
+      "media_abs_vlr": 294.51
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Educacao",
+      "nom_cate_micro": "Entidades de classe",
+      "registros": 238,
+      "clientes": 184,
+      "soma_abs_vlr": 71344.0,
+      "media_abs_vlr": 299.76
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Veiculos",
+      "nom_cate_micro": "Aluguel de carro",
+      "registros": 148,
+      "clientes": 108,
+      "soma_abs_vlr": 69214.92,
+      "media_abs_vlr": 467.67
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Viagens",
+      "nom_cate_micro": "Compra de moedas",
+      "registros": 140,
+      "clientes": 121,
+      "soma_abs_vlr": 281510.64,
+      "media_abs_vlr": 2010.79
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Veiculos",
+      "nom_cate_micro": "Multa",
+      "registros": 136,
+      "clientes": 106,
+      "soma_abs_vlr": 36784.3,
+      "media_abs_vlr": 270.47
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Pets",
+      "nom_cate_micro": "Veterinario",
+      "registros": 136,
+      "clientes": 68,
+      "soma_abs_vlr": 35003.9,
+      "media_abs_vlr": 257.38
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Pensao alimenticia",
+      "registros": 91,
+      "clientes": 81,
+      "soma_abs_vlr": 928.92,
+      "media_abs_vlr": 10.21
+    },
+    {
+      "tipo": "S",
+      "nom_cate_macro": "Outros gastos",
+      "nom_cate_micro": "Cheque",
+      "registros": 82,
+      "clientes": 73,
+      "soma_abs_vlr": 207549.65,
+      "media_abs_vlr": 2531.09
+    }
+  ]
+}

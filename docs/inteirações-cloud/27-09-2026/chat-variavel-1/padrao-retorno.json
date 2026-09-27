@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chat variável 1: retorno",
+  "description": "GET /api/v1/chat/variavel-1/<cliente_id>/: IDs de 1 a 1000 retornam a conversa; IDs fora do recorte devolvem HTTP 404 {erro}, sem conversão para outro cliente.",
+  "$defs": {
+    "texto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "paragrafo_1",
+        "paragrafo_2",
+        "texto_completo"
+      ],
+      "properties": {
+        "tag": {
+          "enum": [
+            "TEXTO_1[NEUTRO]",
+            "TEXTO_2[MASCULINO]",
+            "TEXTO_3[FEMININO]"
+          ]
+        },
+        "paragrafo_1": {
+          "type": "string"
+        },
+        "paragrafo_2": {
+          "type": "string"
+        },
+        "texto_completo": {
+          "type": "string",
+          "description": "paragrafo_1 + linha em branco + paragrafo_2."
+        }
+      }
+    },
+    "chave": {
+      "enum": [
+        "ON",
+        "OFF"
+      ]
+    },
+    "modo": {
+      "enum": [
+        "NEUTRO",
+        "FEMININO",
+        "MASCULINO"
+      ],
+      "description": "NEUTRO com chave ON; com OFF segue o gênero."
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cliente",
+        "chave_interacao_tela_iai",
+        "modo_ativo",
+        "chat_variavel_1"
+      ],
+      "description": "HTTP 200.",
+      "properties": {
+        "cliente": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "nome",
+            "primeiro_nome",
+            "genero",
+            "grupo_fixo",
+            "score"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "nome": {
+              "type": "string"
+            },
+            "primeiro_nome": {
+              "type": "string"
+            },
+            "genero": {
+              "enum": [
+                "F",
+                "M"
+              ],
+              "description": "Par = F, ímpar = M."
+            },
+            "grupo_fixo": {
+              "enum": [
+                "GRUPO_FIXO_FEMININO",
+                "GRUPO_FIXO_MASCULINO"
+              ]
+            },
+            "score": {
+              "type": "integer",
+              "description": "score_comportamental do cliente (exposto em claro)."
+            }
+          }
+        },
+        "chave_interacao_tela_iai": {
+          "$ref": "#/$defs/chave"
+        },
+        "modo_ativo": {
+          "$ref": "#/$defs/modo"
+        },
+        "chat_variavel_1": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "genero",
+            "variavel_nome",
+            "chave_interacao_tela_iai",
+            "modo_ativo",
+            "saudacao",
+            "saudacao_template",
+            "texto_1_neutro",
+            "texto_2_masculino",
+            "texto_3_feminino",
+            "texto_ativo",
+            "titulo_abordagem",
+            "mensagem_abertura",
+            "botao_proximo"
+          ],
+          "properties": {
+            "genero": {
+              "enum": [
+                "F",
+                "M"
+              ]
+            },
+            "variavel_nome": {
+              "type": "string",
+              "description": "primeiro_nome do cliente."
+            },
+            "chave_interacao_tela_iai": {
+              "$ref": "#/$defs/chave"
+            },
+            "modo_ativo": {
+              "$ref": "#/$defs/modo"
+            },
+            "saudacao": {
+              "type": "string",
+              "description": "'Que bom ter você aqui, <primeiro_nome>!'"
+            },
+            "saudacao_template": {
+              "const": "Que bom ter você aqui,[VARIAVEL_NOME] !"
+            },
+            "texto_1_neutro": {
+              "$ref": "#/$defs/texto"
+            },
+            "texto_2_masculino": {
+              "$ref": "#/$defs/texto"
+            },
+            "texto_3_feminino": {
+              "$ref": "#/$defs/texto"
+            },
+            "texto_ativo": {
+              "$ref": "#/$defs/texto",
+              "description": "Cópia de um dos três textos acima, conforme a chave e o gênero."
+            },
+            "titulo_abordagem": {
+              "const": "Auditoria Itaú"
+            },
+            "mensagem_abertura": {
+              "type": "string",
+              "description": "texto_ativo.texto_completo."
+            },
+            "botao_proximo": {
+              "const": "E agora?"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "erro"
+      ],
+      "description": "HTTP 404: cliente_id fora de 1..1000 (ClienteForaDoRecorte; ex.: 1042, 1001, 0). HTTP 400: outra exceção capturada — com rota <int:> não se achou caminho que a dispare, NAO_VERIFICADO em execução.",
+      "properties": {
+        "erro": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Envio do agente ao guard de inclusão do dado",
+  "description": "O que o agente entrega antes de responder ao cliente: a visão que usou, os campos que citou e o texto. Consumido por guard.verificar_envio (apps/context_agent_datadriven/pastas_raiz/estudos/i_agora/guard.py). O guard reexecuta a visão com os mesmos parâmetros e compara.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id_usuario", "topico", "segmento_t3", "dados", "texto"],
+  "properties": {
+    "id_usuario": { "type": "string", "minLength": 1, "description": "id_usuario da tabela extrato_sintetico (UUID)." },
+    "data_corte": { "type": "string", "format": "date", "default": "2025-12-22", "description": "Corte da tese; a janela é de meses completos antes do mês do corte." },
+    "topico": { "enum": ["perfil_t3", "categoria", "renda", "dividas", "recorrencias", "discricionario"], "description": "Chave de visoes.TOPICOS." },
+    "categoria": { "type": "string", "description": "Só no tópico categoria: macro de saída de t3.MAPA_GRUPOS (acento e caixa são normalizados)." },
+    "segmento_t3": { "enum": ["Vulnerável", "Esbanjador", "Livre"], "description": "Segmento que o agente assumiu para escolher o tom." },
+    "dados": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Campo da linha da visão -> valor citado. Número, ou texto como 'R$ 1.638,49' / '52,24%' / rótulo.",
+      "additionalProperties": { "type": ["number", "string"] }
+    },
+    "texto": { "type": "string", "minLength": 1, "description": "Resposta ao cliente. Todo R$ e % escrito aqui precisa de fonte na query." }
+  },
+  "allOf": [
+    { "if": { "properties": { "topico": { "const": "categoria" } } }, "then": { "required": ["categoria"] }, "else": { "not": { "required": ["categoria"] } } }
+  ]
+}

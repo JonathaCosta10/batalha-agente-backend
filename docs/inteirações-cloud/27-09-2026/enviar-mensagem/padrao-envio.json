@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Enviar mensagem ao Harness: envio",
+  "description": "Corpo do POST /api/v1/context-agent/enviar-mensagem/. Só 'mensagem' é obrigatória; os demais campos têm valores por omissão. Chaves extras não são rejeitadas. Tipos inválidos devolvem HTTP 400 {erro}.",
+  "type": "object",
+  "required": ["mensagem"],
+  "properties": {
+    "mensagem": {
+      "type": "string",
+      "pattern": "\\S",
+      "description": "Texto do usuário. A view faz .strip() e devolve 400 {erro} se não for texto ou ficar vazio."
+    },
+    "cliente_id": {
+      "description": "Inteiro ou texto de inteiro convertido pela view; omissão = 42. Valor inválido devolve 400. É a chave da sessão.",
+      "oneOf": [
+        { "type": "integer" },
+        { "type": "string", "pattern": "^\\s*[+-]?[0-9]+\\s*$" }
+      ]
+    },
+    "cliente_nome": {
+      "type": "string",
+      "description": "Nome usado no contexto por omissão e na criação da sessão; omissão = 'Cliente Itaú' (views.py:73)."
+    },
+    "contexto": {
+      "type": "object",
+      "description": "Contexto interno do cliente. Se presente, substitui o contexto montado a partir dos campos de topo. Não-objeto devolve 400. Nenhuma chave é obrigatória.",
+      "properties": {
+        "id": { "type": "integer", "description": "Só ecoado no contexto; o motor usa o cliente_id de topo." },
+        "nome": { "type": "string", "description": "Entra no prompt de sistema e no texto de fallback (agente.py:63, 112)." },
+        "score": { "type": "number", "description": "Usado na contingência e na sessão nova; valor não numérico devolve 400. Omissão = 750." },
+        "indice_corte": { "type": "string", "description": "Grava na sessão só quando ela é criada; omissão = 'CTX-750-ALPHA'." },
+        "segmento": { "type": "string", "description": "Entra no prompt de sistema (agente.py:63)." }
+      }
+    },
+    "score": {
+      "type": "number",
+      "description": "Usado só quando 'contexto' não é enviado; omissão = 750 (views.py:78)."
+    },
+    "indice_corte": {
+      "type": "string",
+      "description": "Usado só quando 'contexto' não é enviado; omissão = 'CTX-750-ALPHA' (views.py:79)."
+    },
+    "segmento": {
+      "type": "string",
+      "description": "Usado só quando 'contexto' não é enviado; omissão = 'Itaú Uniclass' (views.py:80)."
+    }
+  }
+}

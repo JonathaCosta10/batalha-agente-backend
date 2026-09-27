@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.0",
+  "id": "tratamento-erros-api-i-agora",
+  "versao": "1.1.0",
+  "historico": "1.1.0 (2026-09-27): 401/403/405/409 só da nossa API e NAO_CLASSIFICADO para status fora da tabela ou erro do provedor sem tratamento (achados D6/D7 da sessão d9). Antes: erro_api null nesses casos e erro do provedor rotulado como 'api'.",
+  "natureza": "politica_operacional",
+  "aviso": "Tratamentos CONHECIDOS por status HTTP. Vale para dois lados: (1) erro do provedor Gemini -> o servidor decide se faz UMA nova chamada e com qual solução; (2) erro da nossa API ao front -> o envelope leva `erro_api` com o que o cliente pode fazer. Nenhuma nova chamada repete o mesmo pedido ao mesmo modelo, e nenhuma libera texto sem os guards.",
+  "limites": {
+    "novas_chamadas_max": 1,
+    "espera_max_no_servidor_s": 2,
+    "status_de_timeout_local": 504
+  },
+  "erros": {
+    "400": {
+      "nome": "BadRequest",
+      "causa_provavel": "Pedido recusado pelo provedor: parâmetro não suportado pelo modelo (ex.: thinkingConfig), schema ou tamanho. Na nossa API: corpo fora do contrato.",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "proximo_modelo",
+      "solucao_possivel": "Nova chamada com o próximo modelo homologado, que pode aceitar o parâmetro; se falhar, resposta segura predefinida.",
+      "espera_s": 0,
+      "acao_cliente": "reformular",
+      "encaminhar_humano": false,
+      "mensagem_cliente": "Não consegui processar esta mensagem do jeito que chegou. Tente reformular de forma mais curta, sem anexos ou dados pessoais."
+    },
+    "404": {
+      "nome": "NotFound",
+      "causa_provavel": "Modelo descontinuado ou nome de modelo errado no provedor. Na nossa API: sessão inexistente/expirada ou rota inexistente.",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "proximo_modelo",
+      "solucao_possivel": "Nova chamada com o próximo modelo homologado e alerta de configuração (trocar o modelo em desafio_itau/modelos_llm.py).",
+      "espera_s": 0,
+      "acao_cliente": "reiniciar_sessao",
+      "encaminhar_humano": false,
+      "mensagem_cliente": "Esta conversa não está mais disponível. Inicie uma nova conversa para continuar."
+    },
+    "429": {
+      "nome": "TooManyRequests",
+      "causa_provavel": "Cota ou limite de taxa atingido. Medido na base local: gemini-flash-latest devolveu 429 em 19 tentativas no ledger de 2026-09-27; a cota é por modelo, então outro modelo pode responder.",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "proximo_modelo",
+      "solucao_possivel": "Nova chamada imediata com o próximo modelo (cota separada), sem espera no servidor; repetir o mesmo modelo só depois do Retry-After.",
+      "espera_s": 30,
+      "acao_cliente": "aguardar_e_tentar_novamente",
+      "encaminhar_humano": false,
+      "mensagem_cliente": "Muitas mensagens em pouco tempo. Aguarde cerca de {espera_s} segundos e envie de novo."
+    },
+    "503": {
+      "nome": "ServiceUnavailable",
+      "causa_provavel": "Provedor sobrecarregado ou indisponível; na nossa API, também validação reprovada que virou resposta segura.",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "aguardar_e_proximo_modelo",
+      "solucao_possivel": "Espera curta (limitada a espera_max_no_servidor_s) e UMA nova chamada com o próximo modelo; persistindo, resposta segura e opção de atendimento humano.",
+      "espera_s": 10,
+      "acao_cliente": "aguardar_ou_encaminhar",
+      "encaminhar_humano": true,
+      "mensagem_cliente": "O serviço está ocupado agora. Aguarde um pouco e tente de novo em cerca de {espera_s} segundos, ou peça para falar com o atendimento."
+    },
+    "504": {
+      "nome": "GatewayTimeout",
+      "causa_provavel": "O provedor não respondeu no tempo limite (inclui timeout local da chamada HTTP).",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "proximo_modelo",
+      "solucao_possivel": "UMA nova chamada com o próximo modelo, sem espera; persistindo, resposta segura e opção de atendimento humano.",
+      "espera_s": 15,
+      "acao_cliente": "aguardar_ou_encaminhar",
+      "encaminhar_humano": true,
+      "mensagem_cliente": "A resposta demorou mais do que o esperado. Aguarde cerca de {espera_s} segundos e tente de novo, ou peça para falar com o atendimento."
+    },
+    "401": {
+      "nome": "Unauthorized",
+      "origens": ["api"],
+      "causa_provavel": "Sessão de usuário ausente ou expirada (cookie/X-Sessao-Id). Do provedor, 401 é chave inválida: vira NAO_CLASSIFICADO, nunca 'reiniciar sessão'.",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "resposta_segura",
+      "solucao_possivel": "O front chama POST perfil-usuario/definir/ e reenvia.",
+      "espera_s": 0,
+      "acao_cliente": "reiniciar_sessao",
+      "encaminhar_humano": false,
+      "mensagem_cliente": "Não identifiquei sua sessão. Entre de novo para continuar a conversa."
+    },
+    "403": {
+      "nome": "Forbidden",
+      "origens": ["api"],
+      "causa_provavel": "Rota desligada (chave ON/OFF) ou ação não permitida neste canal.",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "resposta_segura",
+      "solucao_possivel": "Nenhuma nova tentativa automática; a ação não está disponível.",
+      "espera_s": 0,
+      "acao_cliente": "nao_repetir",
+      "encaminhar_humano": false,
+      "mensagem_cliente": "Esta ação não está disponível neste canal."
+    },
+    "405": {
+      "nome": "MethodNotAllowed",
+      "origens": ["api"],
+      "causa_provavel": "Erro de integração: método HTTP errado para a rota.",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "resposta_segura",
+      "solucao_possivel": "Corrigir a chamada no front; repetir não resolve.",
+      "espera_s": 0,
+      "acao_cliente": "nao_repetir",
+      "encaminhar_humano": false,
+      "mensagem_cliente": "Não consegui processar este pedido."
+    },
+    "409": {
+      "nome": "Conflict",
+      "origens": ["api"],
+      "causa_provavel": "client_message_id reaproveitado com conteúdo diferente (idempotência).",
+      "repetir_mesmo_pedido": false,
+      "acao_servidor": "resposta_segura",
+      "solucao_possivel": "O front gera um novo client_message_id e envia como mensagem nova.",
+      "espera_s": 0,
+      "acao_cliente": "enviar_como_nova",
+      "encaminhar_humano": false,
+      "mensagem_cliente": "Esta mensagem já foi enviada com outro conteúdo. Envie como uma nova mensagem."
+    }
+  },
+  "nao_classificado": {
+    "nome": "NAO_CLASSIFICADO",
+    "causa_provavel": "Status fora da tabela (ex.: 500 do provedor, 401 de chave) ou exceção sem status. O código real vai em `codigo` (null quando não havia).",
+    "repetir_mesmo_pedido": false,
+    "acao_servidor": "resposta_segura",
+    "solucao_possivel": "Sem nova chamada automática; resposta segura predefinida e registro para diagnóstico.",
+    "espera_s": 15,
+    "acao_cliente": "aguardar_ou_encaminhar",
+    "encaminhar_humano": true,
+    "mensagem_cliente": "Não consegui responder agora. Aguarde cerca de {espera_s} segundos e tente de novo, ou peça para falar com o atendimento."
+  }
+}

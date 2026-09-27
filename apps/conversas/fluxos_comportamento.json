@@ -1,0 +1,233 @@
+{
+  "versao": "2026-09-27.2",
+  "descricao": "Fluxos determinísticos de aprimoramento de comportamento: perfil T3 × situação da MÉDIA mensal da janela de meses completos (regra do dono 2026-09-27 06:22; antes: situação do mês) -> próximo passo, regra e mensagem-base. Escolhidos por código (interacao.selecionar_fluxo), nunca pelo modelo; o Gemini só redige sobre a mensagem-base. O texto aprovado tem de conter um dos termos de `chave` (guard `fluxo`).",
+  "variaveis": [
+    "janela",
+    "saldo",
+    "entradas",
+    "saidas",
+    "maior_desejo"
+  ],
+  "fluxos": {
+    "Vulnerável": {
+      "FALTOU": {
+        "id": "VUL-FALTOU",
+        "proximo_passo": "renegociar_compromissos",
+        "regras": [
+          "RC-08-2023:art-2:§1º, III",
+          "T3:Vulnerável"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, faltou {saldo} por mês: saíram {saidas} e entraram {entradas} por mês. O primeiro passo é organizar os compromissos financeiros e renegociar antes de cortar o essencial.",
+        "chave": [
+          "renegoci"
+        ]
+      },
+      "SOBROU": {
+        "id": "VUL-SOBROU",
+        "proximo_passo": "usar_sobra_para_organizar_compromissos",
+        "regras": [
+          "RC-08-2023:art-2:§1º, I",
+          "T3:Vulnerável"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, sobrou {saldo} por mês: entraram {entradas} e saíram {saidas} por mês. Vamos usar essa sobra para organizar os compromissos, passo a passo.",
+        "chave": [
+          "organiz",
+          "passo a passo"
+        ]
+      },
+      "EQUILIBRIO": {
+        "id": "VUL-EQUILIBRIO",
+        "proximo_passo": "organizar_compromissos",
+        "regras": [
+          "RC-08-2023:art-2:§1º, I",
+          "T3:Vulnerável"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, entradas e saídas ficaram equilibradas: entraram {entradas} e saíram {saidas} por mês. Vamos organizar os compromissos para abrir espaço, passo a passo.",
+        "chave": [
+          "organiz",
+          "passo a passo"
+        ]
+      },
+      "NAO_MEDIDO": {
+        "id": "VUL-NAO_MEDIDO",
+        "proximo_passo": "aguardar_dados",
+        "regras": [
+          "RC-08-2023:art-3:III",
+          "T3:Vulnerável"
+        ],
+        "mensagem_base": "Ainda não consegui ler os seus números dos meses completos, então não vou afirmar se sobrou ou faltou dinheiro. Vamos organizar com calma quando eles estiverem disponíveis.",
+        "chave": [
+          "organiz",
+          "calma"
+        ]
+      }
+    },
+    "Esbanjador": {
+      "FALTOU": {
+        "id": "ESB-FALTOU",
+        "proximo_passo": "limitar_maior_desejo",
+        "regras": [
+          "RC-08-2023:art-2:§1º, I",
+          "T3:Esbanjador"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, faltou {saldo} por mês: saíram {saidas} e entraram {entradas} por mês. A maior categoria de desejos é {maior_desejo}: ajustar ali com um limite por mês devolve a folga.",
+        "chave": [
+          "ajust",
+          "limite",
+          "reduzir",
+          "meta"
+        ]
+      },
+      "SOBROU": {
+        "id": "ESB-SOBROU",
+        "proximo_passo": "limitar_maior_desejo",
+        "regras": [
+          "RC-08-2023:art-2:§1º, I",
+          "T3:Esbanjador"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, sobrou {saldo} por mês: entraram {entradas} e saíram {saidas} por mês. Para manter essa folga, vale pôr um limite por mês em {maior_desejo}.",
+        "chave": [
+          "ajust",
+          "limite",
+          "reduzir",
+          "meta"
+        ]
+      },
+      "EQUILIBRIO": {
+        "id": "ESB-EQUILIBRIO",
+        "proximo_passo": "limitar_maior_desejo",
+        "regras": [
+          "RC-08-2023:art-2:§1º, I",
+          "T3:Esbanjador"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, entradas e saídas ficaram equilibradas: entraram {entradas} e saíram {saidas} por mês. Um limite por mês em {maior_desejo} abre folga.",
+        "chave": [
+          "ajust",
+          "limite",
+          "reduzir",
+          "meta"
+        ]
+      },
+      "NAO_MEDIDO": {
+        "id": "ESB-NAO_MEDIDO",
+        "proximo_passo": "aguardar_dados",
+        "regras": [
+          "RC-08-2023:art-3:III",
+          "T3:Esbanjador"
+        ],
+        "mensagem_base": "Ainda não consegui ler os seus números dos meses completos, então não vou afirmar se sobrou ou faltou dinheiro. Quando eles estiverem disponíveis, dá para definir uma meta por mês.",
+        "chave": [
+          "meta",
+          "ajust",
+          "limite"
+        ]
+      }
+    },
+    "Livre": {
+      "SOBROU": {
+        "id": "LIV-SOBROU",
+        "proximo_passo": "formar_reserva",
+        "regras": [
+          "RC-08-2023:art-2:§1º, II",
+          "T3:Livre"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, sobrou {saldo} por mês: entraram {entradas} e saíram {saidas} por mês. Essa folga pode formar uma reserva e servir a um objetivo planejado.",
+        "chave": [
+          "reserva",
+          "objetivo",
+          "planej"
+        ]
+      },
+      "FALTOU": {
+        "id": "LIV-FALTOU",
+        "proximo_passo": "planejar_reserva_para_meses_atipicos",
+        "regras": [
+          "RC-08-2023:art-2:§1º, II",
+          "T3:Livre"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, faltou {saldo} por mês: saíram {saidas} e entraram {entradas} por mês. Vale planejar uma reserva que cubra meses em que falte.",
+        "chave": [
+          "reserva",
+          "planej"
+        ]
+      },
+      "EQUILIBRIO": {
+        "id": "LIV-EQUILIBRIO",
+        "proximo_passo": "formar_reserva",
+        "regras": [
+          "RC-08-2023:art-2:§1º, II",
+          "T3:Livre"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, entradas e saídas ficaram equilibradas: entraram {entradas} e saíram {saidas} por mês. Vale planejar um objetivo para a sua folga média.",
+        "chave": [
+          "reserva",
+          "objetivo",
+          "planej"
+        ]
+      },
+      "NAO_MEDIDO": {
+        "id": "LIV-NAO_MEDIDO",
+        "proximo_passo": "aguardar_dados",
+        "regras": [
+          "RC-08-2023:art-3:III",
+          "T3:Livre"
+        ],
+        "mensagem_base": "Ainda não consegui ler os seus números dos meses completos, então não vou afirmar se sobrou ou faltou dinheiro. Quando eles estiverem disponíveis, vale planejar o seu objetivo.",
+        "chave": [
+          "planej",
+          "objetivo"
+        ]
+      }
+    },
+    "NAO_MEDIDO": {
+      "FALTOU": {
+        "id": "NM-FALTOU",
+        "proximo_passo": "organizar_orcamento",
+        "regras": [
+          "RC-08-2023:art-2:§1º, I"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, faltou {saldo} por mês: saíram {saidas} e entraram {entradas} por mês. Vamos organizar o orçamento com calma.",
+        "chave": [
+          "organiz"
+        ]
+      },
+      "SOBROU": {
+        "id": "NM-SOBROU",
+        "proximo_passo": "organizar_orcamento",
+        "regras": [
+          "RC-08-2023:art-2:§1º, I"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, sobrou {saldo} por mês: entraram {entradas} e saíram {saidas} por mês. Vamos organizar o orçamento com calma.",
+        "chave": [
+          "organiz"
+        ]
+      },
+      "EQUILIBRIO": {
+        "id": "NM-EQUILIBRIO",
+        "proximo_passo": "organizar_orcamento",
+        "regras": [
+          "RC-08-2023:art-2:§1º, I"
+        ],
+        "mensagem_base": "Na média mensal de {janela}, entradas e saídas ficaram equilibradas: entraram {entradas} e saíram {saidas} por mês. Vamos organizar o orçamento com calma.",
+        "chave": [
+          "organiz"
+        ]
+      },
+      "NAO_MEDIDO": {
+        "id": "NM-NAO_MEDIDO",
+        "proximo_passo": "aguardar_dados",
+        "regras": [
+          "RC-08-2023:art-3:III"
+        ],
+        "mensagem_base": "Ainda não consegui ler os seus números dos meses completos, então não vou afirmar se sobrou ou faltou dinheiro. Vamos organizar com calma quando eles estiverem disponíveis.",
+        "chave": [
+          "organiz",
+          "calma"
+        ]
+      }
+    }
+  },
+  "mudancas": {
+    "2026-09-27.2": "situação e valores = média mensal da janela (jan-nov/2025 com corte 2025-12-22), uma só âncora temporal; o mês isolado deixa de ser citado. Conflito medido pelo front às 06:53 na 8001."
+  }
+}

@@ -1,0 +1,732 @@
+{
+ "gerado_em": "2026-09-27T06:58:39-03:00",
+ "gerado_por": "scratchpad/trab/amostra.py (apps.conversas.interacao.coletar + interacao_cenarios)",
+ "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico (ADC, data_corte 2025-12-22)",
+ "criterio": "T3 x situacao da MEDIA mensal da janela jan-nov/2025 (regra do dono 06:22; o mes de nov/2025 fica so informativo); indice 1 (Maria) obrigatorio; >=1 consolidacao, >=1 inclinacao. Candidatos tirados da bateria-valor-2026-09-27 e REMEDIDOS agora.",
+ "cenarios_esperados_regra": "consolidacao_divida = gatilho_consolidacao(dados); inclinacao_gasto = selecionar_cenario com \"onde estou gastando mais?\" sem divida; financeiro_geral e fora_do_contexto valem para todos",
+ "usuarios": [
+  {
+   "indice": 1,
+   "codigo": "00108ccd-699c-453a-a9f9-a66aad6e03e5",
+   "pessoa": "Maria",
+   "genero": "F",
+   "t3": "Vulnerável",
+   "taxa_surplus_pct": -21.09,
+   "situacao": "FALTOU",
+   "situacao_conversa": {
+    "situacao": "FALTOU",
+    "base": "media_meses_completos",
+    "janela": "janeiro de 2025 a novembro de 2025",
+    "registros_ate": "22/12/2025",
+    "saldo_medio": -1729.62,
+    "entradas_media": 8201.83,
+    "saidas_media": 9931.45,
+    "limiar_equilibrio_pct": 1.0,
+    "regra": "dono 2026-09-27 06:22: negativado = média dos meses completos"
+   },
+   "situacao_mes_recente": "SOBROU",
+   "mes_referencia": {
+    "anomes": 202511,
+    "nome": "novembro de 2025",
+    "entradas": 9895.85,
+    "saidas": 8596.41,
+    "saldo": 1299.44,
+    "situacao": "SOBROU",
+    "papel": "informativo: o mês mais recente não decide a situação da conversa (regra do dono, 06:22)"
+   },
+   "situacao_media": "FALTOU",
+   "divida": {
+    "estado": "MEDIDO",
+    "emprestimos_mensal_medio": 2402.86,
+    "juros_pagos_mensal_medio": 44.75,
+    "divida_mensal_medio": 2447.61,
+    "multas_por_atraso_na_janela": 0,
+    "pct_da_entrada_media": 29.8,
+    "limiar_pct": 10.0,
+    "relevante": true
+   },
+   "inclinacao": {
+    "estado": "MEDIDO",
+    "alta": {
+     "subcategoria": "Vestuario e acessorios",
+     "media_janela": 346.89,
+     "media_recente": 448.88,
+     "diferenca": 101.99,
+     "variacao_pct": 29.4
+    },
+    "queda": {
+     "subcategoria": "Padaria",
+     "media_janela": 180.73,
+     "media_recente": 25.26,
+     "diferenca": -155.47,
+     "variacao_pct": -86.0
+    },
+    "recentes": "setembro de 2025 a novembro de 2025",
+    "janela": "janeiro de 2025 a novembro de 2025"
+   },
+   "cenarios_esperados": [
+    "consolidacao_divida",
+    "inclinacao_gasto",
+    "financeiro_geral",
+    "fora_do_contexto"
+   ],
+   "estados_fontes": {
+    "perfil": "MEDIDO",
+    "mensal": "MEDIDO",
+    "subcategorias": "MEDIDO"
+   },
+   "selo": {
+    "perfil": {
+     "jobs": {
+      "perfil_t3": "5e9050ec-5cfb-4080-b69f-5f788294a661",
+      "renda": "77757b54-a225-44f5-a686-bea05882b2bf",
+      "dividas": "d056e7b9-7df8-4746-bc09-2f0a819a1622",
+      "recorrencias": "c646061e-8186-4aed-b207-9dc2dcae5c04",
+      "discricionario": "19dac0dd-4539-4fb9-9903-95f66def0e7f"
+     },
+     "medido_em": "2026-09-27T06:58:24-03:00",
+     "bytes_processados": 192329813,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "mensal": {
+     "jobs": {
+      "mensal_50_30_20": "39524649-89ab-4e8a-b6ee-ebe1e33412cd"
+     },
+     "medido_em": "2026-09-27T06:58:22-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "subcategorias": {
+     "jobs": {
+      "subcategorias_mensal": "dec694d3-a30a-40cd-a7e0-579ed916e823"
+     },
+     "medido_em": "2026-09-27T06:58:22-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    }
+   },
+   "tempo_ms": 9827
+  },
+  {
+   "indice": 401,
+   "codigo": "67a90d9d-a8de-461c-a5eb-77ff670f5d72",
+   "pessoa": "Bruna",
+   "genero": "F",
+   "t3": "Vulnerável",
+   "taxa_surplus_pct": -64.62,
+   "situacao": "FALTOU",
+   "situacao_conversa": {
+    "situacao": "FALTOU",
+    "base": "media_meses_completos",
+    "janela": "janeiro de 2025 a novembro de 2025",
+    "registros_ate": "22/12/2025",
+    "saldo_medio": -2840.74,
+    "entradas_media": 4395.91,
+    "saidas_media": 7236.65,
+    "limiar_equilibrio_pct": 1.0,
+    "regra": "dono 2026-09-27 06:22: negativado = média dos meses completos"
+   },
+   "situacao_mes_recente": "FALTOU",
+   "mes_referencia": {
+    "anomes": 202511,
+    "nome": "novembro de 2025",
+    "entradas": 6251.16,
+    "saidas": 8532.02,
+    "saldo": -2280.86,
+    "situacao": "FALTOU",
+    "papel": "informativo: o mês mais recente não decide a situação da conversa (regra do dono, 06:22)"
+   },
+   "situacao_media": "FALTOU",
+   "divida": {
+    "estado": "MEDIDO",
+    "emprestimos_mensal_medio": 327.61,
+    "juros_pagos_mensal_medio": 73.61,
+    "divida_mensal_medio": 401.22,
+    "multas_por_atraso_na_janela": 1,
+    "pct_da_entrada_media": 9.1,
+    "limiar_pct": 10.0,
+    "relevante": true
+   },
+   "inclinacao": {
+    "estado": "MEDIDO",
+    "alta": {
+     "subcategoria": "Passagem aerea e taxas",
+     "media_janela": 106.81,
+     "media_recente": 328.27,
+     "diferenca": 221.46,
+     "variacao_pct": 207.3
+    },
+    "queda": {
+     "subcategoria": "Eventos e festas",
+     "media_janela": 554.48,
+     "media_recente": 0.0,
+     "diferenca": -554.48,
+     "variacao_pct": -100.0
+    },
+    "recentes": "setembro de 2025 a novembro de 2025",
+    "janela": "janeiro de 2025 a novembro de 2025"
+   },
+   "cenarios_esperados": [
+    "consolidacao_divida",
+    "inclinacao_gasto",
+    "financeiro_geral",
+    "fora_do_contexto"
+   ],
+   "estados_fontes": {
+    "perfil": "MEDIDO",
+    "mensal": "MEDIDO",
+    "subcategorias": "MEDIDO"
+   },
+   "selo": {
+    "perfil": {
+     "jobs": {
+      "perfil_t3": "99ceda87-df93-4b74-ae72-66c0dc9a7d22",
+      "renda": "26e403c9-85f0-40da-a95a-c4debbf52de3",
+      "dividas": "e13bb989-6f43-44b8-8dda-34bfcf0dddff",
+      "recorrencias": "3c9e8093-b671-4481-94c9-a4d5332bfc02",
+      "discricionario": "c5f36349-e8c5-4b0a-92e2-30ba61405b4d"
+     },
+     "medido_em": "2026-09-27T06:58:25-03:00",
+     "bytes_processados": 192329813,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "mensal": {
+     "jobs": {
+      "mensal_50_30_20": "4236cb28-f0d9-4407-a6a5-f90f8d5bfb46"
+     },
+     "medido_em": "2026-09-27T06:58:25-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "subcategorias": {
+     "jobs": {
+      "subcategorias_mensal": "e977df0d-14e5-49bf-b189-38b5a50fd1ab"
+     },
+     "medido_em": "2026-09-27T06:58:25-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    }
+   },
+   "tempo_ms": 1319
+  },
+  {
+   "indice": 906,
+   "codigo": "e9892e48-978d-4a43-9675-e1928bcb986d",
+   "pessoa": "Gustavo",
+   "genero": "M",
+   "t3": "Esbanjador",
+   "taxa_surplus_pct": -41.43,
+   "situacao": "FALTOU",
+   "situacao_conversa": {
+    "situacao": "FALTOU",
+    "base": "media_meses_completos",
+    "janela": "janeiro de 2025 a novembro de 2025",
+    "registros_ate": "22/12/2025",
+    "saldo_medio": -1695.83,
+    "entradas_media": 4093.36,
+    "saidas_media": 5789.19,
+    "limiar_equilibrio_pct": 1.0,
+    "regra": "dono 2026-09-27 06:22: negativado = média dos meses completos"
+   },
+   "situacao_mes_recente": "FALTOU",
+   "mes_referencia": {
+    "anomes": 202511,
+    "nome": "novembro de 2025",
+    "entradas": 5912.53,
+    "saidas": 6578.76,
+    "saldo": -666.23,
+    "situacao": "FALTOU",
+    "papel": "informativo: o mês mais recente não decide a situação da conversa (regra do dono, 06:22)"
+   },
+   "situacao_media": "FALTOU",
+   "divida": {
+    "estado": "MEDIDO",
+    "emprestimos_mensal_medio": 146.62,
+    "juros_pagos_mensal_medio": 108.19,
+    "divida_mensal_medio": 254.81,
+    "multas_por_atraso_na_janela": 0,
+    "pct_da_entrada_media": 6.2,
+    "limiar_pct": 10.0,
+    "relevante": false
+   },
+   "inclinacao": {
+    "estado": "MEDIDO",
+    "alta": {
+     "subcategoria": "Mercado",
+     "media_janela": 142.83,
+     "media_recente": 241.88,
+     "diferenca": 99.05,
+     "variacao_pct": 69.3
+    },
+    "queda": {
+     "subcategoria": "Vestuario e acessorios",
+     "media_janela": 650.22,
+     "media_recente": 515.95,
+     "diferenca": -134.27,
+     "variacao_pct": -20.6
+    },
+    "recentes": "setembro de 2025 a novembro de 2025",
+    "janela": "janeiro de 2025 a novembro de 2025"
+   },
+   "cenarios_esperados": [
+    "inclinacao_gasto",
+    "financeiro_geral",
+    "fora_do_contexto"
+   ],
+   "estados_fontes": {
+    "perfil": "MEDIDO",
+    "mensal": "MEDIDO",
+    "subcategorias": "MEDIDO"
+   },
+   "selo": {
+    "perfil": {
+     "jobs": {
+      "perfil_t3": "a007675f-3ad7-48b5-98e6-17ec8e6d46b2",
+      "renda": "0e343e8a-094b-4434-917e-f4cefbf5422f",
+      "dividas": "25c6e535-3be1-4e0e-bc38-cd7338cf97b1",
+      "recorrencias": "212f1683-7236-4d3f-871e-0ca423ba6512",
+      "discricionario": "99093827-7caa-4463-8a6f-d72256f17b7d"
+     },
+     "medido_em": "2026-09-27T06:58:26-03:00",
+     "bytes_processados": 192329813,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "mensal": {
+     "jobs": {
+      "mensal_50_30_20": "88fbd8e9-92aa-4983-b450-3ba2a22c0288"
+     },
+     "medido_em": "2026-09-27T06:58:26-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "subcategorias": {
+     "jobs": {
+      "subcategorias_mensal": "207eb577-6a07-4f83-8621-edf7c65058ec"
+     },
+     "medido_em": "2026-09-27T06:58:26-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    }
+   },
+   "tempo_ms": 1235
+  },
+  {
+   "indice": 699,
+   "codigo": "b31852b3-b06d-44d9-9080-b707a704a4ec",
+   "pessoa": "Otávio",
+   "genero": "M",
+   "t3": "Esbanjador",
+   "taxa_surplus_pct": -36.44,
+   "situacao": "FALTOU",
+   "situacao_conversa": {
+    "situacao": "FALTOU",
+    "base": "media_meses_completos",
+    "janela": "janeiro de 2025 a novembro de 2025",
+    "registros_ate": "22/12/2025",
+    "saldo_medio": -1499.96,
+    "entradas_media": 4116.11,
+    "saidas_media": 5616.07,
+    "limiar_equilibrio_pct": 1.0,
+    "regra": "dono 2026-09-27 06:22: negativado = média dos meses completos"
+   },
+   "situacao_mes_recente": "EQUILIBRIO",
+   "mes_referencia": {
+    "anomes": 202511,
+    "nome": "novembro de 2025",
+    "entradas": 6004.85,
+    "saidas": 6027.18,
+    "saldo": -22.33,
+    "situacao": "EQUILIBRIO",
+    "papel": "informativo: o mês mais recente não decide a situação da conversa (regra do dono, 06:22)"
+   },
+   "situacao_media": "FALTOU",
+   "divida": {
+    "estado": "MEDIDO",
+    "emprestimos_mensal_medio": 82.41,
+    "juros_pagos_mensal_medio": 155.64,
+    "divida_mensal_medio": 238.05,
+    "multas_por_atraso_na_janela": 0,
+    "pct_da_entrada_media": 5.8,
+    "limiar_pct": 10.0,
+    "relevante": false
+   },
+   "inclinacao": {
+    "estado": "MEDIDO",
+    "alta": {
+     "subcategoria": "Salao de beleza ou barbearia",
+     "media_janela": 59.27,
+     "media_recente": 100.62,
+     "diferenca": 41.35,
+     "variacao_pct": 69.8
+    },
+    "queda": {
+     "subcategoria": "Vestuario e acessorios",
+     "media_janela": 618.58,
+     "media_recente": 495.8,
+     "diferenca": -122.78,
+     "variacao_pct": -19.8
+    },
+    "recentes": "setembro de 2025 a novembro de 2025",
+    "janela": "janeiro de 2025 a novembro de 2025"
+   },
+   "cenarios_esperados": [
+    "inclinacao_gasto",
+    "financeiro_geral",
+    "fora_do_contexto"
+   ],
+   "estados_fontes": {
+    "perfil": "MEDIDO",
+    "mensal": "MEDIDO",
+    "subcategorias": "MEDIDO"
+   },
+   "selo": {
+    "perfil": {
+     "jobs": {
+      "perfil_t3": "948025e9-1e45-44f0-8991-083a6ccb741b",
+      "renda": "c87a2604-d4af-4ef7-a97d-c149ee39aab4",
+      "dividas": "dc11fc81-50d3-4f99-9873-ff2174d0e5e1",
+      "recorrencias": "a992c6ac-3696-460b-a438-d9eb7bb4b76c",
+      "discricionario": "aa5849dd-1582-4f82-883b-75aeb0290268"
+     },
+     "medido_em": "2026-09-27T06:58:27-03:00",
+     "bytes_processados": 192329813,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "mensal": {
+     "jobs": {
+      "mensal_50_30_20": "a52344ec-e609-4865-8be7-574c520e74e6"
+     },
+     "medido_em": "2026-09-27T06:58:27-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "subcategorias": {
+     "jobs": {
+      "subcategorias_mensal": "1fc5455a-37dd-4aa9-82f5-e789a79c1ea9"
+     },
+     "medido_em": "2026-09-27T06:58:28-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    }
+   },
+   "tempo_ms": 1322
+  },
+  {
+   "indice": 988,
+   "codigo": "fd527099-e541-414c-bbca-199afb03ca55",
+   "pessoa": "Beatriz",
+   "genero": "F",
+   "t3": "Esbanjador",
+   "taxa_surplus_pct": 10.06,
+   "situacao": "SOBROU",
+   "situacao_conversa": {
+    "situacao": "SOBROU",
+    "base": "media_meses_completos",
+    "janela": "janeiro de 2025 a novembro de 2025",
+    "registros_ate": "22/12/2025",
+    "saldo_medio": 480.4,
+    "entradas_media": 4774.12,
+    "saidas_media": 4293.72,
+    "limiar_equilibrio_pct": 1.0,
+    "regra": "dono 2026-09-27 06:22: negativado = média dos meses completos"
+   },
+   "situacao_mes_recente": "SOBROU",
+   "mes_referencia": {
+    "anomes": 202511,
+    "nome": "novembro de 2025",
+    "entradas": 4869.74,
+    "saidas": 4732.93,
+    "saldo": 136.81,
+    "situacao": "SOBROU",
+    "papel": "informativo: o mês mais recente não decide a situação da conversa (regra do dono, 06:22)"
+   },
+   "situacao_media": "SOBROU",
+   "divida": {
+    "estado": "MEDIDO",
+    "emprestimos_mensal_medio": 0.0,
+    "juros_pagos_mensal_medio": 45.2,
+    "divida_mensal_medio": 45.2,
+    "multas_por_atraso_na_janela": 0,
+    "pct_da_entrada_media": 0.9,
+    "limiar_pct": 10.0,
+    "relevante": false
+   },
+   "inclinacao": {
+    "estado": "MEDIDO",
+    "alta": {
+     "subcategoria": "Moveis e decoracao",
+     "media_janela": 128.7,
+     "media_recente": 334.78,
+     "diferenca": 206.08,
+     "variacao_pct": 160.1
+    },
+    "queda": null,
+    "recentes": "setembro de 2025 a novembro de 2025",
+    "janela": "janeiro de 2025 a novembro de 2025"
+   },
+   "cenarios_esperados": [
+    "inclinacao_gasto",
+    "financeiro_geral",
+    "fora_do_contexto"
+   ],
+   "estados_fontes": {
+    "perfil": "MEDIDO",
+    "mensal": "MEDIDO",
+    "subcategorias": "MEDIDO"
+   },
+   "selo": {
+    "perfil": {
+     "jobs": {
+      "perfil_t3": "45be1d23-8e91-4fe0-ab78-198804a780c3",
+      "renda": "d9b987fb-7510-4b0b-a5b5-f990407fc123",
+      "dividas": "1e37ca20-0a70-4545-bc64-85e4ab68698d",
+      "recorrencias": "342cccfb-9206-4236-b82a-318bcd035166",
+      "discricionario": "09e1517f-07a8-41d7-8ac7-a0d23c78e691"
+     },
+     "medido_em": "2026-09-27T06:58:29-03:00",
+     "bytes_processados": 192329813,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "mensal": {
+     "jobs": {
+      "mensal_50_30_20": "a0567aa8-1959-4298-afc0-b49f946c7366"
+     },
+     "medido_em": "2026-09-27T06:58:29-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "subcategorias": {
+     "jobs": {
+      "subcategorias_mensal": "1a41716e-73d7-4dcd-84dd-fbcf873ea641"
+     },
+     "medido_em": "2026-09-27T06:58:29-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    }
+   },
+   "tempo_ms": 1243
+  },
+  {
+   "indice": 838,
+   "codigo": "d734dda2-4cc5-425c-8819-563bbbbbbe8a",
+   "pessoa": "Mariana",
+   "genero": "F",
+   "t3": "Livre",
+   "taxa_surplus_pct": 24.03,
+   "situacao": "SOBROU",
+   "situacao_conversa": {
+    "situacao": "SOBROU",
+    "base": "media_meses_completos",
+    "janela": "janeiro de 2025 a novembro de 2025",
+    "registros_ate": "22/12/2025",
+    "saldo_medio": 1758.55,
+    "entradas_media": 7317.2,
+    "saidas_media": 5558.65,
+    "limiar_equilibrio_pct": 1.0,
+    "regra": "dono 2026-09-27 06:22: negativado = média dos meses completos"
+   },
+   "situacao_mes_recente": "SOBROU",
+   "mes_referencia": {
+    "anomes": 202511,
+    "nome": "novembro de 2025",
+    "entradas": 7060.73,
+    "saidas": 5481.58,
+    "saldo": 1579.15,
+    "situacao": "SOBROU",
+    "papel": "informativo: o mês mais recente não decide a situação da conversa (regra do dono, 06:22)"
+   },
+   "situacao_media": "SOBROU",
+   "divida": {
+    "estado": "MEDIDO",
+    "emprestimos_mensal_medio": 99.24,
+    "juros_pagos_mensal_medio": 56.12,
+    "divida_mensal_medio": 155.36,
+    "multas_por_atraso_na_janela": 0,
+    "pct_da_entrada_media": 2.1,
+    "limiar_pct": 10.0,
+    "relevante": false
+   },
+   "inclinacao": {
+    "estado": "MEDIDO",
+    "alta": null,
+    "queda": {
+     "subcategoria": "Eletronicos",
+     "media_janela": 168.4,
+     "media_recente": 0.0,
+     "diferenca": -168.4,
+     "variacao_pct": -100.0
+    },
+    "recentes": "setembro de 2025 a novembro de 2025",
+    "janela": "janeiro de 2025 a novembro de 2025"
+   },
+   "cenarios_esperados": [
+    "inclinacao_gasto",
+    "financeiro_geral",
+    "fora_do_contexto"
+   ],
+   "estados_fontes": {
+    "perfil": "MEDIDO",
+    "mensal": "MEDIDO",
+    "subcategorias": "MEDIDO"
+   },
+   "selo": {
+    "perfil": {
+     "jobs": {
+      "perfil_t3": "b81106b3-5bde-4de5-aa2d-7d89eedaaf60",
+      "renda": "8a8dc736-23d3-46a8-aa9a-d57c804e4e3d",
+      "dividas": "ba637cc5-ba47-4b4b-90af-6d9ec0fc18d1",
+      "recorrencias": "862d3e39-4553-43db-8f52-415c37a758fc",
+      "discricionario": "d426c149-bd6b-4492-9ccb-3f058ca63294"
+     },
+     "medido_em": "2026-09-27T06:58:30-03:00",
+     "bytes_processados": 192329813,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "mensal": {
+     "jobs": {
+      "mensal_50_30_20": "939eecea-4c73-4dbd-93c4-dd0707b0162f"
+     },
+     "medido_em": "2026-09-27T06:58:30-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    },
+    "subcategorias": {
+     "jobs": {
+      "subcategorias_mensal": "efa51246-0c72-4a16-a7a1-626a781ea875"
+     },
+     "medido_em": "2026-09-27T06:58:30-03:00",
+     "bytes_processados": 41108291,
+     "cache": false,
+     "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico"
+    }
+   },
+   "tempo_ms": 1335
+  }
+ ],
+ "versao": 2,
+ "mudanca": "v2 (regra do dono 06:22, conflito medido pelo front 06:53): situacao = sinal do saldo MEDIO mensal da janela jan-nov/2025; mesmos 6 usuarios da v1 (06:50), remedidos. v1 usava o mes de nov/2025.",
+ "candidatos_medidos": [
+  {
+   "indice": 1,
+   "t3": "Vulnerável",
+   "situacao": "FALTOU",
+   "situacao_mes_recente": "SOBROU",
+   "consolidacao": true
+  },
+  {
+   "indice": 401,
+   "t3": "Vulnerável",
+   "situacao": "FALTOU",
+   "situacao_mes_recente": "FALTOU",
+   "consolidacao": true
+  },
+  {
+   "indice": 906,
+   "t3": "Esbanjador",
+   "situacao": "FALTOU",
+   "situacao_mes_recente": "FALTOU",
+   "consolidacao": false
+  },
+  {
+   "indice": 699,
+   "t3": "Esbanjador",
+   "situacao": "FALTOU",
+   "situacao_mes_recente": "EQUILIBRIO",
+   "consolidacao": false
+  },
+  {
+   "indice": 988,
+   "t3": "Esbanjador",
+   "situacao": "SOBROU",
+   "situacao_mes_recente": "SOBROU",
+   "consolidacao": false
+  },
+  {
+   "indice": 838,
+   "t3": "Livre",
+   "situacao": "SOBROU",
+   "situacao_mes_recente": "SOBROU",
+   "consolidacao": false
+  },
+  {
+   "indice": 50,
+   "t3": "Vulnerável",
+   "situacao": "FALTOU",
+   "situacao_mes_recente": "SOBROU",
+   "consolidacao": true
+  },
+  {
+   "indice": 317,
+   "t3": "Livre",
+   "situacao": "SOBROU",
+   "situacao_mes_recente": "SOBROU",
+   "consolidacao": false
+  },
+  {
+   "indice": 3,
+   "t3": "Esbanjador",
+   "situacao": "SOBROU",
+   "situacao_mes_recente": "FALTOU",
+   "consolidacao": false
+  },
+  {
+   "indice": 709,
+   "t3": "Vulnerável",
+   "situacao": "FALTOU",
+   "situacao_mes_recente": "FALTOU",
+   "consolidacao": false
+  },
+  {
+   "indice": 542,
+   "t3": "Vulnerável",
+   "situacao": "FALTOU",
+   "situacao_mes_recente": "SOBROU",
+   "consolidacao": true
+  },
+  {
+   "indice": 354,
+   "t3": "Livre",
+   "situacao": "SOBROU",
+   "situacao_mes_recente": "SOBROU",
+   "consolidacao": false
+  },
+  {
+   "indice": 605,
+   "t3": "Esbanjador",
+   "situacao": "SOBROU",
+   "situacao_mes_recente": "FALTOU",
+   "consolidacao": false
+  },
+  {
+   "indice": 460,
+   "t3": "Esbanjador",
+   "situacao": "SOBROU",
+   "situacao_mes_recente": "SOBROU",
+   "consolidacao": false
+  }
+ ],
+ "estratos_medidos_nos_14_candidatos": {
+  "Esbanjador x FALTOU": 2,
+  "Esbanjador x SOBROU": 4,
+  "Livre x SOBROU": 3,
+  "Vulnerável x FALTOU": 5
+ },
+ "estratos_sem_representante": "Vulneravel x SOBROU, Livre x FALTOU e todo EQUILIBRIO: nenhum dos 14 candidatos medidos cai neles (NAO_MEDIDO na amostra; nao se procurou nos 1000)."
+}

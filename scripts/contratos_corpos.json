@@ -1,0 +1,16 @@
+{
+ "_nota": "Corpos JSON (UTF-8) usados por scripts/verificar_contratos.py. {SESSAO} e {UUID} sao trocados em tempo de execucao.",
+ "pergunta_assinaturas": {"pergunta": "Quanto eu gasto com assinaturas?"},
+ "pergunta_vazia": {},
+ "proposta_ref1": {"ref": "1"},
+ "proposta_sem_ref": {},
+ "definir_1": {"usuario": "1"},
+ "definir_inexistente": {"usuario": "99999"},
+ "definir_vazio": {},
+ "perfil_pergunta": {"sessao_id": "{SESSAO}", "pergunta": "quem sou eu?"},
+ "perfil_pergunta_sessao_falsa": {"sessao_id": "sessao-que-nao-existe", "pergunta": "quem sou eu?"},
+ "mensagem": {"schema_version": "1.0", "conversation_id": null, "client_message_id": "{UUID}", "message": "quanto eu gasto por mês?"},
+ "mensagem_com_sessao_no_corpo": {"schema_version": "1.0", "conversation_id": null, "client_message_id": "{UUID}", "message": "olá", "sessao_id": "{SESSAO}"},
+ "interacao_home": {"etapa": "home.visao_conta"},
+ "interacao_etapa_invalida": {"etapa": "etapa.que.nao.existe"}
+}

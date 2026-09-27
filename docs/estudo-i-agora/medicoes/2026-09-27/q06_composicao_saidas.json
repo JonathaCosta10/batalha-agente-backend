@@ -1,0 +1,136 @@
+{
+  "consulta": "q06_composicao_saidas.sql",
+  "fonte": "batalha-time-02-lxof.hackathon_dados.extrato_sintetico",
+  "medido_em": "2026-09-27T03:48 BRT",
+  "autenticacao": "ADC",
+  "job_id": "d7d0343c-0e26-424e-9db5-140e359143f2",
+  "bytes_processados": 11852068,
+  "linhas": [
+    {
+      "nom_cate_macro": "Emprestimos e financiamentos",
+      "registros": 10927,
+      "soma_abs_vlr": 24960845.79,
+      "pct_das_saidas": 24.57
+    },
+    {
+      "nom_cate_macro": "Produtos financeiros",
+      "registros": 35338,
+      "soma_abs_vlr": 20022262.97,
+      "pct_das_saidas": 19.71
+    },
+    {
+      "nom_cate_macro": "Casa",
+      "registros": 78148,
+      "soma_abs_vlr": 14336026.7,
+      "pct_das_saidas": 14.11
+    },
+    {
+      "nom_cate_macro": "Educacao",
+      "registros": 9104,
+      "soma_abs_vlr": 7888477.85,
+      "pct_das_saidas": 7.76
+    },
+    {
+      "nom_cate_macro": "Lojas e sites",
+      "registros": 31256,
+      "soma_abs_vlr": 4812353.2,
+      "pct_das_saidas": 4.74
+    },
+    {
+      "nom_cate_macro": "Transferencias diversas",
+      "registros": 23645,
+      "soma_abs_vlr": 4480825.7,
+      "pct_das_saidas": 4.41
+    },
+    {
+      "nom_cate_macro": "Lazer",
+      "registros": 10931,
+      "soma_abs_vlr": 4239518.23,
+      "pct_das_saidas": 4.17
+    },
+    {
+      "nom_cate_macro": "Veiculos",
+      "registros": 12855,
+      "soma_abs_vlr": 3512788.54,
+      "pct_das_saidas": 3.46
+    },
+    {
+      "nom_cate_macro": "Mercado",
+      "registros": 45763,
+      "soma_abs_vlr": 3048734.2,
+      "pct_das_saidas": 3.0
+    },
+    {
+      "nom_cate_macro": "Viagens",
+      "registros": 7705,
+      "soma_abs_vlr": 2651326.84,
+      "pct_das_saidas": 2.61
+    },
+    {
+      "nom_cate_macro": "Restaurantes",
+      "registros": 39684,
+      "soma_abs_vlr": 2506634.31,
+      "pct_das_saidas": 2.47
+    },
+    {
+      "nom_cate_macro": "Delivery",
+      "registros": 27886,
+      "soma_abs_vlr": 1576423.37,
+      "pct_das_saidas": 1.55
+    },
+    {
+      "nom_cate_macro": "Outros gastos",
+      "registros": 9795,
+      "soma_abs_vlr": 1573570.29,
+      "pct_das_saidas": 1.55
+    },
+    {
+      "nom_cate_macro": "Posto de combustivel",
+      "registros": 20802,
+      "soma_abs_vlr": 1512351.02,
+      "pct_das_saidas": 1.49
+    },
+    {
+      "nom_cate_macro": "Boletos diversos",
+      "registros": 1444,
+      "soma_abs_vlr": 1230748.0,
+      "pct_das_saidas": 1.21
+    },
+    {
+      "nom_cate_macro": "Assinaturas",
+      "registros": 36252,
+      "soma_abs_vlr": 1005603.28,
+      "pct_das_saidas": 0.99
+    },
+    {
+      "nom_cate_macro": "Cuidados pessoais",
+      "registros": 5618,
+      "soma_abs_vlr": 945221.55,
+      "pct_das_saidas": 0.93
+    },
+    {
+      "nom_cate_macro": "Saque",
+      "registros": 1527,
+      "soma_abs_vlr": 593955.04,
+      "pct_das_saidas": 0.58
+    },
+    {
+      "nom_cate_macro": "Transporte por app",
+      "registros": 18692,
+      "soma_abs_vlr": 344398.62,
+      "pct_das_saidas": 0.34
+    },
+    {
+      "nom_cate_macro": "Transporte publico",
+      "registros": 4104,
+      "soma_abs_vlr": 225080.77,
+      "pct_das_saidas": 0.22
+    },
+    {
+      "nom_cate_macro": "Pets",
+      "registros": 1032,
+      "soma_abs_vlr": 141683.46,
+      "pct_das_saidas": 0.14
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Primeira chamada: envio",
+  "description": "Corpo do POST /api/v1/context-agent/primeira-chamada/. Somente o texto inicial da conversa é aceito.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["texto_inicial"],
+  "properties": {
+    "texto_inicial": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S",
+      "description": "Primeira mensagem escrita pelo usuário; sem histórico nem contexto do cliente."
+    }
+  }
+}
