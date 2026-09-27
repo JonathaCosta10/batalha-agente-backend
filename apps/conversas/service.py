@@ -207,14 +207,12 @@ class ConversationService:
             tipo = erros_api.tipo_de(status_erro, 'provedor')
             if isinstance(error, RespostaInvalida):
                 tipo = 'resposta_modelo_invalida'  # 1.3.0: saída cortada/fora do schema em todos os modelos tentados
-            bloco = erros_api.erro_api(status_erro, 'provedor', tipo=tipo)
             # cotas-gemini 1.1.0 (dono 14:09): a espera é a do modelo da etapa que fica livre primeiro (router), não o
-            # fixo da política (antes "30 s" com os modelos livres só daqui a ~14 min); cota_dia em todos é dita.
-            espera_real = getattr(error, 'espera_restante_s', None)
-            if bloco and espera_real and bloco.get('tentar_novamente_em_s') is not None:
-                bloco['tentar_novamente_em_s'] = espera_real
-            if bloco and getattr(error, 'motivo_bloqueio', None):
-                bloco['motivo_provedor'] = error.motivo_bloqueio
+            # fixo da política; o mesmo número vai para a mensagem (live 14:25: "10" no campo e "30 s" no texto).
+            # motivo_provedor = o do erro que definiu o tipo (live 14:25: 429 saiu com motivo 'timeout').
+            bloco = erros_api.erro_api(status_erro, 'provedor', tipo=tipo,
+                                       espera_s=getattr(error, 'espera_restante_s', None),
+                                       motivo_provedor=getattr(error, 'motivo_bloqueio', None))
             result = self.release(code='technical', conversation_id=cid, http_status=erros_api.http_de(tipo),
                                   erro_api=bloco)
         # Turno com falha (erro_api) fica marcado `falha` e NÃO vai ao Gemini nos turnos seguintes (ia como fala do

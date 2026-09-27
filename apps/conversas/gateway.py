@@ -49,6 +49,17 @@ RESERVA_APOS_S = {'input_guard': 18, 'generate': 8, 'output_guard': 2}
 MIN_TENTATIVA_S = 3  # abaixo disto não se começa uma chamada (o guard mais rápido medido levou 0,9 s; generate 2,7 s)
 
 
+def motivo_do_erro(error):
+    """Motivo (vocabulário do router) do erro de UMA tentativa; coerente com o status que define o tipo do front."""
+    if isinstance(error, RespostaInvalida):
+        return 'resposta_invalida'
+    status = erros_api.status_de(error)
+    if status == 429:
+        return 'cota_dia' if getattr(error, 'cota', None) == 'dia' else 'cota_minuto'
+    return {504: 'timeout', 404: 'nao_encontrado'}.get(status) or \
+        ('indisponivel' if isinstance(status, int) and status >= 500 else None)
+
+
 def timeout_da_tentativa(stage, agora=None, teto=None):
     """Segundos para a próxima tentativa da etapa; pode vir < MIN_TENTATIVA_S (quem chama decide não tentar).
     `teto`: `capacidades.<modelo>.timeout_s.<etapa>` (cotas-gemini 1.1.0); None = TETO_ADAPTATIVO_S."""
@@ -306,7 +317,11 @@ class GeminiGateway:
         do dia."""
         try:
             error.espera_restante_s = self.roteador.espera_restante(stage)
-            error.motivo_bloqueio = self.roteador.motivo_bloqueio(stage)
+            if getattr(error, 'cota', None) == 'resfriamento':
+                # nenhuma chamada: o motivo é o do bloqueio que deu o status (429 -> cota_*/rpm, nunca 'timeout')
+                error.motivo_bloqueio = self.roteador.motivo_bloqueio(stage, status=getattr(error, 'code', None))
+            else:
+                error.motivo_bloqueio = motivo_do_erro(error)  # o da ÚLTIMA tentativa, que define o tipo
         except AttributeError:
             pass
 
@@ -317,7 +332,7 @@ class GeminiGateway:
         em_ordem = erros_api.carregar().limites.troca_de_modelo_no_turno == 'ordem_no_prazo'
         tentados, novas_http, nova = set(), 0, False
         # a 1ª tentativa sempre sai (o wait_for do turno é o teto); teto por modelo vem de capacidades.timeout_s
-        timeout = max(1.0, timeout_da_tentativa(stage, teto=self.roteador.timeout_s(modelo, stage)))
+        timeout = max(1.0, timeout_da_tentativa(stage, teto=self.roteador.teto_tentativa(modelo, stage)))
         while True:
             try:
                 return await self._uma_chamada(stage, modelo, instruction, digest, texto, schema,
@@ -344,7 +359,7 @@ class GeminiGateway:
                     raise
                 espera = erros_api.espera_no_servidor(status)
                 timeout = timeout_da_tentativa(stage, time.monotonic() + espera,
-                                               teto=self.roteador.timeout_s(proximo, stage))
+                                               teto=self.roteador.teto_tentativa(proximo, stage))
                 if timeout < MIN_TENTATIVA_S:
                     raise  # a próxima tentativa não cabe no prazo do turno: sai o erro desta
                 if espera:

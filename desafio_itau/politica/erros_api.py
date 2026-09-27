@@ -126,7 +126,7 @@ def http_de(tipo):
     return carregar().tipos[tipo].http
 
 
-def erro_api(status, origem='api', tipo=None):
+def erro_api(status, origem='api', tipo=None, espera_s=None, motivo_provedor=None):
     """Bloco aditivo do envelope. `origem`: 'provedor' (falha do Gemini) ou 'api' (validação da nossa rota).
 
     None só para sucesso da nossa API (status None ou < 400, sem `tipo`). Qualquer falha tem bloco com `tipo` e
@@ -148,10 +148,13 @@ def erro_api(status, origem='api', tipo=None):
         t = pol.nao_classificado
     acao = tt.acao_cliente or t.acao_cliente
     mensagem = tt.mensagem_cliente or t.mensagem_cliente
+    # 1.4.0 (live 14:25): a espera real do router (`espera_s`) vale para o número E para a mensagem; antes a mensagem
+    # dizia o fixo da linha (30 s) e o número dizia 10.
+    espera = int(espera_s) if isinstance(espera_s, (int, float)) and espera_s > 0 else t.espera_s
     codigo = int(status) if isinstance(status, int) and not isinstance(status, bool) and status >= 400 else tt.codigo
     return {'codigo': codigo, 'tipo': tipo, 'nome': t.nome, 'origem': origem,
             'acao_cliente': acao,
-            'tentar_novamente_em_s': t.espera_s if acao.startswith('aguardar') else None,
+            'tentar_novamente_em_s': espera if acao.startswith('aguardar') else None,
             'encaminhar_humano': t.encaminhar_humano,
-            'mensagem': mensagem.format(espera_s=t.espera_s),
-            'politica': f'{pol.id}@{pol.versao}'}
+            'mensagem': mensagem.format(espera_s=espera),
+            'politica': f'{pol.id}@{pol.versao}'} | ({'motivo_provedor': motivo_provedor} if motivo_provedor else {})

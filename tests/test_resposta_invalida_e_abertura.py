@@ -90,13 +90,13 @@ class RespostaInvalidaSegueAOrdem(unittest.TestCase):
         """:8013 13:20: guard 3.1-flash-lite timeout -> o mais rápido (3.5-flash-lite) 429 dia -> antes parava ali."""
         g, chamadas, _ = gateway({G[0]: TimeoutError(), 'gemini-3.5-flash-lite': ErroProvedor(429, 'dia')})
         self.assertEqual(guard(g)['decision'], 'release')
-        self.assertEqual(chamadas, [G[0], 'gemini-3.5-flash-lite', 'gemini-3.6-flash'])
+        self.assertEqual(chamadas, [G[0], 'gemini-3.5-flash-lite', G[1]])
 
     def test_429_por_minuto_depois_de_timeout_segue_a_ordem(self):
         """erros_api 1.4.0 ('ordem_no_prazo'): antes parava na 2ª chamada; agora segue ao próximo não tentado."""
         g, chamadas, _ = gateway({G[0]: TimeoutError(), 'gemini-3.5-flash-lite': ErroProvedor(429, 'minuto', 20)})
         self.assertEqual(guard(g)['decision'], 'release')
-        self.assertEqual(chamadas, [G[0], 'gemini-3.5-flash-lite', 'gemini-3.6-flash'])
+        self.assertEqual(chamadas, [G[0], 'gemini-3.5-flash-lite', G[1]])
 
     def test_prova_negativa_503_em_todos_cada_modelo_uma_vez_e_sai_503(self):
         g, chamadas, _ = gateway({m: ErroProvedor(503) for m in G})

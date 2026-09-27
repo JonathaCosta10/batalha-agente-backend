@@ -63,6 +63,8 @@ class Resfriamento(_E):
     nao_encontrado: int = Field(ge=0)
 
 
+STATUS_DO_MOTIVO = {'cota_dia': 429, 'cota_minuto': 429, 'rpm_processo': 429, 'timeout': 504, 'indisponivel': 503,
+                    'nao_encontrado': 404}
 MOTIVOS = Literal['cota_dia', 'cota_minuto', 'timeout', 'indisponivel', 'nao_encontrado']
 ETAPA = Literal['input_guard', 'output_guard', 'generate']
 
@@ -76,6 +78,11 @@ class Router(_E):
     # 1.1.0 (dono 14:09): resfriamento transitório só despromove; com todos bloqueados, o de menor espera transitória
     # é tentado como último recurso. Fora desta lista (cota_dia, nao_encontrado) o modelo fica mesmo excluído.
     transitorios: list[MOTIVOS] = []
+    # 1.2.0 (live 14:25): teto da tentativa = min(timeout_s, max(teto_piso_s, teto_fator_mediana × mediana medida)).
+    teto_fator_mediana: float = Field(default=3.0, gt=0)
+    teto_piso_s: float = Field(default=6.0, gt=0)
+    # 1.2.0: etapas cuja ordem TEM de seguir a latência mediana medida (modelos NAO_MEDIDO não entram na conta).
+    ordem_por_latencia: list[ETAPA] = []
 
 
 class Limite(_E):
@@ -139,6 +146,11 @@ def validar(bruto):
             cap = dados.capacidades.get(m)
             if dados.capacidades and (cap is None or etapa not in cap.etapas or etapa not in cap.timeout_s):
                 raise ValueError(f'Modelo {m} na ordem de {etapa} sem capacidade declarada para a etapa')
+        if etapa in dados.router.ordem_por_latencia:
+            medidas = [dados.capacidades[m].latencia_mediana_ms.get(etapa) for m in ordem]
+            valores = [x.valor_ms for x in medidas if x is not None and x.valor_ms is not None]
+            if valores != sorted(valores):
+                raise ValueError(f'Ordem de {etapa} fora da latência mediana medida: {valores}')
     return dados
 
 
@@ -174,6 +186,17 @@ class Roteador:
     def timeout_s(self, modelo, etapa):
         cap = self.dados.capacidades.get(modelo)
         return cap.timeout_s.get(etapa) if cap else None
+
+    def teto_tentativa(self, modelo, etapa):
+        """Teto de UMA tentativa (live 14:25: 3.1-flash-lite gastou 15,8 e 20,1 s no generate, mediana 3,7 s):
+        min(timeout_s da etapa, max(piso, fator × mediana medida)). Mediana NAO_MEDIDO -> timeout_s da etapa."""
+        teto = self.timeout_s(modelo, etapa)
+        cap = self.dados.capacidades.get(modelo)
+        medida = cap.latencia_mediana_ms.get(etapa) if cap else None
+        if teto is None or medida is None or medida.valor_ms is None:
+            return teto
+        r = self.dados.router
+        return min(teto, max(r.teto_piso_s, r.teto_fator_mediana * medida.valor_ms / 1000))
 
     def max_output_tokens(self, modelo, papel):
         cap = self.dados.capacidades.get(modelo)
@@ -245,15 +268,16 @@ class Roteador:
         menor = min(esperas) if esperas else 0
         return max(1, int(menor + 0.999)) if menor > 0 else None
 
-    def motivo_bloqueio(self, etapa):
-        """'cota_dia' quando TODOS os modelos da etapa estão sem cota do dia; senão o motivo do de menor espera."""
+    def motivo_bloqueio(self, etapa, status=None):
+        """'cota_dia' quando TODOS os modelos da etapa estão sem cota do dia; senão o motivo do de menor espera.
+        Com `status`, só motivos que dão esse status (429 -> cota_*/rpm_processo; nunca 'timeout' num 429)."""
         agora = self.relogio()
         with self._lock:
             pares = [self._espera(m, agora) for m in self.dados.router.etapas[etapa]]
         motivos = [mo for _e, mo in pares]
         if motivos and all(mo == 'cota_dia' for mo in motivos):
             return 'cota_dia'
-        ativos = [(e, mo) for e, mo in pares if mo]
+        ativos = [(e, mo) for e, mo in pares if mo and (status is None or STATUS_DO_MOTIVO.get(mo) == status)]
         return min(ativos)[1] if ativos else None
 
     def motivo_sem_modelo(self, etapa):

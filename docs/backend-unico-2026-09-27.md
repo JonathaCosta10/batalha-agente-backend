@@ -208,6 +208,14 @@ espera real da etapa, com `erro_api.motivo_provedor` (`cota_dia` quando todos es
 Tabela causa → backend → front → teste: [`rotacao-modelos-gemini.md`](rotacao-modelos-gemini.md) §4.1-4.2. Testes:
 `tests/test_capacidades_e_bloqueio.py` (14). Suíte **662 OK** (skipped=1, expected failures=22), 14:24 BRT.
 
+**Live pela :3000 em 284b7b2 (14:25 BRT, coordenador):** turno 1 → 504 aos 45,2 s (generate 3.1-flash-lite 503 depois
+de 15782 ms, output_guard sem prazo); turno 2 → 429 com `motivo_provedor: "timeout"` e "cerca de 30 segundos" contra
+`tentar_novamente_em_s: 10`. Correção (cotas-gemini 1.2.0, 1.1.0 arquivada): teto de cada tentativa = min(timeout_s,
+max(6 s, 3 × mediana medida)); output_guard ordenado pela latência medida (3.6-flash 1º), validado nos dados;
+`motivo_provedor` do erro da última tentativa (nunca 'timeout' num 429) e o mesmo número no campo e na mensagem.
+Testes `Live1425` (6) em `tests/test_capacidades_e_bloqueio.py`; suíte **668 OK** (skipped=1, expected failures=22),
+14:40 BRT. Não verificado ao vivo depois desta correção (a :8000 é reiniciada pelo coordenador).
+
 ## Códigos de erro para o front (erros_api 1.4.0)
 
 Todo erro de `conversas/*` e `i-agora/*` sai com `erro_api.codigo` **numérico** e `erro_api.tipo` **estável**, nunca

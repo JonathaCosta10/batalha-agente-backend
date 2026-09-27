@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "id": "cotas-gemini",
-  "versao": "1.2.0",
+  "versao": "1.1.0",
   "natureza": "dados_operacionais",
   "selo": {
     "limites": "Painel AI Studio 'Limites de taxa por modelo' (uso máximo dos últimos 28 dias / limite), colado pelo dono em 2026-09-27 12:39 BRT. NÃO medido pelo backend: o backend não lê cota restante (a API não expõe).",
@@ -217,7 +217,7 @@
     "Gemini 3.1 Pro"
   ],
   "router": {
-    "nota": "Ordem por etapa. Guards (chamadas pequenas) começam no gemini-3.1-flash-lite (painel 1/15 RPM, 1/500 RPD) e tiram 2/3 das chamadas da cota do principal; o generate começa no principal gemini-3.5-flash-lite. Só modelos com apto=true e sonda 200 com o corpo real (ou 429 de cota, que é temporário). 1.1.0 (dono 14:09 BRT): timeout/5xx resfriam só 15 s e são TRANSITÓRIOS — com todos os modelos da etapa bloqueados, o de menor espera transitória é tentado como último recurso; só cota_dia e 404 excluem de fato. 1.2.0 (live :3000 14:25 BRT): output_guard ordenado pela latência mediana medida (3.6-flash 2086 ms n=4 antes de 3.1-flash-lite 6906 ms n=2 com 4/6 timeouts), validado por `ordem_por_latencia`; custo: 3.6-flash tem 20 RPD, esgotado cai em cota_dia e o 3.1-flash-lite volta a ser o 1º. Teto de cada tentativa = min(timeout_s, max(6 s, 3 x mediana)).",
+    "nota": "Ordem por etapa. Guards (chamadas pequenas) começam no gemini-3.1-flash-lite (painel 1/15 RPM, 1/500 RPD) e tiram 2/3 das chamadas da cota do principal; o generate começa no principal gemini-3.5-flash-lite. Só modelos com apto=true e sonda 200 com o corpo real (ou 429 de cota, que é temporário). 1.1.0 (dono 14:09 BRT): timeout/5xx resfriam só 15 s e são TRANSITÓRIOS — com todos os modelos da etapa bloqueados, o de menor espera transitória é tentado como último recurso; só cota_dia e 404 excluem de fato.",
     "etapas": {
       "input_guard": [
         "gemini-3.1-flash-lite",
@@ -226,8 +226,8 @@
         "gemini-3.5-flash"
       ],
       "output_guard": [
-        "gemini-3.6-flash",
         "gemini-3.1-flash-lite",
+        "gemini-3.6-flash",
         "gemini-3.5-flash-lite",
         "gemini-3.5-flash"
       ],
@@ -256,11 +256,6 @@
       "timeout",
       "indisponivel",
       "cota_minuto"
-    ],
-    "teto_fator_mediana": 3.0,
-    "teto_piso_s": 6.0,
-    "ordem_por_latencia": [
-      "output_guard"
     ]
   },
   "capacidades": {
@@ -284,7 +279,7 @@
       },
       "etapas": {
         "input_guard": "1º dos guards: painel 1/15 RPM e 1/500 RPD (folga), guard 1,2-1,6 s medidos",
-        "output_guard": "2º do output_guard desde 1.2.0: mais lento que 3.6-flash (mediana 6906 ms, 4/6 timeouts de 10 s)",
+        "output_guard": "1º dos guards pela folga de cota; lento com 8-9 mil tokens de entrada (ver falhas)",
         "generate": "2º do generate: reserva do principal quando este está sem cota do dia"
       },
       "pensamento": {
@@ -323,8 +318,7 @@
       "falhas_observadas": [
         "output_guard: TimeoutError no teto fixo de 10 s em 4 de 6 tentativas (10078-10156 ms, 13:21-14:15 BRT)",
         "output_guard: finishReason MAX_TOKENS com teto de 512 (13:15 BRT), corrigido com 2048",
-        "policy_version vem com a data (ignora o const do schema), o servidor carimba (12:58 BRT)",
-        "generate: 503 depois de 15782 ms e falha em 20109 ms (live :3000 14:25 BRT), com mediana de 3672 ms"
+        "policy_version vem com a data (ignora o const do schema), o servidor carimba (12:58 BRT)"
       ]
     },
     "gemini-3.6-flash": {
@@ -347,7 +341,7 @@
       },
       "etapas": {
         "input_guard": "2º dos guards: rápido (2,2 s), mas só 5 RPM / 20 RPD",
-        "output_guard": "1º do output_guard desde 1.2.0: menor mediana medida (2086 ms, n=4); 20 RPD",
+        "output_guard": "2º dos guards: o mais rápido medido no output_guard (1,6-3,1 s)",
         "generate": "3º do generate: 20 RPD, guardado para quando os lite falham"
       },
       "pensamento": {
@@ -384,8 +378,7 @@
         }
       },
       "falhas_observadas": [
-        "503 UNAVAILABLE em rajada: 1156 ms (13:35), 2062 e 1219 ms (input_guard, ~14:07 BRT)",
-        "generate: 503 em 3515 e 3094 ms (live :3000 14:25 BRT)"
+        "503 UNAVAILABLE em rajada: 1156 ms (13:35), 2062 e 1219 ms (input_guard, ~14:07 BRT)"
       ]
     },
     "gemini-3.5-flash-lite": {
@@ -492,10 +485,10 @@
           "estado": "NAO_MEDIDO"
         },
         "generate": {
-          "valor_ms": 7735,
-          "n": 1,
-          "estado": "observado",
-          "fonte": "métricas da :8000 em 284b7b2, turno live pela :3000 às 14:25 BRT (coordenador)"
+          "valor_ms": null,
+          "n": 0,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "NAO_MEDIDO"
         },
         "output_guard": {
           "valor_ms": null,

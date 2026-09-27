@@ -175,7 +175,7 @@ class HistoricoSemFalha(unittest.TestCase):
 class Capacidades(unittest.TestCase):
     def test_capacidades_declaradas_para_toda_a_ordem_e_lidas_pelo_router(self):
         dados = rt.carregar()
-        self.assertEqual(dados.versao, '1.1.0')
+        self.assertEqual(dados.versao, '1.2.0')
         r = rt.Roteador(relogio=Relogio())
         for etapa, ordem in dados.router.etapas.items():
             for m in ordem:
@@ -215,6 +215,83 @@ class Capacidades(unittest.TestCase):
         self.assertEqual((caps[LITE35]['agora']['motivo'], caps[LITE35]['agora']['transitorio']), ('cota_dia', False))
         self.assertEqual((caps[FLASH36]['agora']['estado'], caps[FLASH36]['agora']['rpm_usado']), ('livre', 1))
         self.assertIn('falhas_observadas', caps[LITE31])
+
+
+class Live1425(unittest.TestCase):
+    """Live :3000 em 284b7b2, 14:25 BRT: generate 3.1-flash-lite 503 depois de 15782 ms e falha em 20109 ms (mediana
+    3672 ms) -> 504 aos 45,2 s; 2º turno 429 com tentar_novamente_em_s 10, motivo 'timeout' e texto "cerca de 30 s"."""
+
+    def test_1_teto_da_tentativa_por_mediana(self):
+        r = rt.Roteador(relogio=Relogio())
+        self.assertAlmostEqual(r.teto_tentativa(LITE31, 'generate'), 3 * 3.672)     # 11 s, não 20
+        self.assertEqual(r.teto_tentativa(LITE31, 'input_guard'), 6.0)             # 3 x 1,43 < piso
+        self.assertEqual(r.teto_tentativa(LITE35, 'generate'), 20)                 # NAO_MEDIDO: timeout_s da etapa
+        token = gw_mod.PRAZO_TURNO.set(1000.0 + 45)
+        try:
+            t = gw_mod.timeout_da_tentativa('generate', 1000.0 + 2, teto=r.teto_tentativa(LITE31, 'generate'))
+        finally:
+            gw_mod.PRAZO_TURNO.reset(token)
+        self.assertLess(t, 15.782)                                                 # prova negativa: não come 15,8 s
+
+    def test_1_gateway_passa_o_teto_do_modelo_ao_transporte(self):
+        vistos = []
+
+        def transporte(modelo, corpo, timeout=None):
+            vistos.append((modelo, timeout))
+            return ok_guard(modelo)
+        g = GeminiGateway(transporte=transporte, roteador=rt.Roteador(relogio=Relogio()))
+        token = gw_mod.PRAZO_TURNO.set(__import__('time').monotonic() + 45)
+        try:
+            run(g.input_guard('oi', []))
+        finally:
+            gw_mod.PRAZO_TURNO.reset(token)
+        self.assertEqual(vistos[0][0], LITE31)
+        self.assertAlmostEqual(vistos[0][1], 6.0, delta=0.01)                      # antes: 10 s fixos
+
+    def test_2_output_guard_segue_a_latencia_medida(self):
+        dados = rt.carregar()
+        ordem = dados.router.etapas['output_guard']
+        self.assertEqual(ordem[0], FLASH36)
+        self.assertIn('output_guard', dados.router.ordem_por_latencia)
+        bruto = json.loads(rt.ARQUIVO.read_text(encoding='utf-8'))
+        ruim = copy.deepcopy(bruto)
+        ruim['router']['etapas']['output_guard'] = [LITE31, FLASH36, LITE35, FLASH35]   # a ordem de 1.1.0
+        with self.assertRaises(ValueError):
+            rt.validar(ruim)
+
+    def test_3_motivo_e_o_da_ultima_tentativa_nunca_timeout_num_429(self):
+        g, chamadas, _ = gateway({LITE31: TimeoutError(), FLASH36: ErroProvedor(503), LITE35: ErroProvedor(503),
+                                  FLASH35: ErroProvedor(429, 'dia')})
+        with self.assertRaises(ErroProvedor) as ctx:
+            run(g.input_guard('oi', []))
+        self.assertEqual((ctx.exception.code, ctx.exception.motivo_bloqueio), (429, 'cota_dia'))
+
+    def test_3_sem_modelo_429_motivo_de_429(self):
+        g, chamadas, relogio = gateway({})
+        r = g.roteador
+        r.falhou(LITE31, 504)                   # timeout: menor espera, mas não dá 429
+        relogio.t += 10
+        for m in (FLASH36, LITE35, FLASH35):
+            r.falhou(m, 429, 'dia')
+        for _ in range(r.rpm_teto(LITE31)):
+            r.chamou(LITE31)                    # também saturado no RPM -> sem último recurso
+        with self.assertRaises(ErroProvedor) as ctx:
+            run(g.input_guard('oi', []))
+        self.assertEqual(ctx.exception.code, 429)
+        self.assertIn(ctx.exception.motivo_bloqueio, ('cota_dia', 'cota_minuto', 'rpm_processo'))
+        self.assertEqual(chamadas, [])
+
+    def test_3_mensagem_usa_o_mesmo_numero(self):
+        from desafio_itau.politica import erros_api
+        for status, tipo in ((429, 'cota_provedor'), (503, 'provedor_indisponivel'), (504, 'timeout_provedor')):
+            with self.subTest(status=status):
+                e = erros_api.erro_api(status, 'provedor', tipo=tipo, espera_s=7, motivo_provedor='cota_minuto')
+                self.assertEqual(e['tentar_novamente_em_s'], 7)
+                self.assertIn('cerca de 7 segundos', e['mensagem'])
+                self.assertNotIn('30', e['mensagem'])
+        e = erros_api.erro_api(429, 'provedor', tipo='cota_provedor')          # sem espera real: a da política
+        self.assertIn(str(e['tentar_novamente_em_s']), e['mensagem'])
+        self.assertNotIn('motivo_provedor', e)
 
 
 if __name__ == '__main__':

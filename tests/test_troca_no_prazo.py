@@ -67,19 +67,20 @@ class CasoDoDono1335(unittest.TestCase):
         s, g, chamadas, timeouts, fila = servico([
             (LITE31, guard('allow', LITE31)),              # input_guard
             (LITE31, resposta(DRAFT, LITE31)),             # generate (3.5-flash-lite resfriado)
-            (LITE31, TimeoutError('timed out')),           # output_guard 1º: timeout
-            (FLASH36, ErroProvedor(503)),                  # output_guard 2º: 503
+            (FLASH36, TimeoutError('timed out')),          # output_guard 1º (cotas 1.2.0: o mais rápido): timeout
+            (LITE31, ErroProvedor(503)),                   # output_guard 2º: 503
             (FLASH35, guard('release', FLASH35)),          # output_guard 3º: responde
         ])
         corpo, status = run(s.send('a', payload('São gastos que costumam se repetir, quase toda semana.')))
         self.assertEqual(status, 200, corpo)
         self.assertEqual(fila, [])
         saida = [m['model'] for m in g.metrics if m['stage'] == 'output_guard']
-        self.assertEqual(saida, [LITE31, FLASH36, FLASH35])
+        self.assertEqual(saida, [FLASH36, LITE31, FLASH35])
         self.assertEqual(len(set(saida)), len(saida))       # nunca o mesmo modelo duas vezes na etapa
         self.assertNotIn(LITE35, chamadas)                   # resfriado: pulado sem chamada
         # Timeout adaptativo: o output_guard (última etapa) ganhou mais que o antigo teto fixo de 10 s.
-        self.assertGreater(timeouts[2], gw_mod.TIMEOUT_POR_ETAPA['output_guard'])
+        # Teto por modelo (cotas 1.2.0): 3 x mediana medida com piso de 6 s, nunca acima do timeout_s da etapa.
+        self.assertAlmostEqual(timeouts[2], g.roteador.teto_tentativa(FLASH36, 'output_guard'), delta=0.01)
         self.assertLessEqual(timeouts[2], gw_mod.TETO_ADAPTATIVO_S['output_guard'])
         self.assertLessEqual(timeouts[0], gw_mod.TETO_ADAPTATIVO_S['input_guard'])
 
@@ -87,7 +88,7 @@ class CasoDoDono1335(unittest.TestCase):
 class ProvaNegativa(unittest.TestCase):
     def _prazo_curto(self, erro):
         # prazo de 4 s: depois do 1º erro do output_guard sobram < MIN_TENTATIVA_S + reserva -> não há 2ª tentativa
-        return servico([(LITE31, guard('allow', LITE31)), (LITE31, resposta(DRAFT, LITE31)), (LITE31, erro)],
+        return servico([(LITE31, guard('allow', LITE31)), (LITE31, resposta(DRAFT, LITE31)), (FLASH36, erro)],
                        prazo_s=4)
 
     def test_prazo_esgotado_timeout_sai_504_timeout_provedor(self):
@@ -104,14 +105,14 @@ class ProvaNegativa(unittest.TestCase):
 
     def test_400_nao_troca_mesmo_com_prazo(self):
         s, g, chamadas, _, _ = servico([(LITE31, guard('allow', LITE31)), (LITE31, resposta(DRAFT, LITE31)),
-                                        (LITE31, ErroProvedor(400))])
+                                        (FLASH36, ErroProvedor(400))])
         corpo, status = run(s.send('a', payload()))
         self.assertNotEqual(status, 200)
         self.assertEqual(len(chamadas), 3)
 
     def test_todos_falham_cada_modelo_uma_vez(self):
         s, g, chamadas, _, fila = servico([(LITE31, guard('allow', LITE31)), (LITE31, resposta(DRAFT, LITE31)),
-                                           (LITE31, TimeoutError()), (FLASH36, ErroProvedor(503)),
+                                           (FLASH36, TimeoutError()), (LITE31, ErroProvedor(503)),
                                            (FLASH35, ErroProvedor(503))])
         corpo, status = run(s.send('a', payload()))
         self.assertEqual(status, 503)
