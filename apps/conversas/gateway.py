@@ -8,6 +8,7 @@ retry do provedor, candidato único terminado em STOP, orçamento de chamadas po
 conteúdo nem chave. A chave vai no header `x-goog-api-key`, nunca na URL.
 """
 import asyncio
+import contextvars
 import inspect
 import json
 import threading
@@ -89,6 +90,35 @@ def validated_text(candidate):
     if not text or len(text) > 24000:
         raise ValueError('Provider output budget exceeded')
     return text
+
+
+# Teto de saída por etapa. `maxOutputTokens` do Gemini INCLUI os tokens de pensamento: medido 2026-09-27 13:15 BRT no
+# gemini-3.1-flash-lite, output_guard com 490 de pensamento no teto antigo de 512 -> finishReason MAX_TOKENS e JSON
+# cortado em '{"decision": "release",'; generate com 1026 de pensamento + 260 de texto (teto antigo 1800). O texto
+# útil continua limitado por `validated_text` (24000 caracteres) e pelos schemas.
+MAX_TOKENS_GUARD = 2048
+MAX_TOKENS_GENERATE = 4096
+# Prazo do turno (monotonic) posto pelo ConversationService antes do wait_for de 45 s: o router só começa uma nova
+# tentativa se ela couber inteira (timeout da etapa) antes do prazo. Sem prazo (testes, interacao/): sem esse corte.
+PRAZO_TURNO = contextvars.ContextVar('prazo_turno', default=None)
+
+
+class RespostaInvalida(ValueError):
+    """O modelo respondeu (HTTP 200), mas a saída não serve: não-STOP (ex.: MAX_TOKENS), JSON inválido ou fora do
+    schema estrito. Não é erro do nosso pedido (400) nem do provedor fora (5xx): o router tenta o próximo modelo."""
+
+    def __init__(self, motivo):
+        super().__init__(f'Invalid model output: {motivo}')
+        self.motivo = motivo
+
+
+def _resultado(erro, status):
+    """Rótulo curto da tentativa para GET conversas/status/ (só números e nomes, nada do texto)."""
+    if isinstance(erro, RespostaInvalida):
+        return f'resposta_invalida:{erro.motivo}'
+    if status == 429:
+        return f'429:{getattr(erro, "cota", None) or "sem_tipo"}'
+    return str(status) if status is not None else type(erro).__name__
 
 
 def decisao_guard(texto):
@@ -178,29 +208,48 @@ class GeminiGateway:
         """Uma chamada real ao provedor (router): métrica, RPM do processo e resfriamento do modelo que falhou."""
         started = time.monotonic()
         self.roteador.chamou(model)
+        resposta = None
         try:
             timeout = TIMEOUT_POR_ETAPA.get(stage, TIMEOUT_SEGUNDOS)
             corpo = corpo_pedido(instruction, texto, schema, max_tokens)
             resposta = await (asyncio.to_thread(self.transporte, model, corpo, timeout=timeout) if self._com_timeout
                               else asyncio.to_thread(self.transporte, model, corpo))
             candidatos = resposta.get('candidates') if isinstance(resposta, dict) else None
-            if not candidatos or len(candidatos) != 1:
-                raise ValueError('No unique candidate')
-            result = parse(validated_text(candidatos[0]))
+            try:
+                if not candidatos or len(candidatos) != 1:
+                    raise ValueError('No unique candidate')
+                final = candidatos[0].get('finishReason') if isinstance(candidatos[0], dict) else None
+                if final and final != 'STOP':
+                    raise RespostaInvalida(final)  # ex.: MAX_TOKENS (JSON cortado), SAFETY
+                result = parse(validated_text(candidatos[0]))
+            except RespostaInvalida:
+                raise
+            except ValueError as invalida:  # JSON inválido, schema (pydantic ValidationError), texto vazio/grande
+                raise RespostaInvalida(type(invalida).__name__) from invalida
         except Exception as error:
-            self.roteador.falhou(model, erros_api.status_de(error), getattr(error, 'cota', None),
-                                 getattr(error, 'retry_s', None))
-            self._metric(stage, started, digest, outcome='failed_or_uncertain', error=error, model=model,
-                         nova_chamada=nova)
+            status = erros_api.status_de(error)
+            self.roteador.falhou(model, status, getattr(error, 'cota', None), getattr(error, 'retry_s', None))
+            self.roteador.tentou(stage, model, _resultado(error, status))
+            usage = resposta.get('usageMetadata') if isinstance(resposta, dict) else None
+            versao = resposta.get('modelVersion') if isinstance(resposta, dict) else None
+            self._metric(stage, started, digest, usage, versao, outcome='failed_or_uncertain', error=error,
+                         model=model, nova_chamada=nova)
             raise
         self.roteador.respondeu(stage, model)
+        self.roteador.tentou(stage, model, 'ok')
         self._metric(stage, started, digest, resposta.get('usageMetadata'), resposta.get('modelVersion'),
                      model=model, nova_chamada=nova)
         return result
 
     async def _call_roteado(self, stage, instruction, digest, data, schema, max_tokens, parse):
-        """Router: primeiro modelo disponível da etapa; em erro com nova chamada admitida pela política, UM outro
-        modelo escolhido pelos dados (429/503 -> próximo da ordem com cota; 504 -> o mais rápido; 400 -> não troca)."""
+        """Router: primeiro modelo disponível da etapa, e depois de cada falha o próximo escolhido pelos dados
+        (429/503/404 -> próximo da ordem com cota; 504 -> o mais rápido; 400 -> não troca).
+
+        - Erro HTTP do provedor: no máximo `novas_chamadas_max` (1) novas chamadas por etapa, como manda
+          erros_api-v1.json. Modelo em resfriamento é pulado sem chamada e não conta.
+        - Resposta inválida do modelo (HTTP 200 sem saída válida, `RespostaInvalida`): não é erro HTTP, não gasta a
+          nova chamada da política; segue para o próximo modelo da ordem ainda não tentado.
+        - Nova tentativa só começa se couber inteira (timeout da etapa) antes do prazo do turno (`PRAZO_TURNO`)."""
         texto = json.dumps(data, ensure_ascii=False)
         if len(texto) > 60000:
             raise ValueError('Context budget exceeded')
@@ -210,23 +259,40 @@ class GeminiGateway:
             with self._lock:
                 self.calls -= 1
             status = self.roteador.motivo_sem_modelo(stage)
+            self.roteador.tentou(stage, 'nenhum', 'sem_modelo_disponivel')
             self._metric(stage, time.monotonic(), digest, outcome='sem_modelo_disponivel',
                          error=ErroProvedor(status), model='nenhum')
             raise ErroProvedor(status, 'resfriamento')
-        try:
-            return await self._uma_chamada(stage, modelo, instruction, digest, texto, schema, max_tokens, parse, False)
-        except Exception as error:
-            status = erros_api.status_de(error)
-            if not self.novas_chamadas or not erros_api.pode_nova_chamada(status, 0):
-                raise
-            proximo = self.roteador.escolher(stage, excluir={modelo}, status=status)
-            if proximo is None:
-                raise
-            espera = erros_api.espera_no_servidor(status)
-            if espera:
-                await self.dormir(espera)
-            self._admit()  # a nova chamada também consome o orçamento do processo
-            return await self._uma_chamada(stage, proximo, instruction, digest, texto, schema, max_tokens, parse, True)
+        tentados, novas_http, nova = set(), 0, False
+        while True:
+            try:
+                return await self._uma_chamada(stage, modelo, instruction, digest, texto, schema, max_tokens, parse,
+                                               nova)
+            except Exception as error:
+                tentados.add(modelo)
+                status = erros_api.status_de(error)
+                if not self.novas_chamadas:
+                    raise
+                # 429 de cota DIÁRIA: o provedor recusou sem processar (medido 360-515 ms). É a mesma informação do
+                # resfriamento — que é pulado sem contar — só que descoberta numa chamada (processo recém-iniciado).
+                # Não gasta a nova chamada da política (visto na :8013 13:20: timeout -> 3.5-flash-lite 429 dia -> fim).
+                sem_cota_do_dia = status == 429 and getattr(error, 'cota', None) == 'dia'
+                if not isinstance(error, RespostaInvalida) and not sem_cota_do_dia:
+                    if not erros_api.pode_nova_chamada(status, novas_http):
+                        raise
+                    novas_http += 1
+                prazo = PRAZO_TURNO.get()
+                timeout = TIMEOUT_POR_ETAPA.get(stage, TIMEOUT_SEGUNDOS)
+                if prazo is not None and time.monotonic() + timeout > prazo:
+                    raise  # a próxima tentativa não caberia no teto do turno: sai o erro desta
+                proximo = self.roteador.escolher(stage, excluir=tentados, status=status)
+                if proximo is None:
+                    raise
+                espera = erros_api.espera_no_servidor(status)
+                if espera:
+                    await self.dormir(espera)
+                self._admit()  # a nova chamada também consome o orçamento do processo
+                modelo, nova = proximo, True
 
     def _admit(self):
         with self._lock:
@@ -248,6 +314,7 @@ class GeminiGateway:
                              'output_tokens': usage.get('candidatesTokenCount'),
                              'total_tokens': usage.get('totalTokenCount'),
                              'error_type': type(error).__name__ if error else None,
+                             'motivo_invalida': getattr(error, 'motivo', None),
                              'http_status': getattr(error, 'code', None) if isinstance(getattr(error, 'code', None), int) else None})
 
     async def _call(self, stage, model, instruction, digest, data, schema, max_tokens, parse, _nova=False):
@@ -296,7 +363,7 @@ class GeminiGateway:
         self._admit()
         instruction, digest = render_prompt(stage, reference_date=reference_date)
         return await self._call(stage, self.guard_model, instruction, digest, data,
-                                GuardDecisionV1.model_json_schema(), 512, decisao_guard)
+                                GuardDecisionV1.model_json_schema(), MAX_TOKENS_GUARD, decisao_guard)
 
     async def input_guard(self, message, history):
         return await self._guard('input_guard', {'message': message, 'history': history[-4:]},
@@ -311,5 +378,5 @@ class GeminiGateway:
         instruction, digest = render_prompt('system', reference_date=context['reference_date'], titular=titular)
         data = {'message': message, 'context': context, 'history': history, 'constraints': constraints}
         return await self._call('generate', self.model, instruction, digest, data,
-                                AgentDraftV1.model_json_schema(), 1800,
+                                AgentDraftV1.model_json_schema(), MAX_TOKENS_GENERATE,
                                 lambda t: AgentDraftV1.model_validate_json(t).model_dump())

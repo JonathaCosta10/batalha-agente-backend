@@ -7,7 +7,7 @@ projeto, e porquê. Qualquer sessão que mexa em modelos segue esta lógica e al
   (1.0.0). Código que a lê: [`apps/conversas/roteador.py`](../apps/conversas/roteador.py); quem chama:
   `GeminiGateway._call_roteado` em [`apps/conversas/gateway.py`](../apps/conversas/gateway.py).
 - Política de erros (quantas novas chamadas, o que o front recebe):
-  [`desafio_itau/politica/erros_api-v1.json`](../desafio_itau/politica/erros_api-v1.json) 1.2.0.
+  [`desafio_itau/politica/erros_api-v1.json`](../desafio_itau/politica/erros_api-v1.json) 1.3.0.
 - Criado em 2026-09-27 13:10 BRT (backend-22). Histórico: [`backend-unico-2026-09-27.md`](backend-unico-2026-09-27.md) §4.1-§4.2.
 
 ## 1. Consumo de um turno de conversa
@@ -16,11 +16,15 @@ Um turno = uma mensagem do usuário = **3 chamadas** no caminho feliz, mais no m
 
 | etapa | chamadas | tokens medidos | latência medida (sucesso) | fonte · hora BRT |
 |---|---|---|---|---|
-| `input_guard` | 1 (+1 troca) | prompt 370, saída 44, pensamento 108, total 522 (gemini-3.1-flash-lite, n=1) | 906-5312 ms | sonda 12:58; status :8013 13:02 |
-| `generate` | 1 (+1 troca) | saída 132 (gemini-3.1-flash-lite, n=1); prompt/total NAO_MEDIDO | 1969 ms (3.5-flash-lite), 2719 ms (3.1-flash-lite) | §4 11:44; status :8013 13:02 |
-| `output_guard` | 1 (+1 troca) | NAO_MEDIDO | 1844 ms (gemini-3.6-flash) | status :8013 13:02 |
+| `input_guard` | 1 (+trocas, §4) | prompt 365-370, saída 44, pensamento 104-120, total 510-529 (gemini-3.1-flash-lite, n=4) | 1312-6172 ms; 1 timeout (>10 s) em 8 | sondas 12:58-13:21; status :8000 13:09 e :8013 |
+| `generate` | 1 (+trocas, §4) | depois da abertura: prompt 8197-8726, pensamento 107-1026, saída 213-260, total 9046-9786 (gemini-3.1-flash-lite, n=3) | 2719-14938 ms (3.1-flash-lite); 1969 ms (3.5-flash-lite) | :8013 13:02-13:22; §4 11:44 |
+| `output_guard` | 1 (+trocas, §4) | prompt 7670, pensamento 490 → cortado no teto antigo de 512 (3.1-flash-lite); total 8038 (3.6-flash) | 1640-1844 ms (3.6-flash); 3.1-flash-lite: 2 timeouts de 10 s em 3 | :8013 13:02-13:22 |
 
-Pior caso por turno: 6 chamadas. O teto de tempo é o do serviço, 45 s (`ConversationService.timeout`), abaixo dos 50 s
+Com a abertura, o `generate` e o `output_guard` levam ~8-9 mil tokens de entrada; o `gemini-3.1-flash-lite` fica lento
+(generate até 14,9 s, output_guard em timeout 2/3), e o turno medido às 13:22 levou **31,9 s** (5 chamadas). Teto de
+saída (`maxOutputTokens`, que inclui o pensamento): guards 2048, generate 4096 (antes 512/1800; o 512 cortava o JSON).
+
+Pior caso por turno: até 4 chamadas por etapa (uma por modelo da ordem), limitadas pelo prazo do turno. O teto de tempo é o do serviço, 45 s (`ConversationService.timeout`), abaixo dos 50 s
 do front; o que passar disso sai 504 `timeout_provedor`.
 
 **A conta que motivou a distribuição:** o limite por usuário é 6 mensagens/min; 3 chamadas × 6 msg/min = **18
@@ -78,19 +82,24 @@ alterar, reinicie o servidor.
 | 504 / timeout local (guards 10 s, generate 15 s) | o de menor `latencia_ref_ms` | 60 s | HTTP 504 `timeout_provedor` |
 | 404 (modelo retirado) | próximo da ordem | 3600 s | HTTP 503 `provedor_indisponivel` |
 | 400 (pedido nosso inválido) | **não troca** | nenhum | HTTP 503 |
-| resposta inválida do modelo (JSON/schema) | sem troca hoje; em correção (§6) | nenhum | HTTP 503 |
+| resposta inválida do modelo: HTTP 200 com finishReason ≠ STOP (ex.: MAX_TOKENS), JSON inválido ou fora do schema | próximo da ordem ainda não tentado, **sem gastar** a nova chamada da política | nenhum | HTTP 503 `resposta_modelo_invalida` (linha 503) |
 
-- No máximo **1 nova chamada** por etapa (`erros_api-v1.json`, `novas_chamadas_max`); nunca o mesmo pedido ao
-  mesmo modelo.
+- Erro HTTP: no máximo **1 nova chamada** por etapa (`erros_api-v1.json`, `novas_chamadas_max`); nunca o mesmo pedido
+  ao mesmo modelo. **Não gastam** essa nova chamada (1.3.0): resposta inválida do modelo e 429 de cota **diária**
+  (recusa sem processar, 360-515 ms; é a mesma informação do resfriamento, descoberta num processo recém-iniciado).
+- **Prazo do turno:** o serviço marca `PRAZO_TURNO` = início + 45 s; uma nova tentativa só começa se o timeout da etapa
+  couber antes do prazo; senão sai o erro da tentativa anterior.
 - Modelo em resfriamento é **pulado sem chamada** (não gasta orçamento nem latência). Todos bloqueados: nenhuma
   chamada e o erro com o tipo do bloqueio (cota → 429).
 - **Contador de RPM do processo:** cada chamada real entra numa janela de 60 s por modelo; com `RPM do painel − 1`
   (`rpm_margem`) chamadas na janela, o modelo é tratado como sem cota e o router desvia **antes** do 429. Vale só
   para este processo (dois processos com a mesma chave não se veem).
 - **Auditar:** `GET /api/v1/context-agent/conversas/status/` →
-  `roteador.ordem_por_etapa`, `roteador.ultimo_modelo_por_etapa`, `roteador.resfriamentos {modelo: {restam_s, motivo}}`,
+  `roteador.ordem_por_etapa`, `roteador.ultimo_modelo_por_etapa` (todas as etapas; null = nenhuma resposta válida),
+  `roteador.ultima_tentativa_por_etapa {modelo, resultado}` (inclui falha: `429:dia`, `resposta_invalida:MAX_TOKENS`…),
+  `roteador.proximo_por_etapa`, `roteador.resfriamentos {modelo: {restam_s, motivo}}`,
   `roteador.rpm_no_processo`, `cota_diaria_esgotada`, `ultimas_chamadas[] {stage, model, model_version, latency_ms,
-  outcome, total_tokens, nova_chamada, tratamento_erro}`.
+  outcome, total_tokens, nova_chamada, tratamento_erro, error_type, motivo_invalida, http_status}`.
 
 ```mermaid
 flowchart TD
@@ -98,7 +107,9 @@ flowchart TD
     E --> C[escolher: 1º modelo da ordem sem resfriamento e abaixo do RPM]
     C -->|nenhum livre| X[sem chamada: erro com tipo do bloqueio, cota -> 429]
     C --> K[chamada ao Gemini com timeout da etapa]
-    K -->|ok e schema válido| P[próxima etapa]
+    K -->|STOP e schema válido| P[próxima etapa]
+    K -->|resposta inválida ou 429 do dia| N[próximo não tentado, sem gastar a nova chamada]
+    N --> K
     K -->|429 / 503 / 404| R[resfria o modelo; próximo da ordem]
     K -->|504 timeout| F[resfria; o mais rápido disponível]
     K -->|400| Z[não troca: erro]
@@ -126,8 +137,9 @@ flowchart TD
 - **Cota diária × "aguarde 30 s" (decisão do dono):** com todos sem cota do dia, o front ouve "aguarde 30 s", mas a
   cota volta à meia-noite do Pacífico (≈04:00 BRT, NAO_MEDIDO). Opções: linha própria na política para cota diária;
   chave paga ou separada por processo.
-- **Resposta inválida do modelo reserva:** hoje não troca de modelo e sai como `provedor_indisponivel`/NAO_CLASSIFICADO.
-  Correção em curso (backend-22, pedido do coordenador 13:09): seguir para o próximo modelo da ordem dentro dos 45 s e
-  tipo próprio no envelope.
+- **gemini-3.1-flash-lite com contexto grande** (8-9 mil tokens depois da abertura): generate até 14,9 s e output_guard
+  em timeout 2/3 (13:02-13:22). O turno fica em 24-32 s, dentro dos 45 s, mas sem folga para uma terceira troca. Opções
+  (dono): pôr `gemini-3.6-flash` antes no `output_guard` (1,6-1,8 s, mas 5 RPM / 20 RPD), ou reduzir o contexto enviado
+  ao output_guard. Não alterado.
 - O contador de RPM e os resfriamentos vivem na memória do processo: zeram ao reiniciar.
 - Latência e tokens do `output_guard` e do `generate` com sucesso: amostras de n=1; NAO_MEDIDO em carga.

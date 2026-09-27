@@ -135,7 +135,12 @@ def erro_api(status, origem='api', tipo=None):
     pol = carregar()
     tipo = tipo or tipo_de(status, origem)
     tt = pol.tipos[tipo]
-    t = tratamento(status) if status is not None else None
+    linha = status
+    if status is None and tipo != tipo_de(None, origem) and tt.linha.isdigit():
+        # 1.3.0: sem status HTTP, um tipo ESPECÍFICO (ex.: resposta_modelo_invalida) usa a linha dele; só o tipo
+        # genérico da origem (provedor_indisponivel / interno) continua NAO_CLASSIFICADO (D7).
+        linha = int(tt.linha)
+    t = tratamento(linha) if linha is not None else None
     if not t or origem not in t.origens:
         t = pol.nao_classificado
     acao = tt.acao_cliente or t.acao_cliente

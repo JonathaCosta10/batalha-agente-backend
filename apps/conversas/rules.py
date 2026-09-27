@@ -3,6 +3,7 @@ These patterns are defense in depth, NOT a complete DLP or compliance system.
 """
 import re
 import unicodedata
+from decimal import Decimal
 
 from desafio_itau.politica import lexico
 
@@ -46,12 +47,26 @@ def safe_text(text, permitidos=()):
     return True
 
 
+def _mesmo_valor(citado, fato):
+    """Igualdade exata; entre dois números em ponto decimal, igualdade NUMÉRICA exata (Decimal), sem arredondar.
+    Medido 2026-09-27 13:30 BRT: o modelo citou "34.60" para o fato "34.6" (str de float) e a resposta certa saiu 503."""
+    if citado == fato:
+        return True
+    if not isinstance(citado, str) or not isinstance(fato, str) or not _DECIMAL.fullmatch(citado) \
+            or not _DECIMAL.fullmatch(fato):
+        return False
+    return Decimal(citado) == Decimal(fato)
+
+
+_DECIMAL = re.compile(r'-?\d+(\.\d+)?')
+
+
 def valid_evidence(draft, context):
     evidence = {item['id']: item for item in context.get('sources', []) + context.get('facts', [])}
     for claim in draft.claims:
         item = evidence.get(claim.evidence_id)
         if not item or item.get('status') == 'pending':
             return False
-        if claim.value is not None and claim.value != item.get('value'):
+        if claim.value is not None and not _mesmo_valor(claim.value, item.get('value')):
             return False
     return True

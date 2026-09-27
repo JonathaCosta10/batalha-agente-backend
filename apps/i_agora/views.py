@@ -262,6 +262,12 @@ def conversation_context(principal, context):
     context['facts'].append({'id': 'BQ:group_delivery_restaurants', 'value': str(group),
                              'origin': 'deterministic_sum_of_Delivery_and_Restaurantes', 'period': snap['reference_month']})
     context['financial_input_basis'] = basis + f'; Delivery e refeições fora: R$ {group:.2f} por mês'.replace('.', ',')
+    # Abertura (POST sessao/abertura/): a pergunta que o front mostrou e a categoria em foco. Sem isto a primeira
+    # resposta do usuário ("são gastos que se repetem") chegava ao modelo sem a pergunta (history vazio), medido
+    # 2026-09-27 13:15 BRT. Só a pergunta (último parágrafo) e o foco: os números da observação já estão em `facts`.
+    abertura = guided_opening(s)
+    context['abertura'] = {'fase': abertura['phase'], 'pergunta': abertura['message'].rsplit('\n\n', 1)[-1],
+                           'foco': abertura['focus']}
     context['goal_state'] = {'planId': s['planId'], 'version': s['version'], 'commitment_case': s.get('commitmentCase'),
                              'draft': s['draft'], 'confirmed': s['confirmed'], 'confirmed_at': s['confirmedAt'],
                              'source': 'persistent_server_plan'}

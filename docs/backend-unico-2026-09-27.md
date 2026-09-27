@@ -132,7 +132,43 @@ painel desvia; HTTP/tipo 429/504/503/`resposta_reprovada_validacao`; `Retry-Afte
 `tipo` não nulo; erros de conversas e i-agora; `/api/health/`; status expõe o router). Suíte: **624 OK** (skipped=1,
 expected failures=22), 13:03 BRT.
 
-## Códigos de erro para o front (erros_api 1.2.0)
+### 4.3 Erro real do dono depois da abertura (backend-22, 13:09-13:22 BRT)
+
+**Sintoma (:3000 -> :8000, 13:09):** `POST i-agora/sessao/abertura/` 201 ("…despesa pontual importante ou são gastos que
+costumam se repetir?") -> `POST conversas/mensagens/` "São gastos que costumam se repetir, quase toda semana." -> 503
+`provedor_indisponivel`/NAO_CLASSIFICADO em 16,4 s; `ultimo_modelo_por_etapa` sem o `generate`.
+
+**Causas medidas** (reprodução com o Gemini real, 12 chamadas no total):
+
+1. `maxOutputTokens` inclui o pensamento. `gemini-3.1-flash-lite`, output_guard: 490 tokens de pensamento no teto de
+   512 -> `finishReason MAX_TOKENS`, JSON cortado em `{"decision": "release",` (13:15). O generate já usava 1026 + 260
+   do teto de 1800. Correção: `MAX_TOKENS_GUARD` 2048, `MAX_TOKENS_GENERATE` 4096.
+2. Saída inválida do modelo (não-STOP, JSON, schema) parava o router: exceção sem status, sem nova chamada. Correção:
+   `RespostaInvalida` segue para o próximo modelo da ordem ainda não tentado, sem gastar a nova chamada da política,
+   dentro do prazo do turno (`PRAZO_TURNO`, 45 s); se todos falham, HTTP 503 `resposta_modelo_invalida` (linha 503,
+   nunca NAO_CLASSIFICADO) — erros_api 1.3.0.
+3. A pergunta da abertura não chegava ao modelo (history vazio). Correção: `context.abertura {fase, pergunta, foco}`
+   em `conversation_context` e uma linha no prompt de sistema para seguir esse fio.
+4. `valid_evidence` comparava texto: o modelo citou `"34.60"` para o fato `"34.6"` (str de float) e a resposta certa
+   saiu 503 `resposta_reprovada_validacao` (13:19). Correção: igualdade numérica exata (Decimal) só entre dois números
+   em ponto decimal; "34.61", "R$ 34,60", "3.46e1" continuam reprovados.
+5. Processo recém-iniciado: guard 3.1-flash-lite em timeout -> o "mais rápido" era o 3.5-flash-lite sem cota do dia ->
+   429 em 360 ms gastava a nova chamada -> front recebeu 429 (13:20). Correção: 429 de cota **diária** não gasta a
+   nova chamada (recusa sem processar, a mesma informação do resfriamento).
+6. Status: toda etapa aparece em `ultimo_modelo_por_etapa` (null = sem resposta válida); novos
+   `ultima_tentativa_por_etapa {modelo, resultado}` e `proximo_por_etapa`; métricas com `error_type`,
+   `motivo_invalida`, `http_status`.
+
+**Verificado ao vivo na :8013 (13:21:43-13:22:21 BRT, runserver próprio recém-iniciado, parado depois):** sessao 200 ->
+perfil 200 -> abertura 201 ("…R$ 163,78 no período… ou são gastos que costumam se repetir?") -> mensagem do dono
+**200 em 31,9 s**, `needs_clarification`: "Compreendido, Daniel. Como são gastos que ocorrem quase toda semana, eles
+representam uma parcela constante do seu orçamento. Em dezembro de 2025, você utilizou R$ 163,78 com delivery e
+refeições fora. Gostaria de estabelecer um objetivo de gasto menor…". Por etapa: input_guard 3.1-flash-lite 1312 ms;
+generate 3.5-flash-lite 429 (515 ms) -> 3.1-flash-lite 14938 ms (9786 tokens); output_guard 3.1-flash-lite timeout
+10094 ms -> **3.6-flash** 1640 ms. Testes: `tests/test_resposta_invalida_e_abertura.py` (18). Suíte **642 OK**
+(skipped=1, expected failures=22), 13:21 BRT. Rotação: [`rotacao-modelos-gemini.md`](rotacao-modelos-gemini.md).
+
+## Códigos de erro para o front (erros_api 1.3.0)
 
 Todo erro de `conversas/*` e `i-agora/*` sai com `erro_api.codigo` **numérico** e `erro_api.tipo` **estável**, nunca
 null. O HTTP da resposta é o do tipo; 429/503/504 com espera levam `Retry-After` (segundos). `repetir_mesmo_pedido`
@@ -144,6 +180,7 @@ continua `false` em todas as linhas. Fonte: `desafio_itau/politica/erros_api-v1.
 | cota_provedor | 429 | 429 | provedor | aguardar_e_tentar_novamente | 30 |
 | timeout_provedor | 504 | 504 | provedor | aguardar_ou_encaminhar | 15 |
 | provedor_indisponivel | 503 (ou o status real 5xx) | 503 | provedor | aguardar_ou_encaminhar | 10 |
+| resposta_modelo_invalida (1.3.0) | 503 | 503 | provedor | aguardar_ou_encaminhar | 10 |
 | resposta_reprovada_validacao | 503 | 503 | api | aguardar_ou_encaminhar | 10 |
 | sessao_ausente | 401 | 401 (404 em conversas/, contrato anterior) | api | reiniciar_sessao | — |
 | csrf | 403 | 403 | api | reiniciar_sessao | — |

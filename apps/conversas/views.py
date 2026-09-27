@@ -62,7 +62,7 @@ def get_service():
 
 
 CAMPOS_METRICA = ('stage', 'model', 'model_version', 'latency_ms', 'outcome', 'total_tokens', 'nova_chamada',
-                  'tratamento_erro', 'politica_operacional')
+                  'tratamento_erro', 'politica_operacional', 'error_type', 'motivo_invalida', 'http_status')
 
 
 def estado_harness():

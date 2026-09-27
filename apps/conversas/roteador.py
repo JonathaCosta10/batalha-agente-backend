@@ -104,6 +104,7 @@ class Roteador:
         self.resfriado = {}  # modelo -> (até, motivo, status)
         self.usos = {}       # modelo -> deque de instantes das chamadas reais (janela 60 s)
         self.ultimo = {}     # etapa -> modelo que respondeu por último
+        self.tentativa = {}  # etapa -> {modelo, resultado} da última tentativa (sucesso ou falha)
         self._lock = threading.Lock()
 
     def modelos(self):
@@ -150,6 +151,9 @@ class Roteador:
     def respondeu(self, etapa, modelo):
         self.ultimo[etapa] = modelo
 
+    def tentou(self, etapa, modelo, resultado):
+        self.tentativa[etapa] = {'modelo': modelo, 'resultado': resultado}
+
     def falhou(self, modelo, status, cota=None, retry_s=None):
         cfg = self.dados.router.resfriamento_s
         if status == 429:
@@ -173,7 +177,13 @@ class Roteador:
             resfr = {m: {'restam_s': round(ate - agora), 'motivo': motivo}
                      for m, (ate, motivo, _s) in self.resfriado.items() if ate > agora}
             rpm = {m: self._rpm(m, agora) for m in list(self.usos)}
+        # Toda etapa aparece (null = nenhuma resposta válida desde o arranque). `proximo_por_etapa`: quem seria
+        # chamado agora (sem chamar). `ultima_tentativa_por_etapa`: modelo e resultado da última tentativa, inclusive
+        # falha — antes, etapa que só falhou não aparecia (visto na :8000 às 13:09).
         return {'dados': f'{self.dados.id}@{self.dados.versao}',
                 'ordem_por_etapa': {e: list(o) for e, o in self.dados.router.etapas.items()},
-                'ultimo_modelo_por_etapa': dict(self.ultimo), 'resfriamentos': resfr,
+                'ultimo_modelo_por_etapa': {e: self.ultimo.get(e) for e in ETAPAS},
+                'ultima_tentativa_por_etapa': {e: self.tentativa.get(e) for e in ETAPAS},
+                'proximo_por_etapa': {e: self.escolher(e) for e in ETAPAS},
+                'resfriamentos': resfr,
                 'rpm_no_processo': {m: n for m, n in rpm.items() if n}}

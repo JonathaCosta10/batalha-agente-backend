@@ -189,6 +189,9 @@ class ConversationService:
         message = minimize(request.message)
         stamps = self.rates.setdefault(principal, [])
         stamps.append(self.clock())
+        # Prazo do turno para o router (gateway.PRAZO_TURNO): nova tentativa só se couber antes dos `self.timeout` s.
+        from .gateway import PRAZO_TURNO, RespostaInvalida
+        PRAZO_TURNO.set(time.monotonic() + self.timeout)
         try:
             result = await asyncio.wait_for(self._pipeline(message, history[-12:], cid, (principal, cid), titular), self.timeout)
         except (Exception, asyncio.CancelledError) as error:
@@ -200,6 +203,8 @@ class ConversationService:
             # erros_api 1.2.0 (dono 2026-09-27 12:38): o HTTP segue o tipo — cota do provedor 429 (com Retry-After,
             # views.response), timeout 504, provedor fora 503; `erro_api.tipo` é o código de máquina estável.
             tipo = erros_api.tipo_de(status_erro, 'provedor')
+            if isinstance(error, RespostaInvalida):
+                tipo = 'resposta_modelo_invalida'  # 1.3.0: saída cortada/fora do schema em todos os modelos tentados
             result = self.release(code='technical', conversation_id=cid, http_status=erros_api.http_de(tipo),
                                   erro_api=erros_api.erro_api(status_erro, 'provedor', tipo=tipo))
         history.extend([{'role': 'user', 'text': message}, {'role': 'model', 'text': result[0]['reply']}])

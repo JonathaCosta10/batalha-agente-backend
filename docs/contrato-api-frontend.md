@@ -481,9 +481,9 @@ Nenhum campo existente mudou. Um front que ignore os campos novos continua funci
   - Formato: `{codigo, tipo, nome, origem: api|provedor, acao_cliente, tentar_novamente_em_s, encaminhar_humano, mensagem, politica}`.
   - **Desde 1.2.0 (2026-09-27 13:03 BRT):** `codigo` é sempre número e `tipo` é sempre uma string estável, em
     `conversas/*` e `i-agora/*`. O HTTP da resposta segue o tipo: `cota_provedor` 429 (+ `Retry-After`),
-    `timeout_provedor` 504, `provedor_indisponivel` 503, `resposta_reprovada_validacao` 503. Antes, toda falha do
+    `timeout_provedor` 504, `provedor_indisponivel` 503, `resposta_reprovada_validacao` 503, `resposta_modelo_invalida` 503 (1.3.0: saída do modelo cortada/fora do schema em todos os modelos tentados). Antes, toda falha do
     provedor saía em HTTP 503. Tabela completa de tipos em
-    [`backend-unico-2026-09-27.md`, "Códigos de erro para o front"](backend-unico-2026-09-27.md#códigos-de-erro-para-o-front-erros_api-120).
+    [`backend-unico-2026-09-27.md`, "Códigos de erro para o front"](backend-unico-2026-09-27.md#códigos-de-erro-para-o-front-erros_api-130).
     A linha 400 do provedor passou a `resposta_segura` (sem nova chamada).
   - A tabela vem de `desafio_itau/politica/erros_api-v1.json` (1.2.0; a 1.1.0 está em `politica/archive/2026-09-27/`). Códigos com nova chamada ao modelo (400 deixou de ter na 1.2.0):
 
