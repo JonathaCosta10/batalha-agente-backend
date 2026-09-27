@@ -95,9 +95,7 @@ class ConversasHttpTest(unittest.TestCase):
     # ------------------------------------------------------------ sessão e CSRF
 
     def test_without_session_is_404_asking_for_definir(self):
-        # 2026-09-27 (porte do i-agora): GET sessao/ SEM sessão nenhuma passou a sortear a pessoa (200); ver
-        # tests/test_i_agora_sessao.py. sessao_id explícito desconhecido e POST sem sessão seguem 404.
-        for resposta in (Client().get(BOOT + '?sessao_id=nao-existe'),
+        for resposta in (Client().get(BOOT), Client().get(BOOT + '?sessao_id=nao-existe'),
                          self.post(Client(), payload())):
             with self.subTest(status=resposta.status_code):
                 self.assertEqual(resposta.status_code, 404)

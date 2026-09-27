@@ -30,6 +30,25 @@ class ProjectionProposal(StrictModel):
     reference_month: str = Field(min_length=1, max_length=40)
 
 
+class CommitmentSources(StrictModel):
+    # Id numérico da fala real do usuário (context.user_statements) de onde saiu cada campo.
+    objective: int = Field(ge=1, le=13)
+    personal_context: int = Field(ge=1, le=13)
+    action: int = Field(ge=1, le=13)
+    monthly_amount: int = Field(ge=1, le=13)
+
+
+class CommitmentProposal(StrictModel):
+    # Caso de compromisso do i-agora (portado de Frontend/agent_backend, 2026-09-27); o servidor valida em commitments.py.
+    objective: str = Field(min_length=5, max_length=160)
+    personal_context: str = Field(min_length=5, max_length=220)
+    action: str = Field(min_length=5, max_length=220)
+    category: Literal['delivery', 'shopping', 'other', 'reserve']
+    monthly_amount: str = Field(min_length=1, max_length=40)
+    reference_month: str = Field(min_length=7, max_length=7)
+    source_refs: CommitmentSources
+
+
 class AgentDraftV1(StrictModel):
     reply: str = Field(min_length=1, max_length=4000)
     status: Literal['ok', 'needs_clarification', 'safe_redirect']
@@ -37,6 +56,7 @@ class AgentDraftV1(StrictModel):
     claims: list[Claim] = Field(max_length=12)
     missing_data: list[str] = Field(max_length=10)
     projection_proposal: ProjectionProposal | None = None
+    commitment_proposal: CommitmentProposal | None = None
 
 
 EstadoConversa = Literal['ENCAMINHAMENTO', 'RECUSA_SEGURA', 'ESCLARECIMENTO', 'IDENTIFICACAO', 'DADOS_INSUFICIENTES',

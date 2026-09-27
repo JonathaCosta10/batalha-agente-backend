@@ -57,7 +57,7 @@ A norma de referência é a BCB RC 8/2023.
 | :--- | :--- | :--- |
 | **Este backend** | Mede, redige com guard e serve o roteiro. Fonte de verdade dos números. | aqui |
 | **Front `main`** | Telas i.agora. Consome só `i-agora/plano/proposta/` e `usuario-real/<ref>/saldo-mes/`. | `../frontend-agent-conversacional` |
-| **Front publicado** | Branch `feat/i-agora-gcp-integrado`, no Cloud Run. Usa rotas `i-agora/perfil/`, `i-agora/plano/` (GET/PATCH/DELETE), `plano/confirmar/`, `sessao/abertura/` e `conversas/mensagens/`. Desde 2026-09-27 as rotas `i-agora/*` existem **neste backend** (`apps/i_agora`, porte de `Frontend/agent_backend/planning`): o front fala só com este Django. | `../frontend-publicado-wt` |
+| **Front publicado** | Branch `feat/i-agora-gcp-integrado`, no Cloud Run. Usa rotas `i-agora/perfil/`, `i-agora/plano/` (GET/PATCH/DELETE), `plano/confirmar/`, `sessao/abertura/` e `conversas/mensagens/`. As rotas `i-agora/*` além da proposta **não existem neste backend**: o front publicado fala com o `agent_backend` do `agente-app-mobile`. | `../frontend-publicado-wt` |
 | **agente-app-mobile** | Entrega consolidada (front + `agent_backend`). `apps/conversas/` daqui foi portado de lá. | `../agente-app-mobile` |
 
 ---
@@ -273,14 +273,14 @@ tem de acusar um `totais.valor_liberado` ausente e um `nivel` fora de "Nível 1/
 | `balanceApi.ts` `GET usuario-real/<ref>/saldo-mes/` | `UsuarioRealSaldoMesAPI` | **OK**, verificado no teste | O front usa só `negativado_na_media` e o saldo para a mensagem de apoio. Em 503 ou em `NAO_MEDIDO`, o front grava `saldoMedido = null`. |
 | Texto livre no chat | `conversas/interacao/` \| `mensagens/` | **Não ligado** | O front responde localmente, por palavra-chave (`conversationService.replyTo`). |
 | Identidade da pessoa | `perfil-usuario/definir/` | **Não ligado** | O front usa `ref = índice local + 1`, sem sessão. |
-| Confirmar o plano / Acompanhe | `i-agora/plano/confirmar/`, `i-agora/acompanhamento/` | **Existe (2026-09-27)** | `apps/i_agora`. Confirmar exige o caso de compromisso preparado pela conversa (sem ele: 409); idempotente por `clientRequestId`. |
-| Front i-agora (`Frontend/src/services/backend.ts`) | `conversas/sessao/`, `i-agora/perfil/`, `i-agora/plano/` GET/PATCH/DELETE, `plano/proposta/` POST/DELETE, `plano/confirmar/`, `sessao/abertura/`, `conversas/mensagens/` | **OK (2026-09-27)** | Portadas para `apps/i_agora`. `GET conversas/sessao/` sem sessão sorteia a pessoa entre os 1.000 do CSV da verdade; a mesma pessoa vale em `conversas/*` e `i-agora/*` até `sessao/abertura/ {next:true}`. `plano/proposta/` despacha pelo corpo: com `clientRequestId` é o contrato do front; com `ref` (ou GET) segue em `PlanoPropostaAPI`. Verificado: `tests/test_i_agora_*.py`. |
+| Confirmar o plano / Acompanhe | — | **Não existe aqui** | Fica só em `localStorage`. As rotas `i-agora/plano/confirmar/` e `i-agora/acompanhamento/` estão propostas em `frontend/docs/integracao/contrato-api-i-agora.md`. |
+| Front publicado (`feat/i-agora-gcp-integrado`) | `i-agora/perfil/`, `i-agora/plano/` GET/PATCH/DELETE, `plano/confirmar/`, `sessao/abertura/` | **Não encaixa neste backend** | Essas rotas são do `agente-app-mobile/agent_backend`. Aqui responderiam 404. |
 
 ---
 
 ## Etapa 8 — Verificação
 
-A suíte usa `unittest`: são 45 arquivos `tests/test_*.py`, sem pytest. Não há rede: o Gemini e o BigQuery
+A suíte usa `unittest`: são 41 arquivos `tests/test_*.py`, sem pytest. Não há rede: o Gemini e o BigQuery
 são simulados.
 
 ```powershell
@@ -293,7 +293,6 @@ Copy-Item db.sqlite3 $env:TEMP\teste.sqlite3; $env:SQLITE_PATH="$env:TEMP\teste.
 | Medição | Valor | Fonte e hora |
 | :--- | :--- | :--- |
 | Suíte completa | **528 testes OK, 21 falhas esperadas** (`test_spec_*` e 1 limite do léxico) | `unittest discover`, 2026-09-27 10:15 BRT |
-| Suíte completa após o porte do i-agora | **580 testes, OK** (1 skip, 22 falhas esperadas); antes do porte, na mesma árvore: 545 OK | `unittest discover -s tests` com `SQLITE_PATH` numa cópia, 2026-09-27 11:39 BRT |
 | Contrato front ↔ back | **4/4 OK** | `tests.test_contrato_front_main`, 2026-09-27 10:21 BRT |
 | Suíte completa após o contrato | **NAO_MEDIDO de forma estável**: entre 10:21 e 10:25, outra sessão editava `apps/conversas/*.py` e rodava a suíte em paralelo, e cada rodada deu um resultado diferente (falhas só em `test_conversas_*`). Rode de novo quando `apps/conversas` estiver parado. | 2026-09-27 10:25 BRT |
 

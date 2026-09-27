@@ -19,6 +19,11 @@ urlpatterns = [
     # mais largos para ninguém capturar o prefixo. Contrato: docs/contrato-api-frontend.md, seção 5.2.
     path('api/v1/context-agent/conversas/', include('apps.conversas.urls', namespace='conversas')),
 
+    # Planejamento i-agora (porte de Frontend/agent_backend/planning, 2026-09-27): perfil/, sessao/abertura/, plano/,
+    # plano/proposta/, plano/rascunho/, plano/confirmar/, acompanhamento/. Antes do include de context_agent_datadriven:
+    # plano/proposta/ serve o contrato do front e despacha o contrato antigo (?ref= / {"ref"}) para PlanoPropostaAPI.
+    path('api/v1/context-agent/i-agora/', include('apps.i_agora.urls', namespace='i_agora')),
+
     # Rotas de API versionada (Arquitetura REST para o App Android)
     path('api/v1/', include(('apps.recomendacao.urls', 'api_v1'), namespace='api_v1')),
 

@@ -5,8 +5,7 @@ MessageResponse 1.0. Mudança de identidade: o cookie assinado `i_agora_demo_ses
 ao `sessao_id` de POST perfil-usuario/definir/. O front passa o `sessao_id` UMA vez, no GET sessao/
 (`?sessao_id=` ou header `X-Sessao-Id`); o backend devolve um cookie assinado `conversa_sessao` e o POST
 mensagens/ segue igual ao de A (cookie + `X-CSRFToken`). Header `X-Sessao-Id` no POST também vale e tem
-precedência sobre o cookie. sessao_id explícito desconhecido, ou POST sem sessão: 404 com o envelope e o pedido
-de chamar definir/. GET sessao/ sem sessão nenhuma (front do i-agora, 2026-09-27): sorteia a pessoa e cria a sessão.
+precedência sobre o cookie. Sem sessão válida: 404 com o envelope e o pedido de chamar definir/.
 
 CSRF: o projeto não tem CsrfViewMiddleware global; estas views aplicam o middleware do Django localmente
 (GET sessao/ entrega o cookie `csrftoken`; POST mensagens/ exige `X-CSRFToken`), com a falha no envelope 403.
@@ -47,11 +46,8 @@ def service_for(mode, model, guard_model, budget):
     if mode != 'demo_live':
         raise ValueError('Modo de conversa desconhecido')
     from .gateway import GeminiGateway
-    # Plano i-agora (apps/i_agora, 2026-09-27): a conversa lê o plano do dono e entrega o caso de compromisso.
-    from apps.i_agora.views import conversation_context, offer_case
     return ConversationService(gateway=GeminiGateway(model=model, guard_model=guard_model, max_calls=budget),
-                               persistencia=ArmazemConversas(), principal_context_builder=conversation_context,
-                               on_commitment_proposed=offer_case)
+                               persistencia=ArmazemConversas())
 
 
 def get_service():
@@ -158,15 +154,7 @@ def bootstrap(request):
         return failure('schema', 405)
     sid, titular = sessao_de(request, aceita_query=True)
     if not titular:
-        # sessao_id explícito (header ou query) e desconhecido: 404 pedindo definir/, como antes.
-        if request.META.get('HTTP_X_SESSAO_ID') or request.GET.get('sessao_id'):
-            return failure('sessao', 404)
-        # Sem sessão nenhuma (ou cookie vencido): o front do i-agora (Frontend/src/services/backend.ts) chama
-        # este GET direto. Como no agent_backend, a pessoa é sorteada aqui e fica na sessão até o "próximo
-        # perfil" (apps/i_agora/sessao.py). 2026-09-27; antes respondia 404.
-        from apps.i_agora.sessao import nova_sessao
-        sid = nova_sessao()['sessao_id']
-        titular = perfil_usuario.usuario_da_sessao(sid)
+        return failure('sessao', 404)
     mode = configuracao()['MODO']
     body, status = errors.release(code='demo' if mode == 'demo' else 'clarify', http_status=200)
     body['mode'] = mode

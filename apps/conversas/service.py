@@ -48,7 +48,13 @@ FALLBACKS = {
 class ConversationService:
     def __init__(self, gateway=None, *, context_builder=build_context, timeout=45,
                  max_turns=20, max_sessions=100, ttl=None, clock=time.monotonic, requests_per_minute=6,
-                 persistencia=None, relogio_parede=time.time):
+                 persistencia=None, relogio_parede=time.time,
+                 principal_context_builder=None, on_commitment_proposed=None):
+        # Plano i-agora (apps/i_agora, portado de Frontend/agent_backend em 2026-09-27):
+        # principal_context_builder(principal, context) acrescenta o plano do dono ao contexto;
+        # on_commitment_proposed(principal, case, plan_id, version) grava o caso de compromisso validado.
+        self.principal_context_builder = principal_context_builder
+        self.on_commitment_proposed = on_commitment_proposed
         # ttl da conversa = vida da sessão de usuário (perfil_usuario.SESSAO_SEGUNDOS, 4 h). Antes: 1800 s fixos,
         # e a conversa morria (404) com a sessão ainda válida (achado D3, 2026-09-27).
         ttl = SESSAO_SEGUNDOS if ttl is None else ttl
@@ -129,6 +135,19 @@ class ConversationService:
             self.rates[principal] = [s for s in stamps if self.clock() - s < 60]
             if not self.rates[principal]:
                 del self.rates[principal]
+
+    def forget(self, principal):
+        """Esquece as conversas do principal (i-agora: "Reiniciar" e "próximo perfil"). Portado do agent_backend;
+        aqui também apaga as conversas persistidas que este processo conhece."""
+        with self.lock:
+            conhecidas = [key for key in self.sessions if key[0] == principal]
+            for mapping in (self.sessions, self.created, self.proposals, self.cache, self.criada_parede):
+                for key in list(mapping):
+                    if key[0] == principal:
+                        del mapping[key]
+        if self.persistencia is not None:
+            for p, cid in conhecidas:
+                self.persistencia.apagar(p, cid)
 
     async def _send(self, principal, request, titular=None):
         self._expire()
@@ -235,9 +254,16 @@ class ConversationService:
         if decision.decision not in ('allow', 'constrain', 'deny', 'clarify'):
             raise ValueError('Invalid input decision')
         context = self.context_builder(titular=titular)
+        if self.principal_context_builder and session_key:
+            # ORM fora do laço asyncio (SynchronousOnlyOperation), como a persistência da conversa.
+            from .persistencia import _fora_do_laco
+            context = _fora_do_laco(lambda: self.principal_context_builder(session_key[0], context))
         counter_speech = equality_draft(message, context) if counter_speech else None
         context['user_reported_history'] = deepcopy(history)
+        user_statements = [h['text'] for h in history if h['role'] == 'user'] + [message]
+        context['user_statements'] = [{'id': i + 1, 'text': text} for i, text in enumerate(user_statements)]
         next_proposal = None
+        next_case = None
         rota = 'rascunho'
         if counter_speech is not None:
             draft = counter_speech
@@ -268,7 +294,42 @@ class ConversationService:
                 rota = 'identidade'
                 if faltam:
                     draft = identity_draft(titular)
-            if draft.projection_proposal:
+            if draft.commitment_proposal:
+                # Caso de compromisso (i-agora, portado do agent_backend 2026-09-27): trechos conferidos contra as
+                # falas reais do usuário e cruzados com o plano do dono; só vira proposta no painel depois dos guards.
+                from . import commitments
+                from apps.i_agora.domain import draft_for_case
+                rota = 'confirmacao_projecao'
+                try:
+                    if draft.projection_proposal:
+                        raise ValueError('Simulação e compromisso são etapas separadas.')
+                    next_case = commitments.validate_case(draft.commitment_proposal.model_dump(), user_statements,
+                                                          context.get('financial_period'))
+                    state = context['goal_state']
+                    if state['confirmed']:
+                        raise ValueError('Já existe uma meta aprovada. Recomece explicitamente para substituir o plano.')
+                    validated_plan = draft_for_case(state['draft'], next_case)
+                except (ValueError, KeyError) as erro:
+                    import logging
+                    # Só o tipo e a mensagem fixa do validador; nunca a fala do usuário.
+                    logging.getLogger(__name__).warning('commitment_rejected type=%s', type(erro).__name__)
+                    self.audit.append({'event': 'commitment_rejected', 'tipo': type(erro).__name__})
+                    next_case = None
+                    draft = AgentDraftV1(reply='Antes de propor um compromisso, vamos entender o que cabe na sua vida. '
+                                               'Qual mudança concreta você considera viável, sem comprometer seus gastos essenciais?',
+                                         status='needs_clarification', capabilities=['orcamento'], claims=[],
+                                         missing_data=['commitment_context'])
+                else:
+                    context['commitment_case'] = {'user_reported': next_case, 'baseline': state['draft'],
+                                                  'validated_proposal': validated_plan, 'awaiting_explicit_approval': True}
+                    context['facts'].append({'id': 'CASE:monthly_amount', 'value': next_case['monthly_amount'],
+                                             'origin': 'user_chosen_unconfirmed'})
+                    draft = AgentDraftV1(reply=commitments.explain(next_case, state['draft']),
+                                         status='needs_clarification', capabilities=['orcamento'],
+                                         claims=[Claim(kind='financial', evidence_id='CASE:monthly_amount',
+                                                       text='meta mensal proposta', value=next_case['monthly_amount'])],
+                                         missing_data=['commitment_approval'])
+            elif draft.projection_proposal:
                 try:
                     reported = [h['text'] for h in history if h['role']=='user'] + [message]
                     next_proposal = projection.validate_proposal(draft.projection_proposal.model_dump(), reported)
@@ -301,7 +362,11 @@ class ConversationService:
             return self.release(code='technical', conversation_id=cid, http_status=503)
         if next_proposal is not None:
             self.proposals[session_key] = next_proposal
-        sources = {s['id']: s for s in context['sources']}
+        if next_case is not None and self.on_commitment_proposed and session_key:
+            state = context['goal_state']
+            from .persistencia import _fora_do_laco
+            _fora_do_laco(lambda: self.on_commitment_proposed(session_key[0], next_case, state['planId'], state['version']))
+        sources ={s['id']: s for s in context['sources']}
         citations = [dict(id=i, url=sources[i]['url'], excerpt=sources[i]['text'],
                           limitations=sources[i]['limitations'], status=sources[i]['status'])
                      for i in dict.fromkeys(c.evidence_id for c in draft.claims) if i in sources]

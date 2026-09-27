@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     'apps.recomendacao',
     # Novo app: context-agent-datadriven com comunicação via secret gsconsole
     'apps.context_agent_datadriven',
+    # Planejamento i-agora (porte de Frontend/agent_backend/planning, 2026-09-27): perfil, plano, confirmar
+    'apps.i_agora',
 ]
 
 MIDDLEWARE = [

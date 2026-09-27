@@ -158,6 +158,17 @@ def definir_usuario(referencia) -> dict:
     return {"sessao_id": sessao_id, "usuario": publico, "expira_em_segundos": SESSAO_SEGUNDOS}
 
 
+def trocar_usuario(sessao_id, referencia) -> dict:
+    """Troca o titular de uma sessão existente e válida (i-agora "próximo perfil", apps/i_agora/sessao.py).
+    Mantém sessao_id e criada (o TTL não se renova). -> o novo usuário interno."""
+    usuario = identificar(referencia)
+    usuario_da_sessao(sessao_id)  # SessaoNaoEncontrada se não existe ou venceu
+    with _trava_sessoes:
+        sessao = _sessoes.get(str(sessao_id))
+        _sessoes[str(sessao_id)] = {"usuario": usuario, "criada": sessao["criada"]}
+    return usuario
+
+
 def usuario_da_sessao(sessao_id) -> dict:
     sessao_id = str(sessao_id or "")
     with _trava_sessoes:

@@ -291,9 +291,7 @@ class ConversasMensagensTest(CsvTemporario):
     def test_sem_sessao_404_no_envelope_1_0(self):
         """Sem sessão (nenhuma, inexistente, ou POST sem cookie): 404 no envelope 1.0 pedindo definir/."""
         gateway = self.servico(ConversationService(gateway=FakeGateway())).gateway
-        # 2026-09-27 (porte do i-agora): GET sessao/ sem sessão nenhuma sorteia a pessoa (200), ver
-        # tests/test_i_agora_sessao.py; aqui ficam os casos que continuam 404.
-        for r in (Client().get(URL_BOOT + '?sessao_id=nao-existe'),
+        for r in (Client().get(URL_BOOT), Client().get(URL_BOOT + '?sessao_id=nao-existe'),
                   self.post(Client(), payload()), self.post(Client(), payload(), HTTP_X_SESSAO_ID='x' * 65)):
             with self.subTest(status=r.status_code):
                 self.assertEqual(r.status_code, 404)
