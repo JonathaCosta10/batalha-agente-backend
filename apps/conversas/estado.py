@@ -9,10 +9,13 @@ serviço responde com a resposta segura predefinida: a saída rejeitada nunca é
 
 Tabela de estados e ações permitidas: desafio_itau/politica/operacional-v1.json#estados.
 """
+import re
+
 from desafio_itau import politica
 from desafio_itau.politica import lexico
 from apps.context_agent_datadriven.pastas_raiz.estudos.i_agora import guard as guard_i_agora
 
+from .rules import folded
 from .schemas import ContratoRespostaV1
 
 ORIGEM_EXTRATO = 'bigquery_extrato'
@@ -70,11 +73,47 @@ def fontes_numericas(context):
     return valores
 
 
+# Sinal de um valor NEGATIVO escrito sem o "-" no número ("fluxo negativo de R$ 1.729,62", "déficit de R$ 1.729,62",
+# "-R$ 1.729,62"). O extrator de números lê só a magnitude; antes, o fato cash_flow=-1729.62 nunca batia e toda
+# pergunta sobre "sobras" de titular com fluxo negativo virava 503 (2026-09-27 11:34, :8012). Palavra positiva
+# ("sobra", "superávit", ...) entre o marcador e o número desfaz o sinal: "sobra de R$ 1.729,62" continua sem fonte.
+_MARCA_NEGATIVA = re.compile(r'negativ\w*|deficit\w*|falta\w*|faltou|faltam|rombo|a menos')
+_MARCA_POSITIVA = re.compile(r'sobr\w*|superavit\w*|positiv\w*|excedente\w*|a mais|lucro\w*|ganh\w*|economiz\w*')
+
+
+def _negativo_no_texto(texto, bruto, inicio):
+    """O número em `texto[inicio:]` (`bruto`) está escrito como negativo? Olha a mesma frase, até 60 caracteres antes."""
+    antes = texto[max(0, inicio - 60):inicio]
+    antes = re.split(r'[.!?;:\n](?:\s|$)', antes)[-1]
+    if re.search(r'[-−]\s*$', antes):  # "-R$ 1.729,62" / "R$ -1.729,62" (sinal colado ao valor)
+        return True
+    norm = folded(antes)
+    ultima = None
+    for m in _MARCA_NEGATIVA.finditer(norm):
+        ultima = m
+    return bool(ultima) and not _MARCA_POSITIVA.search(norm[ultima.end():])
+
+
 def numeros_sem_fonte(texto, context):
-    """R$ e % do texto que não batem (na precisão escrita) com nenhuma fonte. Lista vazia = todos sustentados."""
+    """R$ e % do texto que não batem (na precisão escrita) com nenhuma fonte. Lista vazia = todos sustentados.
+    Fonte negativa só sustenta a magnitude escrita quando o texto marca o sinal (_negativo_no_texto)."""
     fontes = fontes_numericas(context)
-    return [n['bruto'] for n in guard_i_agora.numeros_do_texto(texto)
-            if not any(abs(f - n['valor']) <= n['tolerancia'] + 1e-9 for f in fontes)]
+    negativas = [-f for f in fontes if f < 0]
+    sem, cursor = [], 0
+    for n in guard_i_agora.numeros_do_texto(texto):
+        tol = n['tolerancia'] + 1e-9
+        if any(abs(f - n['valor']) <= tol for f in fontes):
+            continue
+        inicio = texto.find(n['bruto'], cursor)
+        inicio = texto.find(n['bruto']) if inicio < 0 else inicio
+        if inicio >= 0:
+            cursor = inicio + len(n['bruto'])
+        numero_tem_sinal = n['bruto'].lstrip().startswith(('-', '−'))
+        if any(abs(f - n['valor']) <= tol for f in negativas) and inicio >= 0 and \
+                (numero_tem_sinal or _negativo_no_texto(texto, n['bruto'], inicio)):
+            continue
+        sem.append(n['bruto'])
+    return sem
 
 
 RACIONAL = {

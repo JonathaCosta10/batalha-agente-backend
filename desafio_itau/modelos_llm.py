@@ -12,7 +12,11 @@ Trocar um modelo é mudar este arquivo (e o YAML de rotas, que tem valor literal
 MODELO_PRIMEIRA_CHAMADA = "gemini-3.5-flash-lite"
 
 # Tentado pelo agente quando o modelo primário da rota falha.
-MODELO_CONTINGENCIA = "gemini-3.5-flash-lite"
+# 2026-09-27 11:40 BRT: era "gemini-3.5-flash-lite" (= o primário), então a nova chamada do gateway de conversas caía
+# em gemini-flash-latest, que responde 429 RESOURCE_EXHAUSTED (cota esgotada) em 100% das sondas (6/6 às 11:38-11:41;
+# ledger 19/19). Resultado: timeout de 15 s no primário -> 503 na conversa, sem contingência real.
+# gemini-3.5-flash: modelo DIFERENTE, cota própria, 200 em 3/4 sondas (~10 s, 1x 503 de pico).
+MODELO_CONTINGENCIA = "gemini-3.5-flash"
 
 # Modelos homologados para o provedor Google, em ordem de prioridade.
 # Ordem invertida em 2026-09-27 09:35 BRT (I2, recomendação aceita pelo dono às 09:28). Ledger

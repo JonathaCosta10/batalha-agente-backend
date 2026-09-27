@@ -36,7 +36,9 @@ LEXICO_NEGATIVO = (
     "prejuizo", "pesado", "pesada",
 )
 
-_NUMERO_BR = r"\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?"
+# "R$ 4359.90" (ponto decimal, formato que o Gemini às vezes usa) era lido como "R$ 4359" e reprovava um número
+# com fonte: 503 na conversa (2026-09-27). Ponto seguido de 1-2 dígitos é decimal; com 3 dígitos segue milhar.
+_NUMERO_BR = r"\d+\.\d{1,2}(?![\d.,])|\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?"
 _ESCALA = r"(?:\s*(mil|milh(?:ão|ões)|bilh(?:ão|ões))\b)?"
 _ESCALAS = {"mil": 1e3, "milhão": 1e6, "milhões": 1e6, "bilhão": 1e9, "bilhões": 1e9}
 # "R$ 1,6 mil" e "1.638,49 reais" são valores; antes de 2026-09-27 só "R$ <n>" era lido (revisão Gemini 04:38).
@@ -51,6 +53,8 @@ def _checagem(nome, resultado, detalhe):
 
 def ler_numero_br(texto: str) -> tuple[float, int]:
     """'1.638,49' -> (1638.49, 2 casas). As casas definem a tolerância da comparação."""
+    if "," not in texto and re.fullmatch(r"\d+\.\d{1,2}", texto):  # ponto decimal: '4359.90'
+        return float(texto), len(texto.partition(".")[2])
     inteiro, _, decimais = texto.replace(".", "").partition(",")
     return float(f"{inteiro}.{decimais or 0}"), len(decimais)
 

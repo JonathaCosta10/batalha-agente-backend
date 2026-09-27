@@ -147,6 +147,17 @@ class Guard(unittest.TestCase):
     def test_por_cento_por_extenso_e_lido(self):
         self.assertEqual([(n["tipo"], n["valor"]) for n in guard.numeros_do_texto("12,5 por cento")], [("pct", 12.5)])
 
+    def test_ponto_decimal_e_lido_como_decimal(self):
+        # 2026-09-27: "R$ 4359.90" virava "R$ 4359" e a conversa caía em 503 com um número que tinha fonte.
+        self.assertEqual([(n["valor"], n["casas"]) for n in guard.numeros_do_texto("R$ 4359.90 e R$ 6380.61")],
+                         [(4359.90, 2), (6380.61, 2)])
+        self.assertEqual(self._verificar(_envio(texto=TEXTO_OK.replace("R$ 4.141,27", "R$ 4141.27")))["veredito"],
+                         guard.APROVADO)
+        # Prova negativa: valor errado em ponto decimal continua reprovado; ponto com 3 dígitos segue milhar.
+        self.assertEqual(self._verificar(_envio(texto=TEXTO_OK.replace("R$ 4.141,27", "R$ 4141.99")))["veredito"],
+                         guard.REPROVADO)
+        self.assertEqual([n["valor"] for n in guard.numeros_do_texto("R$ 1.638")], [1638.0])
+
     def test_prova_negativa_segmento_declarado_errado(self):
         self.assertEqual(self._verificar(_envio(segmento_t3=t3.LIVRE))["veredito"], guard.REPROVADO)
 
