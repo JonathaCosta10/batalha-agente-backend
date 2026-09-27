@@ -51,13 +51,173 @@ A mesma URL atende os dois contratos pelo corpo: `POST` com `clientRequestId` e 
 O caminho proposta -> confirmar -> PATCH -> DELETE foi validado pelo test client (com o caso preparado no servidor)
 e está coberto por `tests/test_i_agora_*.py`.
 
+### 4.1 Pendências do §5 (backend-22, 12:24-12:45 BRT)
+
+**Medido** (fonte: sonda direta `generateContent` com o corpo do `input_guard`, métricas de `GET conversas/status/`
+num `runserver` próprio em :8013, e o ledger `relatorios/avaliacoes/2026-09-27.jsonl`):
+
+| O quê | Valor | Fonte · hora BRT |
+|---|---|---|
+| Cota diária `gemini-3.5-flash-lite` | 429 `GenerateRequestsPerDayPerProjectPerModel-FreeTier`, limite 500/dia, `retryDelay` 35 s | sonda · 12:29 |
+| Cota diária `gemini-3.5-flash` (contingência) | 429 idem, limite 20/dia | sonda · 12:29 |
+| Cota diária `gemini-flash-latest` (serve `gemini-3.8-flash`) | 429 idem, limite 20/dia, `retryDelay` 52 s | sonda · 12:31 |
+| `gemini-3.5-flash` antes do 429 | parado até o timeout: 15109, 15109, 15188 ms (3/3, timeout 15 s); 10079 ms com o timeout novo de 10 s | status/métricas · 12:26-12:28 e 12:34 |
+| Guards com sucesso (conversas) | 906, 937, 2235 ms | §4 (11:44) e diagnóstico · 12:26 |
+| `generate` com sucesso (conversas) | 1969 ms (n=1) | §4 · 11:44 |
+| `gemini-3.5-flash-lite`, rota interacao/ | n=34, p50 1250, p95 1516, máx 1812 ms | ledger de avaliações · 06:10-10:xx |
+| `generate` com sucesso acima de 2,3 s | NAO_MEDIDO (nenhuma amostra) | — |
+
+**Mudou** (`apps/conversas/gateway.py`, `apps/conversas/views.py`):
+
+- Timeout por etapa (`TIMEOUT_POR_ETAPA`): `input_guard` e `output_guard` 10 s (4,5x o máximo medido), `generate` 15 s
+  (sem amostra que justifique subir). Caminho feliz no pior caso: 10 + 15 + 10 = 35 s < 45 s do serviço < 50 s do
+  front. Com nova chamada o teto de 45 s (`ConversationService.timeout`) corta antes dos 50 s do front. Efeito medido:
+  o 503 da mensagem com o modelo de contingência parado saiu em 10,6 s (antes 15,5 s).
+- Cota diária: o 429 do provedor passa a carregar o tipo de cota lido **só** de `details[].violations[].quotaId`
+  (`dia`/`minuto`; nada do corpo vai para a exceção). Com `PerDay`, o modelo fica fora por `PAUSA_COTA_DIARIA_S` = 900 s:
+  o gateway não o chama (métrica `pulado_cota_diaria`, 0 ms, sem gastar o orçamento do processo) e segue o tratamento do
+  429 (outro modelo, no máximo uma nova chamada). Passada a pausa, UMA chamada real volta a sondar. A política
+  `erros_api-v1.json` não mudou. Medido na :8013: 1ª mensagem 2 chamadas (10,6 s), 2ª 1 chamada (0,4 s), 3ª e 4ª
+  **0 chamadas** (0,0 s), todas 503 com `erro_api.codigo=429`, `acao_cliente=aguardar_e_tentar_novamente`.
+- `GET conversas/status/` ganhou `cota_diaria_esgotada` ({modelo: segundos até a sonda}) e
+  `limites.timeout_por_etapa_s` (aditivos).
+
+**Testes:** `tests/test_cota_diaria_e_timeout.py` (11, com provas negativas: 429 por minuto/sem tipo não pausa, "PerDay"
+fora do `quotaId` não conta) e `tests/test_compromisso_caminho_completo.py` (3: quatro turnos, categoria delivery com
+"R$ 1.522,90" x fato `1522.9`, proposta -> confirmar -> PATCH -> acompanhamento; provas negativas: valor que a pessoa não
+disse e alvo acima do observado não viram caso). Suíte: **602 OK** (skipped=1, expected failures=22), 12:45 BRT.
+
+**Fluxo HTTP na :8013 (12:34-12:36 BRT, código novo, Gemini real sem cota):** `GET conversas/sessao/` 200 ->
+`GET i-agora/perfil/` 200 -> `GET i-agora/plano/` 200 -> 4x `POST conversas/mensagens/` 503 (504 na 1ª, 429 nas
+seguintes) -> `POST i-agora/plano/proposta/ {clientRequestId}` 409 -> `POST i-agora/plano/confirmar/` 409 ->
+`GET i-agora/acompanhamento/` 404. O caso não foi preparado porque nenhuma mensagem chegou ao `generate`.
+
+### 4.2 Router por etapa/erro, códigos de erro e verificação real (backend-22, 12:38-13:03 BRT)
+
+**Mudou:** `apps/conversas/roteador.py` (novo), `desafio_itau/politica/cotas-gemini-v1.json` (novo, dados do router),
+`desafio_itau/politica/erros_api-v1.json` 1.2.0 (tabela `tipos`), `erros_api.py`, `apps/conversas/{gateway,service,views}.py`,
+`apps/i_agora/{views,store}.py`, `desafio_itau/saude.py` (`GET /api/health/`).
+
+**Defeito achado na verificação real e corrigido:** o `gemini-3.1-flash-lite` devolve `policy_version: "2026-09-27"` no
+guard (ignora o `const` do schema) — 4/4 `input_guard` reprovados na :8013 às 12:55-12:56. `gateway.decisao_guard` passa a
+carimbar `policy_version` (é do servidor); `decision`/`reason_codes`/`constraints` continuam estritos, campo extra continua
+proibido (prova negativa em `tests/test_roteador_e_erros_tipo.py`). O `generate` do mesmo modelo valida sem ajuste
+(amostra real 13:03).
+
+**Conversa real na :8013 (13:01:38-13:02:02 BRT, `runserver` próprio, parado depois):** `POST conversas/mensagens/`
+**200** em 24,1 s, `status=needs_clarification`. Métricas de `GET conversas/status/`:
+
+| etapa | modelo | resultado | ms | nova chamada |
+|---|---|---|---|---|
+| input_guard | gemini-3.1-flash-lite | complete (`modelVersion` gemini-3.1-flash-lite) | 5312 | não |
+| generate | gemini-3.5-flash-lite | 429 cota diária | 515 | não |
+| generate | **gemini-3.1-flash-lite** | complete | 2719 | sim (router, 429 -> próximo com cota) |
+| output_guard | gemini-3.1-flash-lite | timeout (10 s) | 10078 | não |
+| output_guard | **gemini-3.6-flash** | complete | 1844 | sim (router, 504 -> o mais rápido) |
+
+`roteador.ultimo_modelo_por_etapa` = `{input_guard: gemini-3.1-flash-lite, generate: gemini-3.1-flash-lite,
+output_guard: gemini-3.6-flash}`; resfriamentos: `gemini-3.5-flash-lite` 885 s (cota_dia), `gemini-3.1-flash-lite` 58 s
+(timeout). Os 24,1 s ficam abaixo dos 45 s do serviço e dos 50 s do front.
+
+**Caminho de compromisso (12:58-13:00 BRT):** 3 falas -> 3x 503 `provedor_indisponivel`. Os guards já passavam
+(1969/1515/1297 ms), mas o `generate` reprovava em validação por um carimbo de `schema_version` que eu tinha posto por
+engano no `AgentDraftV1` (campo que ele não tem); retirado às 13:03, e a conversa real acima passou. Depois: proposta
+409 `sem_proposta`, confirmar 409, acompanhamento 404 `sem_objetivo_confirmado`. **Caminho completo com Gemini real: NÃO
+verificado** — o orçamento de chamadas da tarefa (≤40) acabou (≈41 usadas); ver §5.
+
+**Testes:** `tests/test_roteador_e_erros_tipo.py` (22: ordem dos dados e prova negativa de modelo não apto; 429 no 1º
+-> responde o 2º; resfriamento com `retryDelay` respeitado sem chamada; volta ao 1º depois do resfriamento; 400 não troca
+nem resfria; timeout -> o mais rápido; no máximo 1 nova chamada; todos sem cota -> 0 chamadas e 429; teto de RPM do
+painel desvia; HTTP/tipo 429/504/503/`resposta_reprovada_validacao`; `Retry-After`; todos os tipos com `codigo` inteiro e
+`tipo` não nulo; erros de conversas e i-agora; `/api/health/`; status expõe o router). Suíte: **624 OK** (skipped=1,
+expected failures=22), 13:03 BRT.
+
+## Códigos de erro para o front (erros_api 1.2.0)
+
+Todo erro de `conversas/*` e `i-agora/*` sai com `erro_api.codigo` **numérico** e `erro_api.tipo` **estável**, nunca
+null. O HTTP da resposta é o do tipo; 429/503/504 com espera levam `Retry-After` (segundos). `repetir_mesmo_pedido`
+continua `false` em todas as linhas. Fonte: `desafio_itau/politica/erros_api-v1.json` 1.2.0 (1.1.0 arquivada em
+`desafio_itau/politica/archive/2026-09-27/`).
+
+| tipo | codigo | HTTP | origem | acao_cliente | tentar_novamente_em_s |
+|---|---|---|---|---|---|
+| cota_provedor | 429 | 429 | provedor | aguardar_e_tentar_novamente | 30 |
+| timeout_provedor | 504 | 504 | provedor | aguardar_ou_encaminhar | 15 |
+| provedor_indisponivel | 503 (ou o status real 5xx) | 503 | provedor | aguardar_ou_encaminhar | 10 |
+| resposta_reprovada_validacao | 503 | 503 | api | aguardar_ou_encaminhar | 10 |
+| sessao_ausente | 401 | 401 (404 em conversas/, contrato anterior) | api | reiniciar_sessao | — |
+| csrf | 403 | 403 | api | reiniciar_sessao | — |
+| acao_indisponivel | 403 | 403 | api | nao_repetir | — |
+| schema | 400 | 400 | api | reformular | — |
+| metodo_nao_permitido | 405 | 405 | api | nao_repetir | — |
+| conflito_idempotencia | 409 | 409 | api | enviar_como_nova | — |
+| plano_desatualizado | 409 | 409 | api | nao_repetir | — |
+| sem_proposta | 409 | 409 | api | nao_repetir | — |
+| rate_limit_usuario | 429 | 429 | api | aguardar_e_tentar_novamente | 30 |
+| nao_encontrado | 404 | 404 | api | reiniciar_sessao | — |
+| sem_objetivo_confirmado | 404 | 404 | api | nao_repetir | — |
+| fonte_indisponivel | 503 | 503 | api | aguardar_ou_encaminhar | 10 |
+| interno | 503 | 503 | api | aguardar_ou_encaminhar | 10 |
+
+Mudança de contrato: falha do provedor deixa de sair sempre em HTTP 503 — cota 429, timeout 504. O front
+(`Frontend/src/services/backend.ts`) já trata `!r.ok`, lê `erro_api` por `parseErroApi` (ignora `tipo`, campo aditivo)
+e `Retry-After` por `parseRetryAfter`; `telaDeErro` já trata 429/503/504 como "ocupado". O proxy do Vite
+(`'/api/v1'` -> Django) repassa status e cabeçalhos. `Frontend/` não foi alterado. `GET /api/health/` = alias do
+`/healthz` (`{"status":"ok"}`); está fora de `/api/v1`, logo fora do proxy do Vite.
+
+## Limites do provedor
+
+Fonte: painel AI Studio "Limites de taxa por modelo", colado pelo dono às 12:39 BRT — **não medido pelo backend** (a API
+não expõe cota restante). IDs confirmados por `GET v1beta/models` às 12:40 BRT; sonda com o corpo real às 12:29-12:42 BRT.
+Dados versionados em `desafio_itau/politica/cotas-gemini-v1.json` (1.0.0).
+
+| modelo (ID) | RPM | RPD | uso RPD no painel | sonda | apto |
+|---|---|---|---|---|---|
+| gemini-3.5-flash-lite | 15 | 500 | 486 | 429 PerDay 12:29 | sim |
+| gemini-3.1-flash-lite | 15 | 500 | 1 | 200, 2594 ms | sim |
+| gemini-3.6-flash | 5 | 20 | 0 | 200, 1375 ms | sim |
+| gemini-3.5-flash | 5 | 20 | 19 | 429 PerDay; antes parado 15 s | sim |
+| gemini-3-flash-preview | 5 | 20 | 0 | 200 mas 14937 ms | não |
+| gemini-3.7-flash | 5 | 20 | 0 | 503 após 26 s | não |
+| gemini-flash-latest (serve 3.8-flash) | 5 | 20 | 26 | 429 PerDay | não |
+| gemini-2.5-flash-lite / 2.5-flash | 10 / 5 | 20 | 0 | 404 no generateContent | não |
+| gemma-4-26b-a4b-it / 31b-it | 30 | 14400 | 0 | 400 com o corpo real | não |
+
+**Router** (ordem vem do ficheiro; `CONVERSAS['ROTEADOR']` = True por omissão):
+
+- `input_guard` / `output_guard`: gemini-3.1-flash-lite -> gemini-3.6-flash -> gemini-3.5-flash-lite -> gemini-3.5-flash.
+- `generate`: gemini-3.5-flash-lite -> gemini-3.1-flash-lite -> gemini-3.6-flash -> gemini-3.5-flash.
+- Por erro: 429/503/404 -> próximo da ordem disponível; 504 -> o de menor `latencia_ref_ms`; 400 -> não troca.
+  No máximo 1 nova chamada por etapa (política inalterada).
+- Resfriamento por modelo: cota diária 900 s; cota por minuto = `retryDelay` do Google (60 s sem ele); timeout 60 s; 5xx
+  30 s; 404 3600 s. O teto de RPM do painel menos 1 é contado neste processo (janela 60 s). Todos bloqueados -> nenhuma
+  chamada e erro com o tipo do bloqueio (cota -> 429 `cota_provedor`).
+- `GET conversas/status/` expõe `roteador.{ordem_por_etapa, ultimo_modelo_por_etapa, resfriamentos, rpm_no_processo}`.
+
 ## 5. Limites conhecidos (não resolvidos aqui)
 
-- **Cota do Gemini (429):** a chave é partilhada; com mais de um processo a chamar (ex.: validação noutra porta), o
-  provedor devolve 429 e a conversa responde 503 com `erro_api.codigo=429` e `tentar_novamente_em_s=30`. É o sinal
-  previsto pela política de erros, não defeito do backend.
-- **Timeout de 15 s** por chamada ao provedor (`apps/conversas/gateway.py`, `TIMEOUT_SEGUNDOS`); acima disso tenta o
-  modelo alternativo. Em pico o `generate` estoura os 15 s.
-- Caminho de compromisso com o Gemini real não verificado (só com gateway falso nos testes).
+- **Cota do Gemini (429):** a chave é partilhada e, às 12:29-12:31 BRT, a cota **diária** dos três modelos homologados
+  estava esgotada (§4.1). Desde a §4.2 o router desvia para outro modelo com cota (medido: `gemini-3.1-flash-lite` e
+  `gemini-3.6-flash` responderam às 13:02). Com todos sem cota, a conversa responde HTTP 429, `tipo=cota_provedor`,
+  `acao_cliente=aguardar_e_tentar_novamente`, `tentar_novamente_em_s=30` e `Retry-After: 30` (o cabeçalho era a opção
+  (b), aplicada a pedido do coordenador às 12:38). **Decisão do dono (não aplicada):** com cota DIÁRIA esgotada,
+  "aguarde 30 s" não é verdade — a cota volta à meia-noite do Pacífico (≈04:00 BRT, NAO_MEDIDO aqui); opções: (a)
+  linha própria na política para 429 de cota diária (`aguardar_ou_encaminhar`, espera até o reset), (c) chave
+  paga/separada por processo. O `retryDelay` do Google (35-52 s) veio igual para cota diária, então não serve de prazo.
+- **404 do provedor** continua a sair com `acao_cliente=reiniciar_sessao` na linha 404 herdada da 1.1.0 (erro do
+  modelo, não da sessão); o router já tira esse modelo por 3600 s. Mudar a linha é decisão do dono.
+- **Tempo da conversa com router:** medido 24,1 s num turno com 2 trocas (429 no generate + timeout de 10 s no
+  output_guard). Pior caso teórico com as duas trocas em timeout: 10+10 + 15+15 + 10+10 = 70 s, cortado pelos 45 s do
+  serviço (sai 504 antes dos 50 s do front). NAO_MEDIDO em carga.
+- **Timeouts** por etapa desde a §4.1 (guards 10 s, `generate` 15 s). Latência de `generate` com sucesso acima de
+  2,3 s: NAO_MEDIDO. Os "estouros" medidos hoje foram do `gemini-3.5-flash` parado (sem resposta) antes de devolver o
+  429 diário, não geração lenta; subir o timeout não teria ajudado.
+- **Caminho de compromisso com o Gemini real: NÃO verificado** — cota diária do principal esgotada (§4.1) e depois
+  orçamento de chamadas da tarefa gasto (§4.2); uma conversa real passou (200, §4.2). Coberto de ponta a
+  ponta com gateway falso na forma que o prompt pede (`tests/test_compromisso_caminho_completo.py`). O que prepara o
+  caso: pelo menos duas falas do usuário, com objetivo, contexto, ação e valor mensal ditos literalmente (ex.: as 4
+  falas do teste), perfil/plano aberto (`GET i-agora/perfil/`) e nenhuma nova mensagem entre o caso e o
+  `POST plano/proposta/` (cada mensagem retira o caso não aprovado). Para verificar: depois do reset da cota, correr
+  as 4 falas do teste pela :8000 e seguir proposta -> confirmar -> PATCH -> acompanhamento (12 chamadas ao provedor).
 - Mês de corte do plano segue o mês atual (como o `agent_backend`), não o `DATA_CORTE` do backend.
 - `GCSPlanStore` e `admit_call` do `agent_backend` não foram portados.

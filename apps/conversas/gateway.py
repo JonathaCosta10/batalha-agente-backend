@@ -8,6 +8,7 @@ retry do provedor, candidato único terminado em STOP, orçamento de chamadas po
 conteúdo nem chave. A chave vai no header `x-goog-api-key`, nunca na URL.
 """
 import asyncio
+import inspect
 import json
 import threading
 import time
@@ -29,15 +30,52 @@ ALLOWED_MODELS = set(MODELOS_GOOGLE) | {MODELO_PRIMEIRA_CHAMADA, MODELO_CONTINGE
 SAFETY = [{'category': c, 'threshold': 'BLOCK_MEDIUM_AND_ABOVE'} for c in (
     'HARM_CATEGORY_HATE_SPEECH', 'HARM_CATEGORY_DANGEROUS_CONTENT',
     'HARM_CATEGORY_HARASSMENT', 'HARM_CATEGORY_SEXUALLY_EXPLICIT')]
-TIMEOUT_SEGUNDOS = 15
+TIMEOUT_SEGUNDOS = 15  # etapa sem entrada em TIMEOUT_POR_ETAPA
+# Timeout por etapa (2026-09-27, backend-22). Medido: guards bem-sucedidos 906-2235 ms (conversas, 11:44 e 12:26 BRT)
+# e 34 chamadas gemini-3.5-flash-lite da rota interacao/ com p50 1250 / p95 1516 / máx 1812 ms (ledger
+# relatorios/avaliacoes/2026-09-27.jsonl); falhas por timeout: gemini-3.5-flash parado 15109-15188 ms (3/3, 12:26-12:28
+# BRT). Guard a 10 s = 4,5x o máximo medido; o generate fica em 15 s (nenhuma amostra de sucesso acima de 2 s justifica
+# subir). Caminho feliz no pior caso: 10 + 15 + 10 = 35 s < 45 s (ConversationService.timeout) < 50 s (front).
+TIMEOUT_POR_ETAPA = {'input_guard': 10, 'output_guard': 10, 'generate': 15}
+# 429 com quotaId "...PerDay..." (cota DIÁRIA do modelo esgotada, medido 2026-09-27 12:29 BRT nos três modelos
+# homologados): o modelo fica fora por esta pausa, sem chamada ao provedor; depois UMA chamada real volta a sondar.
+# Não muda a política (erros_api-v1.json): nenhum pedido é repetido e continua no máximo uma nova chamada.
+PAUSA_COTA_DIARIA_S = 900
 
 
 class ErroProvedor(RuntimeError):
-    """Falha HTTP do provedor. Guarda só o status, nunca o corpo nem a URL."""
+    """Falha HTTP do provedor. Guarda só o status e, no 429, o tipo de cota ('dia'/'minuto'); nunca o corpo nem a URL."""
 
-    def __init__(self, code):
+    def __init__(self, code, cota=None, retry_s=None):
         super().__init__(f'HTTP {code}')
         self.code = code
+        self.cota = cota
+        self.retry_s = retry_s
+
+
+def detalhes_429(corpo):
+    """Corpo JSON do 429 do Gemini -> (cota 'dia'|'minuto'|None, retryDelay em s|None). Lê só `quotaId` e
+    `retryDelay` de `details[]`; nenhum texto livre."""
+    try:
+        detalhes = json.loads(corpo).get('error', {}).get('details', [])
+        detalhes = [d for d in detalhes if isinstance(d, dict)]
+        ids = [v.get('quotaId') or '' for d in detalhes for v in (d.get('violations') or []) if isinstance(v, dict)]
+        atraso = next((d.get('retryDelay') for d in detalhes if isinstance(d.get('retryDelay'), str)), None)
+    except (ValueError, AttributeError, TypeError):
+        return None, None
+    retry_s = None
+    if atraso and atraso.endswith('s'):
+        try:
+            retry_s = max(1, min(3600, round(float(atraso[:-1]))))
+        except ValueError:
+            retry_s = None
+    cota = 'dia' if any('PerDay' in i for i in ids) else 'minuto' if any('PerMinute' in i for i in ids) else None
+    return cota, retry_s
+
+
+def cota_do_429(corpo):
+    """Corpo JSON do 429 do Gemini -> 'dia' | 'minuto' | None. Lê só `details[].violations[].quotaId`."""
+    return detalhes_429(corpo)[0]
 
 
 def validated_text(candidate):
@@ -53,7 +91,18 @@ def validated_text(candidate):
     return text
 
 
-def transporte_http(modelo, corpo):
+def decisao_guard(texto):
+    """Texto do guard -> GuardDecisionV1. `policy_version` é do servidor, não do modelo: medido 2026-09-27 12:58 BRT,
+    o gemini-3.1-flash-lite ignora o `const` do schema e escreve a data ('2026-09-27'), o que reprovava 4/4 guards.
+    Só esse campo é carimbado; decision/reason_codes/constraints continuam validados sem folga (extra proibido)."""
+    bruto = json.loads(texto)
+    if not isinstance(bruto, dict):
+        raise ValueError('Guard output is not an object')
+    bruto['policy_version'] = '1.0'
+    return GuardDecisionV1.model_validate_json(json.dumps(bruto)).model_dump()
+
+
+def transporte_http(modelo, corpo, timeout=TIMEOUT_SEGUNDOS):
     """POST generateContent. Devolve o JSON da resposta. Os testes trocam esta função."""
     chave = obter_api_key()[0]
     if not chave:
@@ -61,10 +110,16 @@ def transporte_http(modelo, corpo):
     pedido = urllib.request.Request(URL.format(modelo=modelo), data=json.dumps(corpo).encode('utf-8'),
                                     headers={'Content-Type': 'application/json', 'x-goog-api-key': chave})
     try:
-        with urllib.request.urlopen(pedido, timeout=TIMEOUT_SEGUNDOS) as resposta:
+        with urllib.request.urlopen(pedido, timeout=timeout) as resposta:
             return json.loads(resposta.read().decode('utf-8'))
     except urllib.error.HTTPError as erro:
-        raise ErroProvedor(erro.code) from None
+        cota = retry_s = None
+        if erro.code == 429:
+            try:
+                cota, retry_s = detalhes_429(erro.read()[:20000])
+            except Exception:  # corpo ilegível: segue 429 sem tipo de cota
+                cota = retry_s = None
+        raise ErroProvedor(erro.code, cota, retry_s) from None
 
 
 def corpo_pedido(instruction, texto, schema, max_tokens):
@@ -90,15 +145,88 @@ class GeminiGateway:
     # nova chamada.
     novas_chamadas = True
 
-    def __init__(self, *, model=MODELO_PRIMEIRA_CHAMADA, guard_model=None, max_calls=60, transporte=None, dormir=None):
+    def __init__(self, *, model=MODELO_PRIMEIRA_CHAMADA, guard_model=None, max_calls=60, transporte=None, dormir=None,
+                 relogio=time.monotonic, roteador=None):
         self.model, self.guard_model = model, guard_model or model
         if self.model not in ALLOWED_MODELS or self.guard_model not in ALLOWED_MODELS:
             raise ValueError('Model is not allowlisted')
+        # Router por etapa/erro (roteador.py + cotas-gemini-v1.json). Sem ele, o comportamento anterior (um modelo por
+        # etapa + modelo_alternativo) fica igual — a rota interacao/ e os testes antigos usam esse caminho.
+        self.roteador = roteador
         self.max_calls, self.calls = max_calls, 0
         self.transporte = transporte or transporte_http
+        # Transporte que aceita `timeout` recebe o da etapa (TIMEOUT_POR_ETAPA); dublês de 2 argumentos seguem iguais.
+        try:
+            self._com_timeout = 'timeout' in inspect.signature(self.transporte).parameters
+        except (TypeError, ValueError):
+            self._com_timeout = False
         self.dormir = dormir or asyncio.sleep
+        self.relogio = relogio
+        self.cota_esgotada = {}  # modelo -> instante (relogio) até quando fica fora por cota diária (429 PerDay)
         self.metrics = deque(maxlen=300)
         self._lock = threading.Lock()
+
+    def cota_diaria_esgotada(self):
+        """{modelo: segundos até a nova sonda} dos modelos fora por 429 de cota diária. Só modelo e número."""
+        if self.roteador is not None:
+            return {m: r['restam_s'] for m, r in self.roteador.estado()['resfriamentos'].items()
+                    if r['motivo'] == 'cota_dia'}
+        agora = self.relogio()
+        return {m: round(ate - agora) for m, ate in list(self.cota_esgotada.items()) if ate > agora}
+
+    async def _uma_chamada(self, stage, model, instruction, digest, texto, schema, max_tokens, parse, nova):
+        """Uma chamada real ao provedor (router): métrica, RPM do processo e resfriamento do modelo que falhou."""
+        started = time.monotonic()
+        self.roteador.chamou(model)
+        try:
+            timeout = TIMEOUT_POR_ETAPA.get(stage, TIMEOUT_SEGUNDOS)
+            corpo = corpo_pedido(instruction, texto, schema, max_tokens)
+            resposta = await (asyncio.to_thread(self.transporte, model, corpo, timeout=timeout) if self._com_timeout
+                              else asyncio.to_thread(self.transporte, model, corpo))
+            candidatos = resposta.get('candidates') if isinstance(resposta, dict) else None
+            if not candidatos or len(candidatos) != 1:
+                raise ValueError('No unique candidate')
+            result = parse(validated_text(candidatos[0]))
+        except Exception as error:
+            self.roteador.falhou(model, erros_api.status_de(error), getattr(error, 'cota', None),
+                                 getattr(error, 'retry_s', None))
+            self._metric(stage, started, digest, outcome='failed_or_uncertain', error=error, model=model,
+                         nova_chamada=nova)
+            raise
+        self.roteador.respondeu(stage, model)
+        self._metric(stage, started, digest, resposta.get('usageMetadata'), resposta.get('modelVersion'),
+                     model=model, nova_chamada=nova)
+        return result
+
+    async def _call_roteado(self, stage, instruction, digest, data, schema, max_tokens, parse):
+        """Router: primeiro modelo disponível da etapa; em erro com nova chamada admitida pela política, UM outro
+        modelo escolhido pelos dados (429/503 -> próximo da ordem com cota; 504 -> o mais rápido; 400 -> não troca)."""
+        texto = json.dumps(data, ensure_ascii=False)
+        if len(texto) > 60000:
+            raise ValueError('Context budget exceeded')
+        modelo = self.roteador.escolher(stage)
+        if modelo is None:
+            # Todos em resfriamento/teto de RPM: nenhuma chamada; o front recebe o tipo do bloqueio (cota -> 429).
+            with self._lock:
+                self.calls -= 1
+            status = self.roteador.motivo_sem_modelo(stage)
+            self._metric(stage, time.monotonic(), digest, outcome='sem_modelo_disponivel',
+                         error=ErroProvedor(status), model='nenhum')
+            raise ErroProvedor(status, 'resfriamento')
+        try:
+            return await self._uma_chamada(stage, modelo, instruction, digest, texto, schema, max_tokens, parse, False)
+        except Exception as error:
+            status = erros_api.status_de(error)
+            if not self.novas_chamadas or not erros_api.pode_nova_chamada(status, 0):
+                raise
+            proximo = self.roteador.escolher(stage, excluir={modelo}, status=status)
+            if proximo is None:
+                raise
+            espera = erros_api.espera_no_servidor(status)
+            if espera:
+                await self.dormir(espera)
+            self._admit()  # a nova chamada também consome o orçamento do processo
+            return await self._uma_chamada(stage, proximo, instruction, digest, texto, schema, max_tokens, parse, True)
 
     def _admit(self):
         with self._lock:
@@ -123,12 +251,23 @@ class GeminiGateway:
                              'http_status': getattr(error, 'code', None) if isinstance(getattr(error, 'code', None), int) else None})
 
     async def _call(self, stage, model, instruction, digest, data, schema, max_tokens, parse, _nova=False):
+        if self.roteador is not None and stage in TIMEOUT_POR_ETAPA:
+            return await self._call_roteado(stage, instruction, digest, data, schema, max_tokens, parse)
         texto = json.dumps(data, ensure_ascii=False)
         if len(texto) > 60000:
             raise ValueError('Context budget exceeded')
         started = time.monotonic()
         try:
-            resposta = await asyncio.to_thread(self.transporte, model, corpo_pedido(instruction, texto, schema, max_tokens))
+            if self.cota_esgotada.get(model, 0) > self.relogio():
+                # Cota DIÁRIA deste modelo esgotada (429 PerDay medido há menos de PAUSA_COTA_DIARIA_S): não gasta
+                # chamada nem latência; segue o tratamento do 429 (outro modelo, no máximo uma nova chamada).
+                with self._lock:
+                    self.calls -= 1  # não houve chamada ao provedor: devolve a unidade do orçamento
+                raise ErroProvedor(429, 'dia_pausa')
+            timeout = TIMEOUT_POR_ETAPA.get(stage, TIMEOUT_SEGUNDOS)
+            corpo = corpo_pedido(instruction, texto, schema, max_tokens)
+            resposta = await (asyncio.to_thread(self.transporte, model, corpo, timeout=timeout) if self._com_timeout
+                              else asyncio.to_thread(self.transporte, model, corpo))
             candidatos = resposta.get('candidates') if isinstance(resposta, dict) else None
             if not candidatos or len(candidatos) != 1:
                 raise ValueError('No unique candidate')
@@ -137,8 +276,11 @@ class GeminiGateway:
                          model=model, nova_chamada=_nova)
             return result
         except Exception as error:
-            self._metric(stage, started, digest, outcome='failed_or_uncertain', error=error, model=model,
-                         nova_chamada=_nova)
+            pausado = getattr(error, 'cota', None) == 'dia_pausa'
+            if getattr(error, 'cota', None) == 'dia':
+                self.cota_esgotada[model] = self.relogio() + PAUSA_COTA_DIARIA_S
+            self._metric(stage, started, digest, outcome='pulado_cota_diaria' if pausado else 'failed_or_uncertain',
+                         error=error, model=model, nova_chamada=_nova)
             status = erros_api.status_de(error)
             alternativo = modelo_alternativo(model)
             if _nova or not self.novas_chamadas or not alternativo or not erros_api.pode_nova_chamada(status, 0):
@@ -154,8 +296,7 @@ class GeminiGateway:
         self._admit()
         instruction, digest = render_prompt(stage, reference_date=reference_date)
         return await self._call(stage, self.guard_model, instruction, digest, data,
-                                GuardDecisionV1.model_json_schema(), 512,
-                                lambda t: GuardDecisionV1.model_validate_json(t).model_dump())
+                                GuardDecisionV1.model_json_schema(), 512, decisao_guard)
 
     async def input_guard(self, message, history):
         return await self._guard('input_guard', {'message': message, 'history': history[-4:]},

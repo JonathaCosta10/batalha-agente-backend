@@ -118,7 +118,7 @@ class TabelaErros(unittest.TestCase):
         self.assertEqual((b['nome'], b['codigo'], b['origem'], b['acao_cliente']),
                          ('NAO_CLASSIFICADO', 401, 'provedor', 'aguardar_ou_encaminhar'))
         self.assertEqual(erros_api.erro_api(500, 'provedor')['codigo'], 500)
-        self.assertEqual(erros_api.erro_api(None, 'provedor')['codigo'], None)
+        self.assertEqual(erros_api.erro_api(None, 'provedor')['codigo'], 503)  # 1.2.0: nunca null
         self.assertEqual(erros_api.erro_api(418)['nome'], 'NAO_CLASSIFICADO')
 
     def test_acoes_do_cliente(self):
@@ -200,7 +200,7 @@ class EnvelopeDoServico(unittest.TestCase):
             raise ErroProvedor(429)
         gateway.generate = falha
         body, status = run(ConversationService(gateway=gateway).send('a', payload()))
-        self.assertEqual(status, 503)
+        self.assertEqual(status, 429)  # erros_api 1.2.0: cota do provedor -> HTTP 429
         self.assertEqual((body['erro_api']['codigo'], body['erro_api']['origem']), (429, 'provedor'))
         self.assertEqual(body['erro_api']['acao_cliente'], 'aguardar_e_tentar_novamente')
 
@@ -211,7 +211,7 @@ class EnvelopeDoServico(unittest.TestCase):
             await asyncio.sleep(1)
         gateway.generate = lento
         body, status = run(ConversationService(gateway=gateway, timeout=0.05).send('a', payload()))
-        self.assertEqual((status, body['erro_api']['codigo'], body['erro_api']['encaminhar_humano']), (503, 504, True))
+        self.assertEqual((status, body['erro_api']['codigo'], body['erro_api']['encaminhar_humano']), (504, 504, True))
 
     def test_erros_da_propria_api(self):
         service = ConversationService(gateway=FakeGateway())

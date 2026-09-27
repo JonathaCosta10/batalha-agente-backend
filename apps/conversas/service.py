@@ -44,6 +44,13 @@ FALLBACKS = {
     'demo': 'Demonstração local: esta resposta é fixa, não foi gerada por IA. O i-agora pode apoiar orçamento, reserva e prevenção de dívidas. Nenhum dado bancário foi consultado. Para experimentar respostas do Gemini, o responsável deve habilitar o modo de teste autorizado no servidor.',
 }
 
+# (code do release, HTTP) -> tipo de erro_api (desafio_itau/politica/erros_api-v1.json 1.2.0, tabela `tipos`).
+TIPO_POR_CODIGO = {('auth', 401): 'sessao_ausente', ('auth', 403): 'csrf', ('sessao', 404): 'sessao_ausente',
+                   ('schema', 400): 'schema', ('schema', 405): 'metodo_nao_permitido',
+                   ('not_found', 404): 'nao_encontrado', ('not_found', 405): 'metodo_nao_permitido',
+                   ('conflict', 409): 'conflito_idempotencia', ('limit', 429): 'rate_limit_usuario',
+                   ('technical', 503): 'interno'}
+
 
 class ConversationService:
     def __init__(self, gateway=None, *, context_builder=build_context, timeout=45,
@@ -74,11 +81,12 @@ class ConversationService:
 
     def release(self, *, code='auth', conversation_id=None, http_status=401,
                 draft=None, cached=None, citations=None, permitidos=(), dados=None, encaminhamento=None,
-                contrato=None, erro_api=None):
+                contrato=None, erro_api=None, tipo=None):
         candidate = cached['reply'] if cached else (draft.reply if draft else FALLBACKS[code])
         if not safe_text(candidate, permitidos):
-            cached = draft = dados = contrato = None
+            cached = draft = dados = contrato = erro_api = None
             code, http_status, citations = 'technical', 503, []
+            tipo = 'resposta_reprovada_validacao'
         self.audit.append({'event': 'release', 'code': code})
         if cached:
             return deepcopy(cached), http_status
@@ -97,7 +105,10 @@ class ConversationService:
         # (erros_api-v1.json: 400/404/429/503/504 -> reformular, reiniciar, aguardar N s ou atendimento humano).
         body['contrato'] = contrato or estado_conversa.contrato(
             estado_conversa.POR_CODIGO.get(code, 'INDISPONIVEL'))
-        body['erro_api'] = erro_api or erros_api.erro_api(http_status, 'api')
+        # 1.2.0: todo erro leva `erro_api.tipo` (código de máquina estável) e `codigo` numérico.
+        if erro_api is None and http_status >= 400:
+            tipo = tipo or TIPO_POR_CODIGO.get((code, http_status)) or erros_api.tipo_de(http_status, 'api')
+        body['erro_api'] = erro_api or erros_api.erro_api(http_status, 'api', tipo=tipo if http_status >= 400 else None)
         return body, http_status
 
     async def send(self, principal, payload, titular=None):
@@ -186,9 +197,11 @@ class ConversationService:
             # Cache uncertain outcome. No automatic regeneration/double billing.
             status_erro = erros_api.status_de(error)
             self.audit.append({'event': 'provider_failure', 'http_status': status_erro})
-            # O HTTP ao front segue o contrato (503); `erro_api` diz a causa conhecida e o que o cliente pode fazer.
-            result = self.release(code='technical', conversation_id=cid, http_status=503,
-                                  erro_api=erros_api.erro_api(status_erro, 'provedor'))
+            # erros_api 1.2.0 (dono 2026-09-27 12:38): o HTTP segue o tipo — cota do provedor 429 (com Retry-After,
+            # views.response), timeout 504, provedor fora 503; `erro_api.tipo` é o código de máquina estável.
+            tipo = erros_api.tipo_de(status_erro, 'provedor')
+            result = self.release(code='technical', conversation_id=cid, http_status=erros_api.http_de(tipo),
+                                  erro_api=erros_api.erro_api(status_erro, 'provedor', tipo=tipo))
         history.extend([{'role': 'user', 'text': message}, {'role': 'model', 'text': result[0]['reply']}])
         self.cache[key] = (digest, deepcopy(result[0]), result[1])
         self._persistir(principal, cid)
@@ -353,13 +366,15 @@ class ConversationService:
                 or sem_fonte or estado is None:
             self.audit.append({'event': 'deterministic_reject', 'numeros_sem_fonte': len(sem_fonte),
                                'transicao_invalida': estado is None})
-            return self.release(code='technical', conversation_id=cid, http_status=503)
+            return self.release(code='technical', conversation_id=cid, http_status=503,
+                                tipo='resposta_reprovada_validacao')
         check = GuardDecisionV1.model_validate(await self.gateway.output_guard(message, draft.model_dump(), context))
         self.audit.append({'event': 'output_guard', 'decision': check.decision, 'reason_codes': check.reason_codes})
         if check.decision != 'release':
             import logging
             logging.getLogger(__name__).warning('output_guard_replaced reasons=%s', check.reason_codes)
-            return self.release(code='technical', conversation_id=cid, http_status=503)
+            return self.release(code='technical', conversation_id=cid, http_status=503,
+                                tipo='resposta_reprovada_validacao')
         if next_proposal is not None:
             self.proposals[session_key] = next_proposal
         if next_case is not None and self.on_commitment_proposed and session_key:

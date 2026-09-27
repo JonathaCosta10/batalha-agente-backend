@@ -31,7 +31,7 @@ from .service import ConversationService
 errors = ConversationService()
 COOKIE = 'conversa_sessao'
 PADRAO = {'MODO': 'demo_live', 'MODELO': MODELO_PRIMEIRA_CHAMADA, 'MODELO_GUARD': MODELO_PRIMEIRA_CHAMADA,
-          'MAX_CHAMADAS': 300}
+          'MAX_CHAMADAS': 300, 'ROTEADOR': True}  # ROTEADOR: router por etapa/erro (roteador.py, 2026-09-27)
 MODOS = ('demo', 'demo_live')
 
 
@@ -40,7 +40,7 @@ def configuracao():
 
 
 @lru_cache(maxsize=4)
-def service_for(mode, model, guard_model, budget):
+def service_for(mode, model, guard_model, budget, roteador=False):
     # I4 / D-4 (2026-09-27): a conversa sobrevive ao reinício do processo (persistencia.ArmazemConversas, TTL 4 h).
     if mode == 'demo':
         return ConversationService(persistencia=ArmazemConversas())
@@ -49,14 +49,16 @@ def service_for(mode, model, guard_model, budget):
     from .gateway import GeminiGateway
     # Plano i-agora (apps/i_agora, 2026-09-27): a conversa lê o plano do dono e entrega o caso de compromisso.
     from apps.i_agora.views import conversation_context, offer_case
-    return ConversationService(gateway=GeminiGateway(model=model, guard_model=guard_model, max_calls=budget),
+    from .roteador import Roteador
+    gw = GeminiGateway(model=model, guard_model=guard_model, max_calls=budget, roteador=Roteador() if roteador else None)
+    return ConversationService(gateway=gw,
                                persistencia=ArmazemConversas(), principal_context_builder=conversation_context,
                                on_commitment_proposed=offer_case)
 
 
 def get_service():
     cfg = configuracao()
-    return service_for(cfg['MODO'], cfg['MODELO'], cfg['MODELO_GUARD'], int(cfg['MAX_CHAMADAS']))
+    return service_for(cfg['MODO'], cfg['MODELO'], cfg['MODELO_GUARD'], int(cfg['MAX_CHAMADAS']), bool(cfg['ROTEADOR']))
 
 
 CAMPOS_METRICA = ('stage', 'model', 'model_version', 'latency_ms', 'outcome', 'total_tokens', 'nova_chamada',
@@ -68,6 +70,7 @@ def estado_harness():
     O modelo real é o `modelVersion` devolvido pelo provedor na última chamada; sem chamada, diz NAO_MEDIDO."""
     from desafio_itau import politica
     from desafio_itau.politica import erros_api, lexico
+    from .gateway import TIMEOUT_POR_ETAPA
     cfg, service = configuracao(), get_service()
     gw = service.gateway
     metricas = list(getattr(gw, 'metrics', ()))
@@ -80,9 +83,15 @@ def estado_harness():
         'orcamento_processo': ({'max_chamadas': gw.max_calls, 'usadas': gw.calls,
                                 'restantes': max(gw.max_calls - gw.calls, 0)} if gw else None),
         'cota_diaria_provedor': 'NAO_MEDIDO: a API do Gemini não expõe a cota restante; o 429 é o sinal (erro_api)',
+        # Modelos fora por 429 de cota DIÁRIA (quotaId PerDay), com os segundos até a próxima sonda real (gateway.py).
+        'cota_diaria_esgotada': gw.cota_diaria_esgotada() if gw and hasattr(gw, 'cota_diaria_esgotada') else {},
+        # Router (roteador.py): ordem por etapa, último modelo que respondeu em cada etapa, resfriamentos e RPM do
+        # processo. null = sem router (modo demo ou CONVERSAS['ROTEADOR']=False).
+        'roteador': gw.roteador.estado() if gw is not None and getattr(gw, 'roteador', None) is not None else None,
         'orcamento_diario': 'NAO_IMPLEMENTADO: o teto é por processo (MAX_CHAMADAS), não por dia',
         'limites': {'pedidos_por_minuto_por_usuario': service.requests_per_minute, 'turnos_por_conversa': service.max_turns,
                     'conversas_por_usuario': 5, 'ttl_conversa_s': service.ttl, 'timeout_s': service.timeout,
+                    'timeout_por_etapa_s': dict(TIMEOUT_POR_ETAPA),
                     'novas_chamadas_max': lim.novas_chamadas_max, 'espera_max_no_servidor_s': lim.espera_max_no_servidor_s},
         'ultimas_chamadas': [{k: m.get(k) for k in CAMPOS_METRICA} for m in metricas[-20:]],
         'versoes': {'politica': politica.referencia_documento(), 'lexico': lexico.versao(),
@@ -101,11 +110,19 @@ def response(result):
     output = JsonResponse(body, status=status, json_dumps_params={'ensure_ascii': False})
     output['Cache-Control'] = 'no-store'
     output['X-Content-Type-Options'] = 'nosniff'
+    return com_retry_after(output, body, status)
+
+
+def com_retry_after(output, body, status):
+    """erros_api 1.2.0: 429/503/504 com espera conhecida levam `Retry-After` (segundos) — o front já lê o header."""
+    espera = ((body or {}).get('erro_api') or {}).get('tentar_novamente_em_s') if isinstance(body, dict) else None
+    if status in (429, 503, 504) and isinstance(espera, int) and espera > 0:
+        output['Retry-After'] = str(espera)
     return output
 
 
-def failure(code='auth', status=401):
-    return response(errors.release(code=code, http_status=status))
+def failure(code='auth', status=401, tipo=None):
+    return response(errors.release(code=code, http_status=status, tipo=tipo))
 
 
 def sessao_de(request, aceita_query=False):

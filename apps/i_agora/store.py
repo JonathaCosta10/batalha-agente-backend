@@ -19,7 +19,10 @@ from .models import ConfirmacaoPlano, PlanoAtivo, PlanoIAgora
 
 
 class Conflict(ValueError):
-    pass
+    # tipo de erro_api (erros_api-v1.json 1.2.0): plano_desatualizado por padrão; sem_proposta sem caso preparado.
+    def __init__(self, mensagem, tipo='plano_desatualizado'):
+        super().__init__(mensagem)
+        self.tipo = tipo
 
 
 class PlanStore:

@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from apps.conversas import views as conversas
+from desafio_itau.politica import erros_api
 
 from .domain import from_snapshot
 from .fonte import FonteExtrato, SourceUnavailable
@@ -43,11 +44,20 @@ def public(s):
     return {**{k: v for k, v in s.items() if k != 'snapshot'}, 'opening': guided_opening(s)}
 
 
-def response(data, status=200):
+# `codigo` legado do corpo -> tipo de erro_api (erros_api-v1.json 1.2.0). O `codigo` string fica (compatível).
+TIPO_POR_CODIGO = {'auth': 'sessao_ausente', 'source': 'fonte_indisponivel', 'stale': 'plano_desatualizado',
+                   'schema': 'schema', 'technical': 'interno'}
+
+
+def response(data, status=200, tipo=None):
+    if status >= 400 and 'erro_api' not in data:
+        # Todo erro de i-agora/* leva erro_api {codigo numérico, tipo estável, acao_cliente...}, nunca null.
+        tipo = tipo or TIPO_POR_CODIGO.get(data.get('codigo')) or erros_api.tipo_de(status, 'api')
+        data = {**data, 'erro_api': erros_api.erro_api(status, 'api', tipo=tipo)}
     r = JsonResponse(data, status=status)
     r['Cache-Control'] = 'no-store'
     r['X-Content-Type-Options'] = 'nosniff'
-    return r
+    return conversas.com_retry_after(r, data, status)
 
 
 def body(request):
@@ -79,7 +89,8 @@ def endpoint(view):
         except SourceUnavailable as e:
             return response({'erro': str(e), 'estado': 'NAO_MEDIDO', 'codigo': 'source'}, 503)
         except Conflict as e:
-            return response({'erro': str(e), 'codigo': 'stale', 'state': public(store().get(principal))}, 409)
+            return response({'erro': str(e), 'codigo': 'stale', 'state': public(store().get(principal))}, 409,
+                            tipo=getattr(e, 'tipo', 'plano_desatualizado'))
         except (ValueError, TypeError, KeyError) as e:
             return response({'erro': str(e)[:200] or 'Dados inválidos.', 'codigo': 'schema'}, 400)
         except Exception:
@@ -159,7 +170,7 @@ def _proposal(request, principal, sid, titular):
         raise SourceUnavailable('Carregue a base do cliente antes de propor metas.')
     if not s.get('commitmentCase'):
         raise Conflict('Vamos conversar primeiro sobre seu objetivo, contexto e uma mudança viável. '
-                       'Ainda não há proposta para aprovar.')
+                       'Ainda não há proposta para aprovar.', tipo='sem_proposta')
     return response({'state': public(s), 'basis': {'rule': 'conversation_grounded_case', 'seal': s['snapshot']['seal']}})
 
 
@@ -207,7 +218,7 @@ def confirm(request, principal, sid, titular):
         raise ValueError('Confirmação inválida.')
     state = store().get(principal)
     if not state or not state.get('commitmentCase'):
-        raise Conflict('Ainda não há uma proposta construída na conversa para aprovar.')
+        raise Conflict('Ainda não há uma proposta construída na conversa para aprovar.', tipo='sem_proposta')
     if data['plan'] != state['draft']:
         raise ValueError('A aprovação precisa corresponder à proposta apresentada. Peça o ajuste pela conversa.')
     result = store().confirm(principal, data['clientRequestId'], data['version'], data['plan'])
@@ -220,7 +231,7 @@ def followup(request, principal, sid, titular):
         return response({'erro': 'Método não permitido.'}, 405)
     state = store().get(principal)
     if not state or not state['confirmed']:
-        return response({'erro': 'Nenhum objetivo confirmado.'}, 404)
+        return response({'erro': 'Nenhum objetivo confirmado.'}, 404, tipo='sem_objetivo_confirmado')
     p = state['confirmed']
     return response({'state': public(state),
                      'items': [{'category': c, 'spent': None, 'status': 'NAO_MEDIDO'} for c in p['selected']],

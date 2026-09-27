@@ -162,7 +162,7 @@ class GuardsSessionsTest(unittest.TestCase):
         gateway.generate = hang
         service = ConversationService(gateway=gateway, timeout=0.01, max_turns=1)
         response, status = run(service.send('a', payload()))
-        self.assertEqual(status, 503)
+        self.assertEqual(status, 504)  # erros_api 1.2.0: timeout -> HTTP 504
         self.assertEqual(run(service.send('a', payload(mid='next', cid=response['conversation_id'])))[1], 429)
         cached, _ = run(service.send('a', payload()))
         self.assertEqual(cached['message_id'], response['message_id'])

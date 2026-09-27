@@ -45,6 +45,22 @@ class Limites(_Estrito):
     status_de_timeout_local: Literal[504]
 
 
+ACOES_CLIENTE = Literal['reformular', 'reiniciar_sessao', 'aguardar_e_tentar_novamente', 'aguardar_ou_encaminhar',
+                        'nao_repetir', 'enviar_como_nova']
+
+
+class TipoErro(_Estrito):
+    """Código de máquina estável para o front (1.2.0). `linha` aponta a linha de `erros` (ou 'nao_classificado') que dá
+    nome, espera e encaminhamento; `acao_cliente`/`mensagem_cliente` só quando o tipo precisa de outro texto."""
+    codigo: int = Field(ge=400, le=599)
+    http: int = Field(ge=400, le=599)
+    linha: Literal['400', '401', '403', '404', '405', '409', '429', '503', '504', 'nao_classificado']
+    origem: Literal['api', 'provedor']
+    descricao: str
+    acao_cliente: ACOES_CLIENTE | None = None
+    mensagem_cliente: str | None = Field(default=None, min_length=1, max_length=300)
+
+
 class Politica(_Estrito):
     schema_version: Literal['1.0']
     id: str
@@ -55,6 +71,7 @@ class Politica(_Estrito):
     limites: Limites
     erros: dict[Literal['400', '401', '403', '404', '405', '409', '429', '503', '504'], Tratamento]
     nao_classificado: Tratamento
+    tipos: dict[str, TipoErro]
 
 
 @lru_cache(maxsize=1)
@@ -89,19 +106,44 @@ def espera_no_servidor(status):
     return min(t.espera_s, carregar().limites.espera_max_no_servidor_s)
 
 
-def erro_api(status, origem='api'):
+TIPO_API_POR_STATUS = {400: 'schema', 401: 'sessao_ausente', 403: 'acao_indisponivel', 404: 'nao_encontrado',
+                       405: 'metodo_nao_permitido', 409: 'conflito_idempotencia', 429: 'rate_limit_usuario',
+                       504: 'timeout_provedor'}
+
+
+def tipo_de(status, origem='api'):
+    """Status + origem -> tipo estável (1.2.0). Provedor: 429 cota, 504 timeout, o resto indisponível."""
+    if origem == 'provedor':
+        return {429: 'cota_provedor', 504: 'timeout_provedor'}.get(status, 'provedor_indisponivel')
+    return TIPO_API_POR_STATUS.get(status, 'interno')
+
+
+def http_de(tipo):
+    """HTTP da resposta ao front para o tipo (tabela `tipos`)."""
+    return carregar().tipos[tipo].http
+
+
+def erro_api(status, origem='api', tipo=None):
     """Bloco aditivo do envelope. `origem`: 'provedor' (falha do Gemini) ou 'api' (validação da nossa rota).
 
-    None só para sucesso da nossa API (status None ou < 400). Qualquer falha tem bloco: status fora da tabela, ou
-    fora das `origens` da linha, vira NAO_CLASSIFICADO com o código real (null se a exceção não tinha status)."""
-    if origem == 'api' and (status is None or int(status) < 400):
+    None só para sucesso da nossa API (status None ou < 400, sem `tipo`). Qualquer falha tem bloco com `tipo` e
+    `codigo` numérico NUNCA null (1.2.0): falha do provedor sem status sai com 503. Nome, espera e encaminhamento vêm
+    da linha do status real (fora da tabela ou das `origens` -> NAO_CLASSIFICADO, como na 1.1.0); o tipo só troca a
+    ação/mensagem quando a tabela `tipos` diz."""
+    if tipo is None and origem == 'api' and (status is None or int(status) < 400):
         return None
-    t = tratamento(status)
+    pol = carregar()
+    tipo = tipo or tipo_de(status, origem)
+    tt = pol.tipos[tipo]
+    t = tratamento(status) if status is not None else None
     if not t or origem not in t.origens:
-        t = carregar().nao_classificado
-    return {'codigo': int(status) if status is not None else None, 'nome': t.nome, 'origem': origem,
-            'acao_cliente': t.acao_cliente,
-            'tentar_novamente_em_s': t.espera_s if t.acao_cliente.startswith('aguardar') else None,
+        t = pol.nao_classificado
+    acao = tt.acao_cliente or t.acao_cliente
+    mensagem = tt.mensagem_cliente or t.mensagem_cliente
+    codigo = int(status) if isinstance(status, int) and not isinstance(status, bool) and status >= 400 else tt.codigo
+    return {'codigo': codigo, 'tipo': tipo, 'nome': t.nome, 'origem': origem,
+            'acao_cliente': acao,
+            'tentar_novamente_em_s': t.espera_s if acao.startswith('aguardar') else None,
             'encaminhar_humano': t.encaminhar_humano,
-            'mensagem': t.mensagem_cliente.format(espera_s=t.espera_s),
-            'politica': f'{carregar().id}@{carregar().versao}'}
+            'mensagem': mensagem.format(espera_s=t.espera_s),
+            'politica': f'{pol.id}@{pol.versao}'}

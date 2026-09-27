@@ -478,8 +478,14 @@ Nenhum campo existente mudou. Um front que ignore os campos novos continua funci
   - `regras_aplicadas` traz `rule_id@versao` de `desafio_itau/politica/operacional-v1.json` (aprovação **PENDENTE**).
   - **O front decide a tela por `contrato.estado` e `contrato.acoes_permitidas`, nunca pelo texto.**
 - **`erro_api` (null só em sucesso; toda falha tem bloco desde a versão 1.1.0)**
-  - Formato: `{codigo, nome, origem: api|provedor, acao_cliente, tentar_novamente_em_s, encaminhar_humano, mensagem, politica}`.
-  - A tabela vem de `desafio_itau/politica/erros_api-v1.json` (versão 1.1.0). Códigos com nova chamada ao modelo:
+  - Formato: `{codigo, tipo, nome, origem: api|provedor, acao_cliente, tentar_novamente_em_s, encaminhar_humano, mensagem, politica}`.
+  - **Desde 1.2.0 (2026-09-27 13:03 BRT):** `codigo` é sempre número e `tipo` é sempre uma string estável, em
+    `conversas/*` e `i-agora/*`. O HTTP da resposta segue o tipo: `cota_provedor` 429 (+ `Retry-After`),
+    `timeout_provedor` 504, `provedor_indisponivel` 503, `resposta_reprovada_validacao` 503. Antes, toda falha do
+    provedor saía em HTTP 503. Tabela completa de tipos em
+    [`backend-unico-2026-09-27.md`, "Códigos de erro para o front"](backend-unico-2026-09-27.md#códigos-de-erro-para-o-front-erros_api-120).
+    A linha 400 do provedor passou a `resposta_segura` (sem nova chamada).
+  - A tabela vem de `desafio_itau/politica/erros_api-v1.json` (1.2.0; a 1.1.0 está em `politica/archive/2026-09-27/`). Códigos com nova chamada ao modelo (400 deixou de ter na 1.2.0):
 
   | código | o servidor já fez | `acao_cliente` | espera sugerida | encaminhar |
   |---|---|---|---|---|
@@ -503,7 +509,7 @@ Nenhum campo existente mudou. Um front que ignore os campos novos continua funci
   - **Concorrência (correção D11):** o 429 de "pedido concorrente" vale **por usuário**. Antes, o bloqueio era global e um usuário podia receber o 429 do pedido de outro.
   - **Vida da conversa (correção D3):** o ttl da conversa passa a ser igual ao da sessão de usuário (4 h, `perfil_usuario.SESSAO_SEGUNDOS`), no lugar dos 30 min fixos. O cookie de 30 dias citado pelo front está no backend publicado (`agent_backend`), não neste repositório. Aqui, o cookie `conversa_sessao` já dura 4 h.
   - Se a nova chamada também falhar, sai o fallback técnico com `status: "unavailable"`.
-  - Com `origem: "provedor"`, o HTTP da nossa API continua 503 e o código do Gemini vai em `erro_api.codigo`.
+  - Com `origem: "provedor"`, o código do Gemini vai em `erro_api.codigo`; o HTTP é 429/504/503 conforme o `tipo` (1.2.0; antes sempre 503).
   - `encaminhar_humano: true` só indica que o front pode oferecer esse caminho: a rota de handoff é **NAO_IMPLEMENTADO**.
 - **`conversas/interacao/`**
   - Cada item de `avaliacao.tentativas` ganha `http_status` e `tratamento`.
@@ -529,7 +535,8 @@ Responde ao item 3 do pedido do front, na parte que cabe a este repositório. Se
  "versoes": {"politica": "…@1.0.0", "lexico": "1.1.0", "erros_api": "…@1.1.0"}}
 ```
 
-- **Modelo real:** é o `modelVersion` que o provedor devolveu, e não o nome gravado no código. O `/api/health/` com nome fixo, citado pelo front, pertence ao backend publicado e não existe neste repositório.
+- **Modelo real:** é o `modelVersion` que o provedor devolveu, e não o nome gravado no código. `GET /api/health/` existe desde 2026-09-27 como alias leve do `/healthz` (`{"status":"ok"}`, sem chamar o provedor).
+- **Aditivos 2026-09-27 (router):** `cota_diaria_esgotada`, `limites.timeout_por_etapa_s` e `roteador` = `{dados, ordem_por_etapa, ultimo_modelo_por_etapa, resfriamentos: {modelo: {restam_s, motivo}}, rpm_no_processo}` (null sem router). Qual modelo respondeu cada etapa: `roteador.ultimo_modelo_por_etapa` e `ultimas_chamadas[].model`.
 - **Parcial:** não há orçamento por dia. As métricas vivem na memória do processo e zeram ao reiniciar; o ledger persistente é o de `interacao/`, em `relatorios/avaliacoes/`.
 
 ---

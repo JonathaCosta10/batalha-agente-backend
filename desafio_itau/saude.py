@@ -8,7 +8,8 @@ status (`conversas/status/`, `usuario-real/status/?validar=1`), que não servem 
 """
 from django.http import JsonResponse
 
-CAMINHOS = ('/healthz', '/healthz/')
+# /api/health/ (2026-09-27 12:38, pedido do dono): alguém sonda esta rota a cada 5 min e recebia 404. Alias leve.
+CAMINHOS = ('/healthz', '/healthz/', '/api/health', '/api/health/')
 
 
 def healthz(request):

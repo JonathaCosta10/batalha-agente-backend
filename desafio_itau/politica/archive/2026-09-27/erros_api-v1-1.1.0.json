@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "id": "tratamento-erros-api-i-agora",
-  "versao": "1.2.0",
-  "historico": "1.2.0 (2026-09-27 12:45 BRT, backend-22, pedido do dono 12:38/12:39): (a) tabela `tipos`: todo erro sai com `erro_api.tipo` (string estável para switch no front) e `codigo` numérico nunca null (falha do provedor sem status -> 503); o HTTP da resposta segue o tipo (cota do provedor -> 429 com Retry-After, timeout -> 504, provedor fora -> 503); (b) 400 do provedor passa a `resposta_segura` (erro nosso: trocar de modelo não resolve); (c) a nova chamada (no máximo UMA, nunca o mesmo pedido ao mesmo modelo) vai para o modelo escolhido pelo router de dados `cotas-gemini-v1.json`; modelos em resfriamento são pulados sem chamada e não contam como nova chamada. 1.1.0 arquivada em archive/2026-09-27/. 1.1.0 (2026-09-27): 401/403/405/409 só da nossa API e NAO_CLASSIFICADO para status fora da tabela ou erro do provedor sem tratamento (achados D6/D7 da sessão d9). Antes: erro_api null nesses casos e erro do provedor rotulado como 'api'.",
+  "versao": "1.1.0",
+  "historico": "1.1.0 (2026-09-27): 401/403/405/409 só da nossa API e NAO_CLASSIFICADO para status fora da tabela ou erro do provedor sem tratamento (achados D6/D7 da sessão d9). Antes: erro_api null nesses casos e erro do provedor rotulado como 'api'.",
   "natureza": "politica_operacional",
   "aviso": "Tratamentos CONHECIDOS por status HTTP. Vale para dois lados: (1) erro do provedor Gemini -> o servidor decide se faz UMA nova chamada e com qual solução; (2) erro da nossa API ao front -> o envelope leva `erro_api` com o que o cliente pode fazer. Nenhuma nova chamada repete o mesmo pedido ao mesmo modelo, e nenhuma libera texto sem os guards.",
   "limites": {
@@ -13,10 +13,10 @@
   "erros": {
     "400": {
       "nome": "BadRequest",
-      "causa_provavel": "Pedido recusado pelo provedor: parâmetro não suportado pelo modelo (ex.: thinkingConfig, system_instruction/JSON nos Gemma 4, sondados 2026-09-27 12:42), schema ou tamanho. Na nossa API: corpo fora do contrato.",
+      "causa_provavel": "Pedido recusado pelo provedor: parâmetro não suportado pelo modelo (ex.: thinkingConfig), schema ou tamanho. Na nossa API: corpo fora do contrato.",
       "repetir_mesmo_pedido": false,
-      "acao_servidor": "resposta_segura",
-      "solucao_possivel": "Erro do nosso pedido: sem nova chamada (dono 2026-09-27 12:39, '400/schema não troca'). O router só usa modelos sondados com o corpo real (cotas-gemini-v1.json); corrigir o pedido ou o modelo.",
+      "acao_servidor": "proximo_modelo",
+      "solucao_possivel": "Nova chamada com o próximo modelo homologado, que pode aceitar o parâmetro; se falhar, resposta segura predefinida.",
       "espera_s": 0,
       "acao_cliente": "reformular",
       "encaminhar_humano": false,
@@ -125,24 +125,5 @@
     "acao_cliente": "aguardar_ou_encaminhar",
     "encaminhar_humano": true,
     "mensagem_cliente": "Não consegui responder agora. Aguarde cerca de {espera_s} segundos e tente de novo, ou peça para falar com o atendimento."
-  },
-  "tipos": {
-    "cota_provedor": {"codigo": 429, "http": 429, "linha": "429", "origem": "provedor", "descricao": "Todos os modelos tentados/candidatos sem cota (429 RESOURCE_EXHAUSTED ou em resfriamento). Header Retry-After."},
-    "timeout_provedor": {"codigo": 504, "http": 504, "linha": "504", "origem": "provedor", "descricao": "O provedor não respondeu no timeout da etapa, ou o pipeline passou do teto do serviço (45 s)."},
-    "provedor_indisponivel": {"codigo": 503, "http": 503, "linha": "503", "origem": "provedor", "descricao": "Provedor fora, 5xx, 400/401/404 do provedor ou saída inválida. `codigo` leva o status real do provedor quando existe; sem status, 503."},
-    "resposta_reprovada_validacao": {"codigo": 503, "http": 503, "linha": "503", "origem": "api", "descricao": "O modelo respondeu, mas a resposta foi reprovada pelas validações determinísticas ou pelo output_guard; saiu a resposta segura."},
-    "sessao_ausente": {"codigo": 401, "http": 401, "linha": "401", "origem": "api", "descricao": "Sessão de usuário ausente/expirada. HTTP 401 em i-agora/*; em conversas/* o HTTP continua 404 (o chat() do front refaz a sessão no 404)."},
-    "csrf": {"codigo": 403, "http": 403, "linha": "403", "origem": "api", "acao_cliente": "reiniciar_sessao", "mensagem_cliente": "Sua sessão precisa ser renovada. Recarregue a conversa e tente de novo.", "descricao": "Token CSRF ausente/inválido ou Origin não confiável: refazer conversas/sessao/ renova o cookie csrftoken."},
-    "acao_indisponivel": {"codigo": 403, "http": 403, "linha": "403", "origem": "api", "descricao": "Rota desligada (chave ON/OFF) ou ação não permitida neste canal."},
-    "schema": {"codigo": 400, "http": 400, "linha": "400", "origem": "api", "descricao": "Corpo fora do contrato (JSON, campos, tamanho)."},
-    "metodo_nao_permitido": {"codigo": 405, "http": 405, "linha": "405", "origem": "api", "descricao": "Método HTTP errado para a rota."},
-    "conflito_idempotencia": {"codigo": 409, "http": 409, "linha": "409", "origem": "api", "descricao": "client_message_id reaproveitado com outro conteúdo."},
-    "plano_desatualizado": {"codigo": 409, "http": 409, "linha": "409", "origem": "api", "acao_cliente": "nao_repetir", "mensagem_cliente": "O plano mudou. Confira os dados atuais antes de continuar.", "descricao": "version do plano diferente da atual (concorrência otimista); o corpo traz `state` atual."},
-    "sem_proposta": {"codigo": 409, "http": 409, "linha": "409", "origem": "api", "acao_cliente": "nao_repetir", "mensagem_cliente": "Ainda não há proposta para aprovar. Continue a conversa sobre objetivo, contexto e uma mudança viável.", "descricao": "POST plano/proposta/ ou plano/confirmar/ sem caso preparado pela conversa."},
-    "rate_limit_usuario": {"codigo": 429, "http": 429, "linha": "429", "origem": "api", "descricao": "Limite da nossa API por usuário: 6 mensagens/min, 1 pedido em curso, 5 conversas, 20 turnos. Header Retry-After."},
-    "nao_encontrado": {"codigo": 404, "http": 404, "linha": "404", "origem": "api", "descricao": "Conversa ou rota inexistente/expirada."},
-    "sem_objetivo_confirmado": {"codigo": 404, "http": 404, "linha": "404", "origem": "api", "acao_cliente": "nao_repetir", "mensagem_cliente": "Ainda não há objetivo confirmado para acompanhar.", "descricao": "GET i-agora/acompanhamento/ sem plano confirmado."},
-    "fonte_indisponivel": {"codigo": 503, "http": 503, "linha": "503", "origem": "api", "descricao": "Base do extrato (BigQuery) indisponível; nada foi inventado."},
-    "interno": {"codigo": 503, "http": 503, "linha": "nao_classificado", "origem": "api", "descricao": "Exceção inesperada no nosso servidor; resposta segura, sem detalhe técnico."}
   }
 }
