@@ -193,7 +193,9 @@ class ConversationService:
         from .gateway import PRAZO_TURNO, RespostaInvalida
         PRAZO_TURNO.set(time.monotonic() + self.timeout)
         try:
-            result = await asyncio.wait_for(self._pipeline(message, history[-12:], cid, (principal, cid), titular), self.timeout)
+            para_o_modelo = [{'role': h['role'], 'text': h['text']} for h in history if not h.get('falha')][-12:]
+            result = await asyncio.wait_for(self._pipeline(message, para_o_modelo, cid, (principal, cid), titular),
+                                            self.timeout)
         except (Exception, asyncio.CancelledError) as error:
             import logging
             logging.getLogger(__name__).warning('conversation_failure type=%s code=%s', type(error).__name__, getattr(error, 'code', None))
@@ -205,9 +207,21 @@ class ConversationService:
             tipo = erros_api.tipo_de(status_erro, 'provedor')
             if isinstance(error, RespostaInvalida):
                 tipo = 'resposta_modelo_invalida'  # 1.3.0: saída cortada/fora do schema em todos os modelos tentados
+            bloco = erros_api.erro_api(status_erro, 'provedor', tipo=tipo)
+            # cotas-gemini 1.1.0 (dono 14:09): a espera é a do modelo da etapa que fica livre primeiro (router), não o
+            # fixo da política (antes "30 s" com os modelos livres só daqui a ~14 min); cota_dia em todos é dita.
+            espera_real = getattr(error, 'espera_restante_s', None)
+            if bloco and espera_real and bloco.get('tentar_novamente_em_s') is not None:
+                bloco['tentar_novamente_em_s'] = espera_real
+            if bloco and getattr(error, 'motivo_bloqueio', None):
+                bloco['motivo_provedor'] = error.motivo_bloqueio
             result = self.release(code='technical', conversation_id=cid, http_status=erros_api.http_de(tipo),
-                                  erro_api=erros_api.erro_api(status_erro, 'provedor', tipo=tipo))
-        history.extend([{'role': 'user', 'text': message}, {'role': 'model', 'text': result[0]['reply']}])
+                                  erro_api=bloco)
+        # Turno com falha (erro_api) fica marcado `falha` e NÃO vai ao Gemini nos turnos seguintes (ia como fala do
+        # modelo, frontend-c7 14:09); continua a contar para `max_turns`. O cache por client_message_id continua.
+        marca = {'falha': True} if result[0].get('erro_api') else {}
+        history.extend([{'role': 'user', 'text': message, **marca},
+                        {'role': 'model', 'text': result[0]['reply'], **marca}])
         self.cache[key] = (digest, deepcopy(result[0]), result[1])
         self._persistir(principal, cid)
         return result
@@ -224,7 +238,8 @@ class ConversationService:
         if idade >= self.ttl:
             return
         chave = (principal, cid)
-        self.sessions[chave] = [{'role': h['role'], 'text': h['text']} for h in valor['historico']]
+        self.sessions[chave] = [{'role': h['role'], 'text': h['text'], **({'falha': True} if h.get('falha') else {})}
+                                for h in valor['historico']]
         self.created[chave] = self.clock() - idade
         self.criada_parede[chave] = valor['criada']
         if valor.get('proposta'):

@@ -168,7 +168,47 @@ generate 3.5-flash-lite 429 (515 ms) -> 3.1-flash-lite 14938 ms (9786 tokens); o
 10094 ms -> **3.6-flash** 1640 ms. Testes: `tests/test_resposta_invalida_e_abertura.py` (18). Suíte **642 OK**
 (skipped=1, expected failures=22), 13:21 BRT. Rotação: [`rotacao-modelos-gemini.md`](rotacao-modelos-gemini.md).
 
-## Códigos de erro para o front (erros_api 1.3.0)
+### 4.4 503 do dono com prazo sobrando (backend-22, 13:35-14:10 BRT)
+
+**Sintoma (:3000 -> :8000 em 9152041, 13:35:26):** input_guard 3.1-flash-lite ok 6375 ms; generate 3.1-flash-lite ok
+9297 ms; output_guard 3.1-flash-lite `TimeoutError` 10078 ms -> 3.6-flash 503 em 1156 ms -> turno encerrado com 503 e
+~18 s ainda livres no prazo de 45 s. Resfriamentos: 3.5-flash-lite cota_dia, 3.1-flash-lite timeout, 3.6-flash
+indisponível.
+
+**Causa:** (1) teto fixo de 10 s no output_guard, curto para 3.1-flash-lite com 7-9 mil tokens de entrada (3 de 4
+output_guards deste modelo medidos hoje passaram de 10 s; 14:09 levou 7969 ms); (2) erros_api 1.3.0 admitia **uma** nova
+chamada HTTP por etapa, então o 503 do 2º modelo encerrava a etapa.
+
+**Correção (erros_api 1.4.0; 1.3.0 arquivada em `desafio_itau/politica/archive/2026-09-27/`):** timeout adaptativo
+por tentativa (`min(teto, prazo restante − reserva)`; tetos 10/20/20 s, reservas 18/8/2 s, mínimo 3 s para começar
+uma troca) e troca pela ordem da etapa para o próximo modelo **não tentado** enquanto couber no prazo; o mesmo modelo
+nunca repete na etapa; 400 não troca. Detalhe: [`rotacao-modelos-gemini.md`](rotacao-modelos-gemini.md) §4.
+Não feito: reduzir o contexto do output_guard (sem prova de que a validação não enfraquece).
+
+**Testes:** `tests/test_troca_no_prazo.py` (6): a sequência exata (timeout no 1º, 503 no 2º, 3º responde -> 200, cada
+modelo uma vez, timeout do output_guard > 10 s); prova negativa: prazo esgotado -> 504 `timeout_provedor` / 503
+`provedor_indisponivel` sem 2ª tentativa; 400 não troca; todos falham -> 503 com cada modelo uma vez. Testes antigos que
+afirmavam "1 nova chamada" passaram a afirmar "cada modelo no máximo uma vez". Suíte **648 OK** (skipped=1, expected
+failures=22), 14:08 BRT.
+
+**Verificado ao vivo na :8013 (14:09:32-14:09:57 BRT, runserver próprio com sqlite copiado, parado depois; 4 chamadas
+ao provedor):** sessao 200 -> perfil 200 (8,6 s) -> abertura 201 ("…delivery e refeições fora, com R$ 450,30 no
+período… ou são gastos que costumam se repetir?") -> mensagem do dono **200 em 16,4 s**, `needs_clarification`. Por
+etapa: input_guard 3.1-flash-lite 1609 ms; generate 3.5-flash-lite 429 (516 ms) -> 3.1-flash-lite 2578 ms (8874
+tokens); output_guard 3.1-flash-lite 7969 ms (8760 tokens). **Não exercitado ao vivo:** a troca depois de timeout/503
+no output_guard (o provedor não falhou nesta corrida) — coberta só pelo transporte falso.
+
+**Mesmo commit, pedidos do dono 14:09/14:11 e do par frontend-c7:** (1) às 14:07 o input_guard devolveu 429
+`sem_modelo_disponivel` com 3.1-flash-lite só resfriado por um timeout de outra etapa — agora timeout/5xx/429 por minuto
+resfriam 15 s e só despromovem, e com todos bloqueados o de menor espera transitória é tentado (último recurso); cota_dia
+e 404 excluem de fato (`cotas-gemini-v1.json` 1.1.0, 1.0.0 arquivada). (2) `Retry-After`/`tentar_novamente_em_s` = menor
+espera real da etapa, com `erro_api.motivo_provedor` (`cota_dia` quando todos estão sem cota do dia), em vez do fixo de
+30 s. (3) resposta de falha deixou de ir ao Gemini como fala do modelo (turno marcado `falha`, ainda conta para
+`max_turns`). (4) bloco `capacidades` por modelo, lido pelo router e exposto em `roteador.capacidades` com o estado vivo.
+Tabela causa → backend → front → teste: [`rotacao-modelos-gemini.md`](rotacao-modelos-gemini.md) §4.1-4.2. Testes:
+`tests/test_capacidades_e_bloqueio.py` (14). Suíte **662 OK** (skipped=1, expected failures=22), 14:24 BRT.
+
+## Códigos de erro para o front (erros_api 1.4.0)
 
 Todo erro de `conversas/*` e `i-agora/*` sai com `erro_api.codigo` **numérico** e `erro_api.tipo` **estável**, nunca
 null. O HTTP da resposta é o do tipo; 429/503/504 com espera levam `Retry-After` (segundos). `repetir_mesmo_pedido`

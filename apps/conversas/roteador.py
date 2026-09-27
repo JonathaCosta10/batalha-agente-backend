@@ -8,8 +8,11 @@ corpo real). Nada de ordem em `if`: a ordem por etapa, a escolha por status e os
   (`latencia_ref_ms`). None = nenhum disponível.
 - `falhou(modelo, status, cota, retry_s)`: resfriamento — 429 de cota diária 900 s; 429 por minuto/sem tipo usa o
   `retryDelay` do Google quando vem; 504, 503/5xx e 404 têm o seu tempo; 400 não resfria (erro do nosso pedido).
-Quem decide SE há nova chamada continua a ser erros_api-v1.json (no máximo uma, nunca o mesmo pedido ao mesmo modelo);
-o router só decide QUAL modelo. Pular um modelo em resfriamento não é chamada.
+Quem decide SE há nova chamada continua a ser erros_api-v1.json (1.4.0: pela ordem, dentro do prazo do turno, nunca o
+mesmo modelo duas vezes na etapa); o router só decide QUAL modelo. Pular um modelo em resfriamento não é chamada.
+- 1.1.0 dos dados (dono 14:09/14:11): `capacidades` por modelo (RPM, etapas, timeout, tokens, latência mediana, falhas)
+  lidas aqui; resfriamento transitório (timeout, 5xx, 429 por minuto) só despromove — `ultimo_recurso` tenta o de menor
+  espera quando todos estão bloqueados; `espera_restante`/`motivo_bloqueio` vão para o Retry-After do front.
 """
 import json
 import threading
@@ -60,12 +63,50 @@ class Resfriamento(_E):
     nao_encontrado: int = Field(ge=0)
 
 
+MOTIVOS = Literal['cota_dia', 'cota_minuto', 'timeout', 'indisponivel', 'nao_encontrado']
+ETAPA = Literal['input_guard', 'output_guard', 'generate']
+
+
 class Router(_E):
     nota: str
-    etapas: dict[Literal['input_guard', 'output_guard', 'generate'], list[str]]
+    etapas: dict[ETAPA, list[str]]
     escolha_por_status: dict[str, Literal['ordem', 'mais_rapido']]
     resfriamento_s: Resfriamento
     rpm_margem: int = Field(ge=0)
+    # 1.1.0 (dono 14:09): resfriamento transitório só despromove; com todos bloqueados, o de menor espera transitória
+    # é tentado como último recurso. Fora desta lista (cota_dia, nao_encontrado) o modelo fica mesmo excluído.
+    transitorios: list[MOTIVOS] = []
+
+
+class Limite(_E):
+    valor: int | None = Field(default=None, ge=0)
+    fonte: str
+    estado: Literal['observado', 'NAO_MEDIDO']
+
+
+class Latencia(_E):
+    valor_ms: int | None = Field(ge=0)
+    n: int = Field(ge=0)
+    fonte: str
+    estado: Literal['observado', 'NAO_MEDIDO']
+
+
+class Pensamento(_E):
+    emite: Literal['sim', 'nao', 'NAO_MEDIDO']
+    fonte: str
+
+
+class Capacidade(_E):
+    """O que o modelo aguenta e como falhou (1.1.0, dono 14:11). Lido pelo router: `limites.rpm` (teto de RPM do
+    processo), `etapas` (a ordem só pode ter quem serve a etapa), `timeout_s` (teto da tentativa),
+    `max_output_tokens`, `latencia_mediana_ms` (o mais rápido depois de timeout)."""
+    limites: dict[Literal['rpm', 'tpm', 'rpd'], Limite]
+    etapas: dict[ETAPA, str]
+    pensamento: Pensamento
+    max_output_tokens: dict[Literal['guard', 'generate'], int]
+    timeout_s: dict[ETAPA, int]
+    latencia_mediana_ms: dict[ETAPA, Latencia]
+    falhas_observadas: list[str]
 
 
 class Cotas(_E):
@@ -77,6 +118,7 @@ class Cotas(_E):
     modelos: dict[str, Modelo]
     sem_cota_no_painel: list[str]
     router: Router
+    capacidades: dict[str, Capacidade] = {}
 
 
 @lru_cache(maxsize=1)
@@ -94,6 +136,9 @@ def validar(bruto):
         for m in ordem:
             if m not in dados.modelos or not dados.modelos[m].apto:
                 raise ValueError(f'Modelo fora da lista apta: {m}')
+            cap = dados.capacidades.get(m)
+            if dados.capacidades and (cap is None or etapa not in cap.etapas or etapa not in cap.timeout_s):
+                raise ValueError(f'Modelo {m} na ordem de {etapa} sem capacidade declarada para a etapa')
     return dados
 
 
@@ -116,6 +161,31 @@ class Roteador:
             fila.popleft()
         return len(fila)
 
+    def rpm_teto(self, modelo):
+        """RPM do painel: de `capacidades` (1.1.0) quando declarado, senão do bloco `painel`."""
+        cap = self.dados.capacidades.get(modelo)
+        valor = cap.limites['rpm'].valor if cap and 'rpm' in cap.limites else None
+        return valor if valor is not None else self.dados.modelos[modelo].painel.rpm
+
+    def _limite_rpm(self, modelo):
+        rpm = self.rpm_teto(modelo)
+        return max(1, rpm - self.dados.router.rpm_margem) if rpm else None
+
+    def timeout_s(self, modelo, etapa):
+        cap = self.dados.capacidades.get(modelo)
+        return cap.timeout_s.get(etapa) if cap else None
+
+    def max_output_tokens(self, modelo, papel):
+        cap = self.dados.capacidades.get(modelo)
+        return cap.max_output_tokens.get(papel) if cap else None
+
+    def _latencia(self, modelo, etapa):
+        cap = self.dados.capacidades.get(modelo)
+        medida = cap.latencia_mediana_ms.get(etapa) if cap else None
+        if medida is not None and medida.valor_ms is not None:
+            return medida.valor_ms
+        return self.dados.modelos[modelo].latencia_ref_ms or 10 ** 9
+
     def bloqueio(self, modelo):
         """None se disponível; senão o status que explica o bloqueio (429 cota/RPM, 504 timeout, 503/404)."""
         agora = self.relogio()
@@ -123,20 +193,68 @@ class Roteador:
             r = self.resfriado.get(modelo)
             if r and r[0] > agora:
                 return r[2]
-            rpm = self.dados.modelos[modelo].painel.rpm
-            if rpm and self._rpm(modelo, agora) >= max(1, rpm - self.dados.router.rpm_margem):
+            limite = self._limite_rpm(modelo)
+            if limite and self._rpm(modelo, agora) >= limite:
                 return 429
         return None
 
+    def _espera(self, modelo, agora):
+        """(segundos até ficar livre, motivo) — 0 se livre. Chamar com o lock."""
+        espera, motivo = 0.0, None
+        r = self.resfriado.get(modelo)
+        if r and r[0] > agora:
+            espera, motivo = r[0] - agora, r[1]
+        limite = self._limite_rpm(modelo)
+        fila = self.usos.get(modelo)
+        if limite and fila is not None and self._rpm(modelo, agora) >= limite:
+            livre_em = fila[len(fila) - limite] + 60 - agora
+            if livre_em > espera:
+                espera, motivo = livre_em, 'rpm_processo'
+        return espera, motivo
+
     def escolher(self, etapa, excluir=(), status=None):
+        """Primeiro livre da ordem (ou o mais rápido depois de timeout). Nenhum livre: ÚLTIMO RECURSO (1.1.0, dono
+        14:09) — o de menor espera entre os resfriados por motivo transitório (`router.transitorios`: timeout,
+        5xx, 429 por minuto), nunca cota_dia/404 nem o teto de RPM do processo, nunca um já tentado na etapa."""
         ordem = self.dados.router.etapas[etapa]
         livres = [m for m in ordem if m not in excluir and self.bloqueio(m) is None]
         if not livres:
-            return None
+            return self.ultimo_recurso(etapa, excluir)
         if self.dados.router.escolha_por_status.get(str(status)) == 'mais_rapido':
-            ref = lambda m: self.dados.modelos[m].latencia_ref_ms or 10 ** 9
-            return min(livres, key=lambda m: (ref(m), ordem.index(m)))
+            return min(livres, key=lambda m: (self._latencia(m, etapa), ordem.index(m)))
         return livres[0]
+
+    def ultimo_recurso(self, etapa, excluir=()):
+        agora, transitorios = self.relogio(), set(self.dados.router.transitorios)
+        candidatos = []
+        with self._lock:
+            for m in self.dados.router.etapas[etapa]:
+                if m in excluir:
+                    continue
+                espera, motivo = self._espera(m, agora)
+                if motivo in transitorios:
+                    candidatos.append((espera, m))
+        return min(candidatos)[1] if candidatos else None
+
+    def espera_restante(self, etapa):
+        """Menor espera real (s, inteiro >= 1) até algum modelo da etapa ficar livre; None se algum já está livre.
+        Vai para o Retry-After / erro_api.tentar_novamente_em_s (1.1.0: antes era o fixo de 30 s da política)."""
+        agora = self.relogio()
+        with self._lock:
+            esperas = [self._espera(m, agora)[0] for m in self.dados.router.etapas[etapa]]
+        menor = min(esperas) if esperas else 0
+        return max(1, int(menor + 0.999)) if menor > 0 else None
+
+    def motivo_bloqueio(self, etapa):
+        """'cota_dia' quando TODOS os modelos da etapa estão sem cota do dia; senão o motivo do de menor espera."""
+        agora = self.relogio()
+        with self._lock:
+            pares = [self._espera(m, agora) for m in self.dados.router.etapas[etapa]]
+        motivos = [mo for _e, mo in pares]
+        if motivos and all(mo == 'cota_dia' for mo in motivos):
+            return 'cota_dia'
+        ativos = [(e, mo) for e, mo in pares if mo]
+        return min(ativos)[1] if ativos else None
 
     def motivo_sem_modelo(self, etapa):
         """Todos bloqueados: 429 se algum está sem cota (o front espera e tenta), senão o primeiro motivo."""
@@ -186,4 +304,20 @@ class Roteador:
                 'ultima_tentativa_por_etapa': {e: self.tentativa.get(e) for e in ETAPAS},
                 'proximo_por_etapa': {e: self.escolher(e) for e in ETAPAS},
                 'resfriamentos': resfr,
-                'rpm_no_processo': {m: n for m, n in rpm.items() if n}}
+                'rpm_no_processo': {m: n for m, n in rpm.items() if n},
+                'capacidades': self.capacidades_ao_vivo()}
+
+    def capacidades_ao_vivo(self):
+        """capacidades do ficheiro + estado vivo: livre | resfriando {motivo, restam_s} | rpm_usado (dono 14:11)."""
+        agora, saida = self.relogio(), {}
+        for m, cap in self.dados.capacidades.items():
+            with self._lock:
+                espera, motivo = self._espera(m, agora)
+                usado = self._rpm(m, agora)
+            vivo = {'estado': 'livre' if not motivo else 'resfriando', 'rpm_usado': usado,
+                    'rpm_limite_processo': self._limite_rpm(m)}
+            if motivo:
+                vivo.update(motivo=motivo, restam_s=max(1, int(espera + 0.999)),
+                            transitorio=motivo in self.dados.router.transitorios)
+            saida[m] = {**cap.model_dump(), 'agora': vivo}
+        return saida

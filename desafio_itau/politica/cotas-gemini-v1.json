@@ -1,48 +1,506 @@
 {
   "schema_version": "1.0",
   "id": "cotas-gemini",
-  "versao": "1.0.0",
+  "versao": "1.1.0",
   "natureza": "dados_operacionais",
   "selo": {
     "limites": "Painel AI Studio 'Limites de taxa por modelo' (uso máximo dos últimos 28 dias / limite), colado pelo dono em 2026-09-27 12:39 BRT. NÃO medido pelo backend: o backend não lê cota restante (a API não expõe).",
     "ids": "GET https://generativelanguage.googleapis.com/v1beta/models com a chave do projeto (supportedGenerationMethods contém generateContent), 2026-09-27 12:40 BRT.",
     "sonda": "Uma chamada generateContent por modelo com o corpo REAL do input_guard (system_instruction + responseJsonSchema + thinkingConfig LOW), 2026-09-27 12:29-12:42 BRT, script de sonda da sessão backend-22.",
-    "latencia_ref": "latencia_ref_ms = sonda de 12:41-12:42 BRT (n=1), exceto gemini-3.5-flash-lite: p50 do ledger relatorios/avaliacoes/2026-09-27.jsonl (n=34). Usada só para escolher o modelo mais rápido depois de timeout."
+    "latencia_ref": "latencia_ref_ms = sonda de 12:41-12:42 BRT (n=1), exceto gemini-3.5-flash-lite: p50 do ledger relatorios/avaliacoes/2026-09-27.jsonl (n=34). Usada só para escolher o modelo mais rápido depois de timeout.",
+    "capacidades": "Bloco capacidades (1.1.0, pedido do dono 14:11 BRT): limites do painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT; latências = mediana das chamadas complete de ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete; NAO_MEDIDO onde não houve chamada completa. Lido pelo router: rpm (teto de RPM do processo), etapas (validação da ordem), timeout_s (teto da tentativa), max_output_tokens, latencia_mediana_ms (escolha do mais rápido depois de timeout)."
   },
   "modelos": {
-    "gemini-3.5-flash-lite": {"rotulo": "Gemini 3.5 Flash Lite", "painel": {"rpm": 15, "rpm_uso": 16, "tpm": 250000, "tpm_uso": 92290, "rpd": 500, "rpd_uso": 486},
-      "sonda": {"http": 429, "latencia_ms": 343, "nota": "429 GenerateRequestsPerDayPerProjectPerModel-FreeTier (cota do dia esgotada) 12:29"}, "latencia_ref_ms": 1250, "apto": true},
-    "gemini-3.1-flash-lite": {"rotulo": "Gemini 3.1 Flash Lite", "painel": {"rpm": 15, "rpm_uso": 1, "tpm": 250000, "tpm_uso": 7, "rpd": 500, "rpd_uso": 1},
-      "sonda": {"http": 200, "latencia_ms": 2594, "nota": "JSON bem formado, modelVersion gemini-3.1-flash-lite, 12:41; mas policy_version vem com a data (ignora o const do schema), medido 12:58: o servidor carimba (gateway.decisao_guard)"}, "latencia_ref_ms": 2594, "apto": true},
-    "gemini-3.6-flash": {"rotulo": "Gemini 3.6 Flash", "painel": {"rpm": 5, "rpm_uso": 0, "tpm": 250000, "tpm_uso": 0, "rpd": 20, "rpd_uso": 0},
-      "sonda": {"http": 200, "latencia_ms": 1375, "nota": "JSON do guard válido, 12:42"}, "latencia_ref_ms": 1375, "apto": true},
-    "gemini-3.5-flash": {"rotulo": "Gemini 3.5 Flash", "painel": {"rpm": 5, "rpm_uso": 3, "tpm": 250000, "tpm_uso": 17600, "rpd": 20, "rpd_uso": 19},
-      "sonda": {"http": 429, "latencia_ms": 313, "nota": "429 PerDay 12:29; antes parado até o timeout (15109-15188 ms, 3/3, 12:26-12:28)"}, "latencia_ref_ms": 10000, "apto": true},
-    "gemini-3-flash-preview": {"rotulo": "Gemini 3 Flash", "painel": {"rpm": 5, "rpm_uso": 0, "tpm": 250000, "tpm_uso": 0, "rpd": 20, "rpd_uso": 0},
-      "sonda": {"http": 200, "latencia_ms": 14937, "nota": "JSON válido, mas 14,9 s: acima do timeout de guard (10 s)"}, "latencia_ref_ms": 14937, "apto": false},
-    "gemini-3.7-flash": {"rotulo": "Gemini 3.7 Flash", "painel": {"rpm": 5, "rpm_uso": 0, "tpm": 250000, "tpm_uso": 0, "rpd": 20, "rpd_uso": 0},
-      "sonda": {"http": 503, "latencia_ms": 26234, "nota": "503 UNAVAILABLE depois de 26 s, 12:42"}, "latencia_ref_ms": null, "apto": false},
-    "gemini-flash-latest": {"rotulo": "Gemini Flash Latest (serve gemini-3.8-flash)", "painel": {"rpm": 5, "rpm_uso": 4, "tpm": 250000, "tpm_uso": 12870, "rpd": 20, "rpd_uso": 26},
-      "sonda": {"http": 429, "latencia_ms": 359, "nota": "429 PerDay (quotaDimensions.model=gemini-3.8-flash) 12:31; painel acima do RPD"}, "latencia_ref_ms": null, "apto": false},
-    "gemini-2.5-flash-lite": {"rotulo": "Gemini 2.5 Flash Lite", "painel": {"rpm": 10, "rpm_uso": 0, "tpm": 250000, "tpm_uso": 0, "rpd": 20, "rpd_uso": 0},
-      "sonda": {"http": 404, "latencia_ms": 329, "nota": "listado em /models, mas generateContent 404 NOT_FOUND (12:41); modelos_llm.py já registrava 'no longer available to new users'"}, "latencia_ref_ms": null, "apto": false},
-    "gemini-2.5-flash": {"rotulo": "Gemini 2.5 Flash", "painel": {"rpm": 5, "rpm_uso": 0, "tpm": 250000, "tpm_uso": 0, "rpd": 20, "rpd_uso": 0},
-      "sonda": {"http": 404, "latencia_ms": 531, "nota": "generateContent 404 NOT_FOUND (12:41)"}, "latencia_ref_ms": null, "apto": false},
-    "gemma-4-26b-a4b-it": {"rotulo": "Gemma 4 26B", "painel": {"rpm": 30, "rpm_uso": 0, "tpm": 16000, "tpm_uso": 0, "rpd": 14400, "rpd_uso": 0},
-      "sonda": {"http": 400, "latencia_ms": 390, "nota": "400 INVALID_ARGUMENT com o corpo real (system_instruction/JSON schema/thinkingConfig), 12:42"}, "latencia_ref_ms": null, "apto": false},
-    "gemma-4-31b-it": {"rotulo": "Gemma 4 31B", "painel": {"rpm": 30, "rpm_uso": 0, "tpm": 16000, "tpm_uso": 0, "rpd": 14400, "rpd_uso": 0},
-      "sonda": {"http": 400, "latencia_ms": 422, "nota": "400 INVALID_ARGUMENT com o corpo real, 12:42"}, "latencia_ref_ms": null, "apto": false}
-  },
-  "sem_cota_no_painel": ["Gemini 2 Flash", "Gemini 2 Flash Lite", "Gemini 2.5 Pro", "Gemini 3.1 Pro"],
-  "router": {
-    "nota": "Ordem por etapa. Guards (chamadas pequenas) começam no gemini-3.1-flash-lite (painel 1/15 RPM, 1/500 RPD) e tiram 2/3 das chamadas da cota do principal; o generate começa no principal gemini-3.5-flash-lite. Só modelos com apto=true e sonda 200 com o corpo real (ou 429 de cota, que é temporário).",
-    "etapas": {
-      "input_guard": ["gemini-3.1-flash-lite", "gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.5-flash"],
-      "output_guard": ["gemini-3.1-flash-lite", "gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.5-flash"],
-      "generate": ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.6-flash", "gemini-3.5-flash"]
+    "gemini-3.5-flash-lite": {
+      "rotulo": "Gemini 3.5 Flash Lite",
+      "painel": {
+        "rpm": 15,
+        "rpm_uso": 16,
+        "tpm": 250000,
+        "tpm_uso": 92290,
+        "rpd": 500,
+        "rpd_uso": 486
+      },
+      "sonda": {
+        "http": 429,
+        "latencia_ms": 343,
+        "nota": "429 GenerateRequestsPerDayPerProjectPerModel-FreeTier (cota do dia esgotada) 12:29"
+      },
+      "latencia_ref_ms": 1250,
+      "apto": true
     },
-    "escolha_por_status": {"429": "ordem", "503": "ordem", "404": "ordem", "504": "mais_rapido"},
-    "resfriamento_s": {"cota_dia": 900, "cota_minuto_padrao": 60, "timeout": 60, "indisponivel": 30, "nao_encontrado": 3600},
-    "rpm_margem": 1
+    "gemini-3.1-flash-lite": {
+      "rotulo": "Gemini 3.1 Flash Lite",
+      "painel": {
+        "rpm": 15,
+        "rpm_uso": 1,
+        "tpm": 250000,
+        "tpm_uso": 7,
+        "rpd": 500,
+        "rpd_uso": 1
+      },
+      "sonda": {
+        "http": 200,
+        "latencia_ms": 2594,
+        "nota": "JSON bem formado, modelVersion gemini-3.1-flash-lite, 12:41; mas policy_version vem com a data (ignora o const do schema), medido 12:58: o servidor carimba (gateway.decisao_guard)"
+      },
+      "latencia_ref_ms": 2594,
+      "apto": true
+    },
+    "gemini-3.6-flash": {
+      "rotulo": "Gemini 3.6 Flash",
+      "painel": {
+        "rpm": 5,
+        "rpm_uso": 0,
+        "tpm": 250000,
+        "tpm_uso": 0,
+        "rpd": 20,
+        "rpd_uso": 0
+      },
+      "sonda": {
+        "http": 200,
+        "latencia_ms": 1375,
+        "nota": "JSON do guard válido, 12:42"
+      },
+      "latencia_ref_ms": 1375,
+      "apto": true
+    },
+    "gemini-3.5-flash": {
+      "rotulo": "Gemini 3.5 Flash",
+      "painel": {
+        "rpm": 5,
+        "rpm_uso": 3,
+        "tpm": 250000,
+        "tpm_uso": 17600,
+        "rpd": 20,
+        "rpd_uso": 19
+      },
+      "sonda": {
+        "http": 429,
+        "latencia_ms": 313,
+        "nota": "429 PerDay 12:29; antes parado até o timeout (15109-15188 ms, 3/3, 12:26-12:28)"
+      },
+      "latencia_ref_ms": 10000,
+      "apto": true
+    },
+    "gemini-3-flash-preview": {
+      "rotulo": "Gemini 3 Flash",
+      "painel": {
+        "rpm": 5,
+        "rpm_uso": 0,
+        "tpm": 250000,
+        "tpm_uso": 0,
+        "rpd": 20,
+        "rpd_uso": 0
+      },
+      "sonda": {
+        "http": 200,
+        "latencia_ms": 14937,
+        "nota": "JSON válido, mas 14,9 s: acima do timeout de guard (10 s)"
+      },
+      "latencia_ref_ms": 14937,
+      "apto": false
+    },
+    "gemini-3.7-flash": {
+      "rotulo": "Gemini 3.7 Flash",
+      "painel": {
+        "rpm": 5,
+        "rpm_uso": 0,
+        "tpm": 250000,
+        "tpm_uso": 0,
+        "rpd": 20,
+        "rpd_uso": 0
+      },
+      "sonda": {
+        "http": 503,
+        "latencia_ms": 26234,
+        "nota": "503 UNAVAILABLE depois de 26 s, 12:42"
+      },
+      "latencia_ref_ms": null,
+      "apto": false
+    },
+    "gemini-flash-latest": {
+      "rotulo": "Gemini Flash Latest (serve gemini-3.8-flash)",
+      "painel": {
+        "rpm": 5,
+        "rpm_uso": 4,
+        "tpm": 250000,
+        "tpm_uso": 12870,
+        "rpd": 20,
+        "rpd_uso": 26
+      },
+      "sonda": {
+        "http": 429,
+        "latencia_ms": 359,
+        "nota": "429 PerDay (quotaDimensions.model=gemini-3.8-flash) 12:31; painel acima do RPD"
+      },
+      "latencia_ref_ms": null,
+      "apto": false
+    },
+    "gemini-2.5-flash-lite": {
+      "rotulo": "Gemini 2.5 Flash Lite",
+      "painel": {
+        "rpm": 10,
+        "rpm_uso": 0,
+        "tpm": 250000,
+        "tpm_uso": 0,
+        "rpd": 20,
+        "rpd_uso": 0
+      },
+      "sonda": {
+        "http": 404,
+        "latencia_ms": 329,
+        "nota": "listado em /models, mas generateContent 404 NOT_FOUND (12:41); modelos_llm.py já registrava 'no longer available to new users'"
+      },
+      "latencia_ref_ms": null,
+      "apto": false
+    },
+    "gemini-2.5-flash": {
+      "rotulo": "Gemini 2.5 Flash",
+      "painel": {
+        "rpm": 5,
+        "rpm_uso": 0,
+        "tpm": 250000,
+        "tpm_uso": 0,
+        "rpd": 20,
+        "rpd_uso": 0
+      },
+      "sonda": {
+        "http": 404,
+        "latencia_ms": 531,
+        "nota": "generateContent 404 NOT_FOUND (12:41)"
+      },
+      "latencia_ref_ms": null,
+      "apto": false
+    },
+    "gemma-4-26b-a4b-it": {
+      "rotulo": "Gemma 4 26B",
+      "painel": {
+        "rpm": 30,
+        "rpm_uso": 0,
+        "tpm": 16000,
+        "tpm_uso": 0,
+        "rpd": 14400,
+        "rpd_uso": 0
+      },
+      "sonda": {
+        "http": 400,
+        "latencia_ms": 390,
+        "nota": "400 INVALID_ARGUMENT com o corpo real (system_instruction/JSON schema/thinkingConfig), 12:42"
+      },
+      "latencia_ref_ms": null,
+      "apto": false
+    },
+    "gemma-4-31b-it": {
+      "rotulo": "Gemma 4 31B",
+      "painel": {
+        "rpm": 30,
+        "rpm_uso": 0,
+        "tpm": 16000,
+        "tpm_uso": 0,
+        "rpd": 14400,
+        "rpd_uso": 0
+      },
+      "sonda": {
+        "http": 400,
+        "latencia_ms": 422,
+        "nota": "400 INVALID_ARGUMENT com o corpo real, 12:42"
+      },
+      "latencia_ref_ms": null,
+      "apto": false
+    }
+  },
+  "sem_cota_no_painel": [
+    "Gemini 2 Flash",
+    "Gemini 2 Flash Lite",
+    "Gemini 2.5 Pro",
+    "Gemini 3.1 Pro"
+  ],
+  "router": {
+    "nota": "Ordem por etapa. Guards (chamadas pequenas) começam no gemini-3.1-flash-lite (painel 1/15 RPM, 1/500 RPD) e tiram 2/3 das chamadas da cota do principal; o generate começa no principal gemini-3.5-flash-lite. Só modelos com apto=true e sonda 200 com o corpo real (ou 429 de cota, que é temporário). 1.1.0 (dono 14:09 BRT): timeout/5xx resfriam só 15 s e são TRANSITÓRIOS — com todos os modelos da etapa bloqueados, o de menor espera transitória é tentado como último recurso; só cota_dia e 404 excluem de fato.",
+    "etapas": {
+      "input_guard": [
+        "gemini-3.1-flash-lite",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.5-flash"
+      ],
+      "output_guard": [
+        "gemini-3.1-flash-lite",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.5-flash"
+      ],
+      "generate": [
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash"
+      ]
+    },
+    "escolha_por_status": {
+      "429": "ordem",
+      "503": "ordem",
+      "404": "ordem",
+      "504": "mais_rapido"
+    },
+    "resfriamento_s": {
+      "cota_dia": 900,
+      "cota_minuto_padrao": 60,
+      "timeout": 15,
+      "indisponivel": 15,
+      "nao_encontrado": 3600
+    },
+    "rpm_margem": 1,
+    "transitorios": [
+      "timeout",
+      "indisponivel",
+      "cota_minuto"
+    ]
+  },
+  "capacidades": {
+    "gemini-3.1-flash-lite": {
+      "limites": {
+        "rpm": {
+          "valor": 15,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        },
+        "tpm": {
+          "valor": 250000,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        },
+        "rpd": {
+          "valor": 500,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        }
+      },
+      "etapas": {
+        "input_guard": "1º dos guards: painel 1/15 RPM e 1/500 RPD (folga), guard 1,2-1,6 s medidos",
+        "output_guard": "1º dos guards pela folga de cota; lento com 8-9 mil tokens de entrada (ver falhas)",
+        "generate": "2º do generate: reserva do principal quando este está sem cota do dia"
+      },
+      "pensamento": {
+        "emite": "sim",
+        "fonte": "output_guard 13:15 BRT: 490 thoughtsTokenCount no teto de 512 -> MAX_TOKENS"
+      },
+      "max_output_tokens": {
+        "guard": 2048,
+        "generate": 4096
+      },
+      "timeout_s": {
+        "input_guard": 10,
+        "generate": 20,
+        "output_guard": 20
+      },
+      "latencia_mediana_ms": {
+        "input_guard": {
+          "valor_ms": 1430,
+          "n": 6,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "observado"
+        },
+        "generate": {
+          "valor_ms": 3672,
+          "n": 5,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "observado"
+        },
+        "output_guard": {
+          "valor_ms": 6906,
+          "n": 2,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "observado"
+        }
+      },
+      "falhas_observadas": [
+        "output_guard: TimeoutError no teto fixo de 10 s em 4 de 6 tentativas (10078-10156 ms, 13:21-14:15 BRT)",
+        "output_guard: finishReason MAX_TOKENS com teto de 512 (13:15 BRT), corrigido com 2048",
+        "policy_version vem com a data (ignora o const do schema), o servidor carimba (12:58 BRT)"
+      ]
+    },
+    "gemini-3.6-flash": {
+      "limites": {
+        "rpm": {
+          "valor": 5,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        },
+        "tpm": {
+          "valor": 250000,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        },
+        "rpd": {
+          "valor": 20,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        }
+      },
+      "etapas": {
+        "input_guard": "2º dos guards: rápido (2,2 s), mas só 5 RPM / 20 RPD",
+        "output_guard": "2º dos guards: o mais rápido medido no output_guard (1,6-3,1 s)",
+        "generate": "3º do generate: 20 RPD, guardado para quando os lite falham"
+      },
+      "pensamento": {
+        "emite": "NAO_MEDIDO",
+        "fonte": "thoughtsTokenCount não registado nas métricas deste modelo hoje"
+      },
+      "max_output_tokens": {
+        "guard": 2048,
+        "generate": 4096
+      },
+      "timeout_s": {
+        "input_guard": 10,
+        "generate": 20,
+        "output_guard": 20
+      },
+      "latencia_mediana_ms": {
+        "input_guard": {
+          "valor_ms": 2234,
+          "n": 1,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "observado"
+        },
+        "generate": {
+          "valor_ms": 3500,
+          "n": 1,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "observado"
+        },
+        "output_guard": {
+          "valor_ms": 2086,
+          "n": 4,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "observado"
+        }
+      },
+      "falhas_observadas": [
+        "503 UNAVAILABLE em rajada: 1156 ms (13:35), 2062 e 1219 ms (input_guard, ~14:07 BRT)"
+      ]
+    },
+    "gemini-3.5-flash-lite": {
+      "limites": {
+        "rpm": {
+          "valor": 15,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        },
+        "tpm": {
+          "valor": 250000,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        },
+        "rpd": {
+          "valor": 500,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        }
+      },
+      "etapas": {
+        "input_guard": "3º dos guards: principal do generate, só quando os outros falham",
+        "output_guard": "3º dos guards, idem",
+        "generate": "1º do generate: modelo principal (qualidade da resposta)"
+      },
+      "pensamento": {
+        "emite": "NAO_MEDIDO",
+        "fonte": "thoughtsTokenCount não registado nas métricas deste modelo hoje"
+      },
+      "max_output_tokens": {
+        "guard": 2048,
+        "generate": 4096
+      },
+      "timeout_s": {
+        "input_guard": 10,
+        "generate": 20,
+        "output_guard": 20
+      },
+      "latencia_mediana_ms": {
+        "input_guard": {
+          "valor_ms": null,
+          "n": 0,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "NAO_MEDIDO"
+        },
+        "generate": {
+          "valor_ms": null,
+          "n": 0,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "NAO_MEDIDO"
+        },
+        "output_guard": {
+          "valor_ms": null,
+          "n": 0,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "NAO_MEDIDO"
+        }
+      },
+      "falhas_observadas": [
+        "429 de cota DIÁRIA (GenerateRequestsPerDayPerProjectPerModel-FreeTier): 12:29, 13:21 (515 ms), 14:09 (516 ms), resfriado cota_dia às 14:15 BRT; painel 486/500 RPD"
+      ]
+    },
+    "gemini-3.5-flash": {
+      "limites": {
+        "rpm": {
+          "valor": 5,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        },
+        "tpm": {
+          "valor": 250000,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        },
+        "rpd": {
+          "valor": 20,
+          "fonte": "painel AI Studio (Limites de taxa por modelo), colado pelo dono 2026-09-27 12:39 BRT",
+          "estado": "observado"
+        }
+      },
+      "etapas": {
+        "input_guard": "4º dos guards: último recurso",
+        "output_guard": "4º dos guards: último recurso",
+        "generate": "4º do generate: último recurso"
+      },
+      "pensamento": {
+        "emite": "NAO_MEDIDO",
+        "fonte": "thoughtsTokenCount não registado nas métricas deste modelo hoje"
+      },
+      "max_output_tokens": {
+        "guard": 2048,
+        "generate": 4096
+      },
+      "timeout_s": {
+        "input_guard": 10,
+        "generate": 20,
+        "output_guard": 20
+      },
+      "latencia_mediana_ms": {
+        "input_guard": {
+          "valor_ms": null,
+          "n": 0,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "NAO_MEDIDO"
+        },
+        "generate": {
+          "valor_ms": null,
+          "n": 0,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "NAO_MEDIDO"
+        },
+        "output_guard": {
+          "valor_ms": null,
+          "n": 0,
+          "fonte": "ultimas_chamadas do GET conversas/status/: :8000 lida 14:15 BRT (20 chamadas), :8013 13:21 e 14:09 BRT, métricas da :8000 13:35 enviadas pelo coordenador; só chamadas complete",
+          "estado": "NAO_MEDIDO"
+        }
+      },
+      "falhas_observadas": [
+        "429 de cota DIÁRIA: 12:29 (313 ms), ~14:07 (375 e 328 ms) BRT; painel 19/20 RPD",
+        "antes do 429, parado até o timeout de 15 s (15109-15188 ms, 3/3, 12:26-12:28 BRT)"
+      ]
+    }
   }
 }

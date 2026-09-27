@@ -92,17 +92,18 @@ class RespostaInvalidaSegueAOrdem(unittest.TestCase):
         self.assertEqual(guard(g)['decision'], 'release')
         self.assertEqual(chamadas, [G[0], 'gemini-3.5-flash-lite', 'gemini-3.6-flash'])
 
-    def test_prova_negativa_429_por_minuto_gasta_a_nova_chamada(self):
+    def test_429_por_minuto_depois_de_timeout_segue_a_ordem(self):
+        """erros_api 1.4.0 ('ordem_no_prazo'): antes parava na 2ª chamada; agora segue ao próximo não tentado."""
         g, chamadas, _ = gateway({G[0]: TimeoutError(), 'gemini-3.5-flash-lite': ErroProvedor(429, 'minuto', 20)})
-        with self.assertRaises(ErroProvedor):
-            guard(g)
-        self.assertEqual(chamadas, [G[0], 'gemini-3.5-flash-lite'])
+        self.assertEqual(guard(g)['decision'], 'release')
+        self.assertEqual(chamadas, [G[0], 'gemini-3.5-flash-lite', 'gemini-3.6-flash'])
 
-    def test_prova_negativa_erro_http_continua_com_uma_nova_chamada(self):
+    def test_prova_negativa_503_em_todos_cada_modelo_uma_vez_e_sai_503(self):
         g, chamadas, _ = gateway({m: ErroProvedor(503) for m in G})
-        with self.assertRaises(ErroProvedor):
+        with self.assertRaises(ErroProvedor) as ctx:
             guard(g)
-        self.assertEqual(len(chamadas), 2)
+        self.assertEqual(ctx.exception.code, 503)
+        self.assertEqual(sorted(chamadas), sorted(G))   # todos tentados, nenhum repetido
 
     def test_prova_negativa_400_nao_troca(self):
         g, chamadas, _ = gateway({G[0]: ErroProvedor(400)})
@@ -165,9 +166,10 @@ class EnvelopeDoFront(unittest.TestCase):
         corpo, _ = run(ConversationService(gateway=Quebrado()).send('a', payload()))
         self.assertEqual((corpo['erro_api']['tipo'], corpo['erro_api']['nome']), ('provedor_indisponivel', 'NAO_CLASSIFICADO'))
 
-    def test_politica_1_3_0(self):
+    def test_politica_1_4_0(self):
         pol = erros_api.carregar()
-        self.assertEqual(pol.versao, '1.3.0')
+        self.assertEqual(pol.versao, '1.4.0')
+        self.assertEqual(pol.limites.troca_de_modelo_no_turno, 'ordem_no_prazo')
         self.assertEqual(erros_api.http_de('resposta_modelo_invalida'), 503)
         self.assertTrue(all(not t.repetir_mesmo_pedido for t in pol.erros.values()))
         self.assertEqual(pol.limites.novas_chamadas_max, 1)

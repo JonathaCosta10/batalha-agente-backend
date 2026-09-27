@@ -41,6 +41,9 @@ class Tratamento(_Estrito):
 
 class Limites(_Estrito):
     novas_chamadas_max: int = Field(ge=0, le=1)
+    # 1.4.0: com o router, erro do provedor com nova chamada admitida segue para o próximo modelo NÃO tentado da ordem
+    # da etapa enquanto couber no prazo do turno ('ordem_no_prazo'); 'uma' = só `novas_chamadas_max`.
+    troca_de_modelo_no_turno: Literal['uma', 'ordem_no_prazo']
     espera_max_no_servidor_s: int = Field(ge=0, le=5)
     status_de_timeout_local: Literal[504]
 

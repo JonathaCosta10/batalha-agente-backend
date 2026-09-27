@@ -90,7 +90,8 @@ class ArmazemConversas:
 
     def gravar(self, principal, cid, *, historico, criada, proposta=None):
         valor = {'versao': VERSAO, 'principal': principal, 'cid': cid, 'criada': float(criada),
-                 'historico': [{'role': h['role'], 'text': h['text']} for h in historico],
+                 'historico': [{'role': h['role'], 'text': h['text'], **({'falha': True} if h.get('falha') else {})}
+                               for h in historico],
                  'proposta': proposta}
         try:
             _fora_do_laco(lambda: self._backend().set(_chave(principal, cid), valor))

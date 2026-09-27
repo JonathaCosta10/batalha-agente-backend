@@ -111,11 +111,12 @@ class RouterPorErro(unittest.TestCase):
         rapido = min(restantes, key=lambda m: (dados.modelos[m].latencia_ref_ms or 10 ** 9, G.index(m)))
         self.assertEqual(chamadas, [G[0], rapido])
 
-    def test_no_maximo_uma_nova_chamada_por_etapa(self):
+    def test_503_em_todos_cada_modelo_no_maximo_uma_vez(self):
+        """erros_api 1.4.0: segue a ordem inteira no prazo (antes: 1 nova chamada); nunca o mesmo modelo 2x."""
         g, chamadas, _ = gateway({m: ErroProvedor(503) for m in G})
         with self.assertRaises(ErroProvedor):
             run(g.input_guard('oi', []))
-        self.assertEqual(len(chamadas), 2)
+        self.assertEqual(sorted(chamadas), sorted(G))
 
     def test_todos_sem_cota_nenhuma_chamada_e_429(self):
         g, chamadas, _ = gateway({m: ErroProvedor(429, 'dia') for m in G})
@@ -214,7 +215,7 @@ class FrontRecebeTipoEHttp(unittest.TestCase):
 class NenhumErroSemCodigo(unittest.TestCase):
     def test_prova_negativa_tabela_inteira_e_status_soltos(self):
         pol = erros_api.carregar()
-        self.assertIn(pol.versao, ('1.2.0', '1.3.0'))
+        self.assertIn(pol.versao, ('1.2.0', '1.3.0', '1.4.0'))
         for tipo, t in pol.tipos.items():
             b = erros_api.erro_api(None, t.origem, tipo=tipo)
             with self.subTest(tipo=tipo):

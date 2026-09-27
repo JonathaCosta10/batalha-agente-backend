@@ -70,7 +70,7 @@ def estado_harness():
     O modelo real é o `modelVersion` devolvido pelo provedor na última chamada; sem chamada, diz NAO_MEDIDO."""
     from desafio_itau import politica
     from desafio_itau.politica import erros_api, lexico
-    from .gateway import TIMEOUT_POR_ETAPA
+    from .gateway import MIN_TENTATIVA_S, RESERVA_APOS_S, TETO_ADAPTATIVO_S, TIMEOUT_POR_ETAPA
     cfg, service = configuracao(), get_service()
     gw = service.gateway
     metricas = list(getattr(gw, 'metrics', ()))
@@ -92,6 +92,10 @@ def estado_harness():
         'limites': {'pedidos_por_minuto_por_usuario': service.requests_per_minute, 'turnos_por_conversa': service.max_turns,
                     'conversas_por_usuario': 5, 'ttl_conversa_s': service.ttl, 'timeout_s': service.timeout,
                     'timeout_por_etapa_s': dict(TIMEOUT_POR_ETAPA),
+                    # 1.4.0: com router e prazo do turno, cada tentativa usa min(teto, prazo restante - reserva).
+                    'timeout_adaptativo': {'teto_s': dict(TETO_ADAPTATIVO_S), 'reserva_apos_s': dict(RESERVA_APOS_S),
+                                           'min_tentativa_s': MIN_TENTATIVA_S},
+                    'troca_de_modelo_no_turno': lim.troca_de_modelo_no_turno,
                     'novas_chamadas_max': lim.novas_chamadas_max, 'espera_max_no_servidor_s': lim.espera_max_no_servidor_s},
         'ultimas_chamadas': [{k: m.get(k) for k in CAMPOS_METRICA} for m in metricas[-20:]],
         'versoes': {'politica': politica.referencia_documento(), 'lexico': lexico.versao(),

@@ -38,6 +38,26 @@ TIMEOUT_SEGUNDOS = 15  # etapa sem entrada em TIMEOUT_POR_ETAPA
 # BRT). Guard a 10 s = 4,5x o máximo medido; o generate fica em 15 s (nenhuma amostra de sucesso acima de 2 s justifica
 # subir). Caminho feliz no pior caso: 10 + 15 + 10 = 35 s < 45 s (ConversationService.timeout) < 50 s (front).
 TIMEOUT_POR_ETAPA = {'input_guard': 10, 'output_guard': 10, 'generate': 15}
+# Timeout ADAPTATIVO com o router e prazo do turno (1.4.0, 503 real do dono às 13:35 com 18 s livres): cada tentativa
+# usa min(teto da etapa, prazo restante - reserva para as etapas seguintes). Medido 2026-09-27 com o contexto depois da
+# abertura (8-9 mil tokens): gemini-3.1-flash-lite generate 2,7-14,9 s, output_guard >10 s em 3/4 (timeouts de 10 s);
+# gemini-3.6-flash output_guard 1,6-1,8 s. Reserva depois do input_guard = generate (10) + output_guard (6) + resposta
+# (2); depois do generate = output_guard (6) + resposta (2); depois do output_guard = resposta (2).
+# Sem prazo (testes, rota interacao/) vale TIMEOUT_POR_ETAPA.
+TETO_ADAPTATIVO_S = {'input_guard': 10, 'generate': 20, 'output_guard': 20}
+RESERVA_APOS_S = {'input_guard': 18, 'generate': 8, 'output_guard': 2}
+MIN_TENTATIVA_S = 3  # abaixo disto não se começa uma chamada (o guard mais rápido medido levou 0,9 s; generate 2,7 s)
+
+
+def timeout_da_tentativa(stage, agora=None, teto=None):
+    """Segundos para a próxima tentativa da etapa; pode vir < MIN_TENTATIVA_S (quem chama decide não tentar).
+    `teto`: `capacidades.<modelo>.timeout_s.<etapa>` (cotas-gemini 1.1.0); None = TETO_ADAPTATIVO_S."""
+    prazo = PRAZO_TURNO.get()
+    if prazo is None:
+        return TIMEOUT_POR_ETAPA.get(stage, TIMEOUT_SEGUNDOS)
+    agora = time.monotonic() if agora is None else agora
+    disponivel = prazo - agora - RESERVA_APOS_S.get(stage, 2)
+    return min(teto or TETO_ADAPTATIVO_S.get(stage, TIMEOUT_SEGUNDOS), disponivel)
 # 429 com quotaId "...PerDay..." (cota DIÁRIA do modelo esgotada, medido 2026-09-27 12:29 BRT nos três modelos
 # homologados): o modelo fica fora por esta pausa, sem chamada ao provedor; depois UMA chamada real volta a sondar.
 # Não muda a política (erros_api-v1.json): nenhum pedido é repetido e continua no máximo uma nova chamada.
@@ -204,13 +224,16 @@ class GeminiGateway:
         agora = self.relogio()
         return {m: round(ate - agora) for m, ate in list(self.cota_esgotada.items()) if ate > agora}
 
-    async def _uma_chamada(self, stage, model, instruction, digest, texto, schema, max_tokens, parse, nova):
-        """Uma chamada real ao provedor (router): métrica, RPM do processo e resfriamento do modelo que falhou."""
+    async def _uma_chamada(self, stage, model, instruction, digest, texto, schema, max_tokens, parse, nova,
+                           timeout=None):
+        """Uma chamada real ao provedor (router): métrica, RPM do processo e resfriamento do modelo que falhou.
+        `timeout`: segundos desta tentativa (adaptativo, `timeout_da_tentativa`); None = TIMEOUT_POR_ETAPA."""
         started = time.monotonic()
         self.roteador.chamou(model)
         resposta = None
         try:
-            timeout = TIMEOUT_POR_ETAPA.get(stage, TIMEOUT_SEGUNDOS)
+            if timeout is None:
+                timeout = TIMEOUT_POR_ETAPA.get(stage, TIMEOUT_SEGUNDOS)
             corpo = corpo_pedido(instruction, texto, schema, max_tokens)
             resposta = await (asyncio.to_thread(self.transporte, model, corpo, timeout=timeout) if self._com_timeout
                               else asyncio.to_thread(self.transporte, model, corpo))
@@ -245,11 +268,17 @@ class GeminiGateway:
         """Router: primeiro modelo disponível da etapa, e depois de cada falha o próximo escolhido pelos dados
         (429/503/404 -> próximo da ordem com cota; 504 -> o mais rápido; 400 -> não troca).
 
-        - Erro HTTP do provedor: no máximo `novas_chamadas_max` (1) novas chamadas por etapa, como manda
-          erros_api-v1.json. Modelo em resfriamento é pulado sem chamada e não conta.
-        - Resposta inválida do modelo (HTTP 200 sem saída válida, `RespostaInvalida`): não é erro HTTP, não gasta a
-          nova chamada da política; segue para o próximo modelo da ordem ainda não tentado.
-        - Nova tentativa só começa se couber inteira (timeout da etapa) antes do prazo do turno (`PRAZO_TURNO`)."""
+        - Erro do provedor com nova chamada admitida pela política (503/5xx, 504 timeout, 429, 404): com
+          `limites.troca_de_modelo_no_turno == 'ordem_no_prazo'` (erros_api 1.4.0, pedido do dono 12:39) segue para o
+          PRÓXIMO modelo ainda não tentado da ordem da etapa, quantas vezes couber no prazo do turno; com 'uma' vale o
+          antigo `novas_chamadas_max` (1). O MESMO modelo nunca é chamado duas vezes na etapa (`excluir=tentados`).
+        - 400 (`resposta_segura`) e erro sem status não trocam: sai o erro.
+        - Resposta inválida do modelo (HTTP 200 sem saída válida, `RespostaInvalida`) e 429 de cota DIÁRIA também
+          seguem para o próximo modelo não tentado (nunca contaram como nova chamada).
+        - Timeout ADAPTATIVO: cada tentativa usa `timeout_da_tentativa(stage)` = min(teto da etapa, prazo restante -
+          reserva das etapas seguintes). Uma troca só começa se sobrarem >= MIN_TENTATIVA_S; senão sai o erro da
+          última tentativa (o front recebe o tipo dele: 504 timeout_provedor, 503 provedor_indisponivel...).
+        - Modelo em resfriamento é pulado sem chamada."""
         texto = json.dumps(data, ensure_ascii=False)
         if len(texto) > 60000:
             raise ValueError('Context budget exceeded')
@@ -262,12 +291,37 @@ class GeminiGateway:
             self.roteador.tentou(stage, 'nenhum', 'sem_modelo_disponivel')
             self._metric(stage, time.monotonic(), digest, outcome='sem_modelo_disponivel',
                          error=ErroProvedor(status), model='nenhum')
-            raise ErroProvedor(status, 'resfriamento')
+            erro = ErroProvedor(status, 'resfriamento')
+            self._anota_bloqueio(stage, erro)
+            raise erro
+        try:
+            return await self._tentar_ordem(stage, modelo, instruction, digest, texto, schema, max_tokens, parse)
+        except Exception as error:
+            self._anota_bloqueio(stage, error)
+            raise
+
+    def _anota_bloqueio(self, stage, error):
+        """Espera REAL até o próximo modelo da etapa ficar livre e o motivo (cotas 1.1.0, dono 14:09): o serviço põe no
+        erro_api.tentar_novamente_em_s / Retry-After em vez do fixo da política; 'cota_dia' quando todos estão sem cota
+        do dia."""
+        try:
+            error.espera_restante_s = self.roteador.espera_restante(stage)
+            error.motivo_bloqueio = self.roteador.motivo_bloqueio(stage)
+        except AttributeError:
+            pass
+
+    def _max_tokens(self, modelo, stage, padrao):
+        return self.roteador.max_output_tokens(modelo, 'generate' if stage == 'generate' else 'guard') or padrao
+
+    async def _tentar_ordem(self, stage, modelo, instruction, digest, texto, schema, max_tokens, parse):
+        em_ordem = erros_api.carregar().limites.troca_de_modelo_no_turno == 'ordem_no_prazo'
         tentados, novas_http, nova = set(), 0, False
+        # a 1ª tentativa sempre sai (o wait_for do turno é o teto); teto por modelo vem de capacidades.timeout_s
+        timeout = max(1.0, timeout_da_tentativa(stage, teto=self.roteador.timeout_s(modelo, stage)))
         while True:
             try:
-                return await self._uma_chamada(stage, modelo, instruction, digest, texto, schema, max_tokens, parse,
-                                               nova)
+                return await self._uma_chamada(stage, modelo, instruction, digest, texto, schema,
+                                               self._max_tokens(modelo, stage, max_tokens), parse, nova, timeout)
             except Exception as error:
                 tentados.add(modelo)
                 status = erros_api.status_de(error)
@@ -278,17 +332,21 @@ class GeminiGateway:
                 # Não gasta a nova chamada da política (visto na :8013 13:20: timeout -> 3.5-flash-lite 429 dia -> fim).
                 sem_cota_do_dia = status == 429 and getattr(error, 'cota', None) == 'dia'
                 if not isinstance(error, RespostaInvalida) and not sem_cota_do_dia:
-                    if not erros_api.pode_nova_chamada(status, novas_http):
-                        raise
-                    novas_http += 1
-                prazo = PRAZO_TURNO.get()
-                timeout = TIMEOUT_POR_ETAPA.get(stage, TIMEOUT_SEGUNDOS)
-                if prazo is not None and time.monotonic() + timeout > prazo:
-                    raise  # a próxima tentativa não caberia no teto do turno: sai o erro desta
+                    if em_ordem:
+                        if not erros_api.pode_nova_chamada(status, 0):
+                            raise  # 400 / sem status: a política não admite outra chamada
+                    else:
+                        if not erros_api.pode_nova_chamada(status, novas_http):
+                            raise
+                        novas_http += 1
                 proximo = self.roteador.escolher(stage, excluir=tentados, status=status)
                 if proximo is None:
                     raise
                 espera = erros_api.espera_no_servidor(status)
+                timeout = timeout_da_tentativa(stage, time.monotonic() + espera,
+                                               teto=self.roteador.timeout_s(proximo, stage))
+                if timeout < MIN_TENTATIVA_S:
+                    raise  # a próxima tentativa não cabe no prazo do turno: sai o erro desta
                 if espera:
                     await self.dormir(espera)
                 self._admit()  # a nova chamada também consome o orçamento do processo
