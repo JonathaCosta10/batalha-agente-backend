@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Proposta do agente no clique IAI",
+  "description": "Espelho legivel do bloco proposta_do_agente do contrato; a fonte de verdade das chaves continua no contrato.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id_extracao", "numero_usuario", "id_usuario", "comportamento", "categoria", "campo", "valor"],
+  "properties": {
+    "id_extracao": {"type": "string", "minLength": 1},
+    "numero_usuario": {"type": "integer", "minimum": 1},
+    "id_usuario": {"type": "string", "format": "uuid"},
+    "comportamento": {"enum": ["entrada", "saída"]},
+    "categoria": {"type": "string"},
+    "campo": {"const": "vlr"},
+    "valor": {"type": ["string", "number"]}
+  }
+}

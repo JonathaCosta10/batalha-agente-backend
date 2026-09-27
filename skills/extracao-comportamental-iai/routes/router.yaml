@@ -1,0 +1,21 @@
+routes:
+  - id: iai.preparar
+    signals: [sortear usuario, clique IAI, preparar extracao, gerar evidencia]
+    workflow: workflows/preparar.md
+    loads:
+      - policies/gates.yaml
+      - templates/resposta-liberada.md
+  - id: iai.validar
+    signals: [validar proposta do agente, conferir resposta IAI, guard de extracao]
+    workflow: workflows/validar.md
+    loads:
+      - schemas/proposta.schema.json
+      - policies/gates.yaml
+  - id: iai.verificar
+    signals: [rodar provas da skill, mudei o contrato, mudei scripts, pre-guard offline]
+    workflow: workflows/verificar.md
+    loads:
+      - schemas/proposta.schema.json
+      - policies/gates.yaml
+ambiguity_rule: pergunte se e um clique real (toca o BigQuery) ou so a prova offline; nao escolha
+fallback: para o chat do i.agora e o guard de numeros do texto use apps/conversas e docs/contrato-api-frontend.md

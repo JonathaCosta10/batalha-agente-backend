@@ -1,0 +1,32 @@
+{
+  "descricao": "Agente acrescenta afirmacao livre.",
+  "prova_negativa": "TEM de reprovar.",
+  "nota": "Evidencia sintetica igual a de scripts/testar_skill.py (linha Mercado, S, 25.5); nao e dado real.",
+  "evidencia": {
+    "id_extracao": "4f1c2b9e-7a1d-4c8e-9b3a-2d5e6f7a8b9c",
+    "selecao": {
+      "numero_usuario": 1,
+      "id_usuario": "123e4567-e89b-42d3-a456-426614174000",
+      "campo": "vlr",
+      "linha": {
+        "anomesdia": "2025-08-05T12:00:00+00:00",
+        "anomes": 202508,
+        "tipo": "S",
+        "vlr": 25.5,
+        "nom_cate_macro": "Mercado"
+      }
+    }
+  },
+  "proposta": {
+    "id_extracao": "4f1c2b9e-7a1d-4c8e-9b3a-2d5e6f7a8b9c",
+    "numero_usuario": 1,
+    "id_usuario": "123e4567-e89b-42d3-a456-426614174000",
+    "comportamento": "saída",
+    "categoria": "Mercado",
+    "campo": "vlr",
+    "valor": 25.5,
+    "afirmacao_livre": "garantido"
+  },
+  "deve": "reprovar",
+  "falha_contem": "estrutura JSON"
+}

@@ -1,0 +1,8 @@
+# Politica da extracao-comportamental-iai. Lida pelo modelo e por tools/gate.mjs (chave: valor, uma por linha).
+contrato: contrato-de-extracao-e-resposta.json
+esperado_golden: APROVADO
+esperado_adversarial: REPROVADO
+uuid_regex: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+python_testes: scripts/testar_skill.py
+evals_devem_passar: true
+nota_minima_avaliador: 75

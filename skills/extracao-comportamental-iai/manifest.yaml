@@ -1,0 +1,13 @@
+name: extracao-comportamental-iai
+version: 0.2.0
+owner: repo
+escopo: local
+boundaries:
+  - le BigQuery so por scripts/base.py (ADC, sem chave de API, cache desligado, teto de bytes do contrato)
+  - a integracao do botao IAI no front e no Django pertence a outra seccao
+produces: [evidencia-extracao-json, resposta-liberada-json]
+consumes: [contrato-de-extracao-e-resposta.json, proposta-do-agente-json]
+engine: scripts/validar_resposta.py
+verifier: scripts/testar_skill.py
+proof: tools/gate.mjs
+omissoes: [references, examples, docs]

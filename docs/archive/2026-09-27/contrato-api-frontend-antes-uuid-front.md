@@ -289,14 +289,12 @@ job `657ffebb-09f9-49e2-abef-8dedbed639bb`, 2026-09-27T05:26 BRT) e junta `nome`
 `data/usuarios_verdade.selo.json`.
 
 ```ts
-// 1) Ao abrir o app: define o usuário SÓ pelo id_usuario (UUID). Índice posicional ("1") → 400 desde 10:32.
-POST /api/v1/context-agent/perfil-usuario/definir/   {"usuario": "00108ccd-699c-453a-a9f9-a66aad6e03e5"}
-// 201  (gênero e índice ficam na sessão, não saem — padrão neutro, dono 10:17)
+// 1) Ao abrir o app: define o usuário (índice 1..1000 ou id_usuario UUID)
+POST /api/v1/context-agent/perfil-usuario/definir/   {"usuario": "1"}
+// 201
 { sessao_id: string, expira_em_segundos: 14400,
-  usuario: { codigo: string /* id_usuario */, pessoa: string /* "Maria" */, nome_origem: "nome_gerado" },
+  usuario: { codigo: string /* id_usuario */, pessoa: string /* "Maria" */, genero: "F" | "M", indice: number },
   tempo_resposta_ms: number }
-// 400 {"erro": "Índice posicional descontinuado: envie usuario com o id_usuario (UUID)."}
-// 404 UUID bem formado que não está no CSV da verdade
 
 // 2) Cada pergunta leva o sessao_id
 POST /api/v1/context-agent/perfil-usuario/pergunta/  {"sessao_id": "...", "pergunta": "quem sou eu?"}
@@ -320,14 +318,6 @@ POST /api/v1/context-agent/perfil-usuario/pergunta/  {"sessao_id": "...", "pergu
   00108ccd-699c-453a-a9f9-a66aad6e03e5. …", guard APROVADO. "qual o meu saldo?" 200: o modelo diz que
   ainda não tem essa informação.
 - Testes: `python -m unittest tests.test_perfil_usuario` (12 testes, Gemini falso, com provas negativas).
-- **Identidade só por UUID** (P0 do dono, 2026-09-27 10:32; `services/perfil_usuario.identificar`): texto só de
-  dígitos → 400 `ReferenciaInvalida`; UUID fora do CSV → 404. O padrão do front é
-  `00108ccd-699c-453a-a9f9-a66aad6e03e5` (Maria, linha 1 de `data/usuarios_verdade.csv`). As medições de 05:33
-  acima usaram `{"usuario": "1"}`, que hoje daria 400.
-- **O front já faz isto** (batalha-agente-frontend, commit `c4a9ff3`, `src/services/backend.ts`): envia
-  `{"usuario": "<UUID>"}` (padrão acima; `VITE_IAGORA_USUARIO` troca). O guard `src/services/idUsuario.test.ts`
-  intercepta 12 pedidos e só aceita `usuario` em `definir/` e só como UUID — prova negativa: com `'1'` reprova.
-  Medido no front: 40/40 testes (`npm test`), `tsc` 0 erros · 2026-09-27 12:30 BRT.
 
 ### 5.2 Conversa i-agora: `conversas/sessao/` e `conversas/mensagens/` (front de agente-app-mobile)
 
@@ -339,7 +329,7 @@ novos são aditivos: `usuario` no `sessao/` e `dados` nas respostas aprovadas.
 A conversa fica presa ao `sessao_id` de **5.1**. O front passa esse `sessao_id` uma vez, no `GET sessao/`.
 
 ```ts
-// 0) POST perfil-usuario/definir/ {"usuario": "<id_usuario UUID>"} -> sessao_id  (5.1)
+// 0) POST perfil-usuario/definir/ {"usuario": "1"} -> sessao_id  (5.1)
 // 1) GET conversas/sessao/?sessao_id=<sessao_id>   (ou header X-Sessao-Id)
 // 200 -> cookies: csrftoken + conversa_sessao (assinado, HttpOnly, SameSite=Lax, 4 h)
 { schema_version: "1.0", conversation_id: null, message_id, request_id, status, reply, citations: [],
@@ -380,24 +370,14 @@ A conversa fica presa ao `sessao_id` de **5.1**. O front passa esse `sessao_id` 
 
 Todo erro vem no mesmo envelope, com `status: "unavailable"`.
 
-**O que o front já faz** (batalha-agente-frontend `c4a9ff3`, `src/services/backend.ts`; a lista "o front
-precisa mudar" anterior está em `docs/archive/2026-09-27/contrato-api-frontend-antes-uuid-front.md`):
-1. `POST definir/ {"usuario": "<UUID>"}` → `GET conversas/sessao/?sessao_id=` (recebe cookies `csrftoken` e
-   `conversa_sessao`) → header `X-Sessao-Id` em **todo** pedido seguinte → `GET i-agora/perfil/` →
-   `POST i-agora/sessao/abertura/` → `POST conversas/mensagens/` → `i-agora/plano/`.
-2. Proxy do Vite (`:3000`) manda `/api/v1` para `DJANGO_URL` (padrão `http://127.0.0.1:8000`). Um só backend na
-   `:8000`: o `agent_backend/` do repo do front não sobe junto.
-3. Degradações: `definir/` 404/405 → identidade por cookie (modo `agent_backend`); chat 404 com sessão → reabre
-   a sessão uma vez e reenvia como conversa nova; `i-agora/perfil` 404 → modo só-chat, sem inventar valores nem
-   abertura. A sessão de usuário e a conversa sobrevivem ao reinício (I4 / D-4); 404 = vencida (4 h) ou de outra sessão.
-4. A resposta do bot é renderizada por `src/components/chat/RichText.tsx` (negrito, itálico, listas, títulos; sem HTML).
-
-Ponta a ponta pela `:3000` (medido no front, 2026-09-27): 11:52 BRT "O que eu faço com as sobras?" → 200
-`needs_clarification` em 14,5 s ("…fluxo líquido de -1729.62 R$ por mês… não havendo sobras…"). 12:31 BRT o
-mesmo fluxo: `definir` 201 / `sessao` 200 / `perfil` 200 / `abertura` 201 / `plano` 200, mas chat **503 por
-provedor** (generate `flash-lite` falhou em 515 ms; contingência `gemini-3.5-flash` em timeout de 15 s), sem
-rejeição determinística — classifique 503 lendo `conversas/status/` (5.5). 503 por provedor ou cota: ver
-`docs/backend-unico-2026-09-27.md`.
+**O front de agente-app-mobile precisa mudar:**
+1. Antes de `bootstrap()`, chamar `POST /api/v1/context-agent/perfil-usuario/definir/`. Depois passar
+   `?sessao_id=` na URL de `sessao/`, em `conversationApi.ts`. Com isso, o `send()` funciona sem mudança.
+2. Apontar o proxy do `vite.config.ts` para a porta do Django (`8000` no padrão; o smoke usou `8012`).
+3. Tratar 404 de `sessao/`/`mensagens/` como "definir usuário de novo". Desde 2026-09-27 (I4 / D-4) a sessão de
+   usuário **e** a conversa sobrevivem ao reinício do processo; o 404 passa a significar sessão/conversa vencida
+   (4 h) ou de outra sessão, não "o servidor reiniciou".
+4. Opcional: mostrar `usuario.pessoa`/`usuario.codigo` do `sessao/` e o `dados.selo` junto da resposta.
 
 **Persistência da conversa (I4 / D-4, 2026-09-27).** `ConversationService.sessions` passa a ser gravado no banco do
 Django (cache com backend de banco, tabela `conversas_sessao_cache`, criada sob demanda; `apps/conversas/persistencia.py`).
@@ -498,14 +478,8 @@ Nenhum campo existente mudou. Um front que ignore os campos novos continua funci
   - `regras_aplicadas` traz `rule_id@versao` de `desafio_itau/politica/operacional-v1.json` (aprovação **PENDENTE**).
   - **O front decide a tela por `contrato.estado` e `contrato.acoes_permitidas`, nunca pelo texto.**
 - **`erro_api` (null só em sucesso; toda falha tem bloco desde a versão 1.1.0)**
-  - Formato: `{codigo, tipo, nome, origem: api|provedor, acao_cliente, tentar_novamente_em_s, encaminhar_humano, mensagem, politica}`.
-  - **Desde 1.2.0 (2026-09-27 13:03 BRT):** `codigo` é sempre número e `tipo` é sempre uma string estável, em
-    `conversas/*` e `i-agora/*`. O HTTP da resposta segue o tipo: `cota_provedor` 429 (+ `Retry-After`),
-    `timeout_provedor` 504, `provedor_indisponivel` 503, `resposta_reprovada_validacao` 503, `resposta_modelo_invalida` 503 (1.3.0: saída do modelo cortada/fora do schema em todos os modelos tentados). Antes, toda falha do
-    provedor saía em HTTP 503. Tabela completa de tipos em
-    [`backend-unico-2026-09-27.md`, "Códigos de erro para o front"](backend-unico-2026-09-27.md#códigos-de-erro-para-o-front-erros_api-130).
-    A linha 400 do provedor passou a `resposta_segura` (sem nova chamada).
-  - A tabela vem de `desafio_itau/politica/erros_api-v1.json` (1.2.0; a 1.1.0 está em `politica/archive/2026-09-27/`). Códigos com nova chamada ao modelo (400 deixou de ter na 1.2.0):
+  - Formato: `{codigo, nome, origem: api|provedor, acao_cliente, tentar_novamente_em_s, encaminhar_humano, mensagem, politica}`.
+  - A tabela vem de `desafio_itau/politica/erros_api-v1.json` (versão 1.1.0). Códigos com nova chamada ao modelo:
 
   | código | o servidor já fez | `acao_cliente` | espera sugerida | encaminhar |
   |---|---|---|---|---|
@@ -529,7 +503,7 @@ Nenhum campo existente mudou. Um front que ignore os campos novos continua funci
   - **Concorrência (correção D11):** o 429 de "pedido concorrente" vale **por usuário**. Antes, o bloqueio era global e um usuário podia receber o 429 do pedido de outro.
   - **Vida da conversa (correção D3):** o ttl da conversa passa a ser igual ao da sessão de usuário (4 h, `perfil_usuario.SESSAO_SEGUNDOS`), no lugar dos 30 min fixos. O cookie de 30 dias citado pelo front está no backend publicado (`agent_backend`), não neste repositório. Aqui, o cookie `conversa_sessao` já dura 4 h.
   - Se a nova chamada também falhar, sai o fallback técnico com `status: "unavailable"`.
-  - Com `origem: "provedor"`, o código do Gemini vai em `erro_api.codigo`; o HTTP é 429/504/503 conforme o `tipo` (1.2.0; antes sempre 503).
+  - Com `origem: "provedor"`, o HTTP da nossa API continua 503 e o código do Gemini vai em `erro_api.codigo`.
   - `encaminhar_humano: true` só indica que o front pode oferecer esse caminho: a rota de handoff é **NAO_IMPLEMENTADO**.
 - **`conversas/interacao/`**
   - Cada item de `avaliacao.tentativas` ganha `http_status` e `tratamento`.
@@ -555,8 +529,7 @@ Responde ao item 3 do pedido do front, na parte que cabe a este repositório. Se
  "versoes": {"politica": "…@1.0.0", "lexico": "1.1.0", "erros_api": "…@1.1.0"}}
 ```
 
-- **Modelo real:** é o `modelVersion` que o provedor devolveu, e não o nome gravado no código. `GET /api/health/` existe desde 2026-09-27 como alias leve do `/healthz` (`{"status":"ok"}`, sem chamar o provedor).
-- **Aditivos 2026-09-27 (router):** `cota_diaria_esgotada`, `limites.timeout_por_etapa_s` e `roteador` = `{dados, ordem_por_etapa, ultimo_modelo_por_etapa, resfriamentos: {modelo: {restam_s, motivo}}, rpm_no_processo}` (null sem router). Qual modelo respondeu cada etapa: `roteador.ultimo_modelo_por_etapa` e `ultimas_chamadas[].model`.
+- **Modelo real:** é o `modelVersion` que o provedor devolveu, e não o nome gravado no código. O `/api/health/` com nome fixo, citado pelo front, pertence ao backend publicado e não existe neste repositório.
 - **Parcial:** não há orçamento por dia. As métricas vivem na memória do processo e zeram ao reiniciar; o ledger persistente é o de `interacao/`, em `relatorios/avaliacoes/`.
 
 ---

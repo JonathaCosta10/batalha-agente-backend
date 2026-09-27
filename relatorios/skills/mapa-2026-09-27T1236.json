@@ -1,0 +1,242 @@
+{
+  "skills": [
+    {
+      "nome": "extracao-comportamental-iai",
+      "repo": "skills",
+      "dir": "C:\\Users\\ACER\\AppData\\Local\\Temp\\claude\\C--Users-ACER-Desktop-Nova-pasta-Frontend\\241cb976-6a73-46c9-9202-8c44c735e444\\scratchpad\\backend-docs-wt\\skills\\extracao-comportamental-iai",
+      "ficheiros": [
+        {
+          "caminho": "contrato-de-extracao-e-resposta.json",
+          "bytes": 1556,
+          "sha256": "b3cd576e162d8fc35187c20d939971c1325126c8832c4a7cc77b3596db81ec71",
+          "mtime": "2026-09-27T15:35:26.070Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "evidencias/.gitignore",
+          "bytes": 16,
+          "sha256": "4bb38be6d6d9ef0d2f9bcc339850ff48d821eccfa739369402b354c9ba946ea2",
+          "mtime": "2026-09-27T15:35:26.072Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "scripts/base.py",
+          "bytes": 5552,
+          "sha256": "c7a2a6d415ff758b478958c304a61560a5223c35c15f1047d70ed2ef95801071",
+          "mtime": "2026-09-27T15:35:26.073Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "scripts/preparar_extracao.py",
+          "bytes": 3838,
+          "sha256": "d9b0bbd88f32f0e522aff1363d49ad4ad9e4f3453853c894704c972dd87dd192",
+          "mtime": "2026-09-27T15:35:26.074Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "scripts/testar_skill.py",
+          "bytes": 4768,
+          "sha256": "0abe75680ac9781c303bece1e34fdca2d0eb9078dab93b6f01641a90f8403d2e",
+          "mtime": "2026-09-27T15:35:26.076Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "scripts/validar_resposta.py",
+          "bytes": 5150,
+          "sha256": "48c799675a0ea46859091abe3933f206cb578afd05a6bc789e76980bd83f5f19",
+          "mtime": "2026-09-27T15:35:26.077Z",
+          "classe": "outro"
+        },
+        {
+          "caminho": "SKILL.md",
+          "bytes": 4435,
+          "sha256": "e292bef4670dc85454a8ef6da0111a6fbb395d06b854f32dc914c4e0370c2be8",
+          "mtime": "2026-09-27T15:35:26.070Z",
+          "classe": "sempre"
+        }
+      ],
+      "total_bytes": 25315,
+      "sempre_bytes": 4435,
+      "enderecavel_bytes": 20880,
+      "zero_token_bytes": 0,
+      "tokens_carregaveis": 6330,
+      "rotas": [],
+      "ambiguity_rule": "",
+      "fallback": "",
+      "frontmatter": {
+        "campos": [
+          "name",
+          "description"
+        ],
+        "name": "extracao-comportamental-iai",
+        "description": "Sortear um usuário UUID e um fato de seu extrato BigQuery i.agora no clique IAI, registrar evidências e bloquear propostas do agente que não coincidam com a fonte ou o contrato de resposta.",
+        "desc_chars": 189,
+        "triggers": [],
+        "allowed_tools": []
+      },
+      "partes": {
+        "routes": false,
+        "workflows": false,
+        "schemas": false,
+        "policies": false,
+        "templates": false,
+        "tools": false,
+        "evals": false
+      },
+      "omissoes_declaradas": [],
+      "evals": {
+        "golden": 0,
+        "adversariais": 0
+      },
+      "dimensoes": {
+        "custo": {
+          "nota": 100,
+          "motivos": []
+        },
+        "router": {
+          "nota": 0,
+          "motivos": [
+            "Criar routes/router.yaml com rotas, workflow, loads, ambiguity_rule e fallback."
+          ]
+        },
+        "frontmatter": {
+          "nota": 60,
+          "motivos": [
+            "Declarar triggers no frontmatter do SKILL.md.",
+            "Declarar allowed-tools no frontmatter do SKILL.md."
+          ]
+        },
+        "colisao": {
+          "nota": 100,
+          "motivos": []
+        },
+        "anatomia": {
+          "nota": 0,
+          "motivos": [
+            "Criar routes/ ou declarar a sua omissao no manifest.yaml.",
+            "Criar workflows/ ou declarar a sua omissao no manifest.yaml.",
+            "Criar schemas/ ou declarar a sua omissao no manifest.yaml.",
+            "Criar policies/ ou declarar a sua omissao no manifest.yaml.",
+            "Criar templates/ ou declarar a sua omissao no manifest.yaml.",
+            "Criar tools/ ou declarar a sua omissao no manifest.yaml.",
+            "Criar evals/ ou declarar a sua omissao no manifest.yaml."
+          ]
+        },
+        "verificacao": {
+          "nota": 0,
+          "motivos": [
+            "Adicionar gate executavel em tools/ (*.js ou *.mjs).",
+            "Adicionar casos golden em evals/golden/.",
+            "Adicionar casos adversariais em evals/adversarial/."
+          ]
+        },
+        "kernel": {
+          "nota": 100,
+          "motivos": []
+        }
+      },
+      "nota": 39,
+      "correcoes": [
+        "Criar routes/router.yaml com rotas, workflow, loads, ambiguity_rule e fallback.",
+        "Declarar triggers no frontmatter do SKILL.md.",
+        "Declarar allowed-tools no frontmatter do SKILL.md.",
+        "Criar routes/ ou declarar a sua omissao no manifest.yaml.",
+        "Criar workflows/ ou declarar a sua omissao no manifest.yaml.",
+        "Criar schemas/ ou declarar a sua omissao no manifest.yaml.",
+        "Criar policies/ ou declarar a sua omissao no manifest.yaml.",
+        "Criar templates/ ou declarar a sua omissao no manifest.yaml.",
+        "Criar tools/ ou declarar a sua omissao no manifest.yaml.",
+        "Criar evals/ ou declarar a sua omissao no manifest.yaml.",
+        "Adicionar gate executavel em tools/ (*.js ou *.mjs).",
+        "Adicionar casos golden em evals/golden/.",
+        "Adicionar casos adversariais em evals/adversarial/."
+      ],
+      "fonte": "ferramentas/avaliador-skills.mjs; fs.readFileSync, fs.statSync e REGUA",
+      "medido_em": "2026-09-27T15:36:00.946Z",
+      "tokens_reais": "NAO_MEDIDO",
+      "tokens_reais_motivo": "Estimativa ceil(bytes/4); nao houve chamada a modelo.",
+      "gates_executados": "NAO_MEDIDO",
+      "gates_executados_motivo": "Inspeccao estatica; os tools e evals nao foram executados."
+    }
+  ],
+  "colisoes": [],
+  "gerado_em": "2026-09-27T15:36:00.946Z",
+  "regua": {
+    "pesos": {
+      "custo": 10,
+      "router": 25,
+      "frontmatter": 15,
+      "colisao": 10,
+      "anatomia": 10,
+      "verificacao": 20,
+      "kernel": 10
+    },
+    "sempre_ideal": 6144,
+    "sempre_teto": 49152,
+    "desc_min_chars": 40,
+    "desc_max_chars": 300,
+    "desc_min_palavras": 6,
+    "limiar_colisao": 0.5,
+    "router": {
+      "rotas": 20,
+      "workflow": 20,
+      "loads": 20,
+      "existentes": 20,
+      "ambiguity_rule": 10,
+      "fallback": 10
+    },
+    "frontmatter": {
+      "name": 20,
+      "description": 40,
+      "triggers": 20,
+      "allowed_tools": 20
+    },
+    "triggers_parciais": 0.5,
+    "partes": [
+      "routes",
+      "workflows",
+      "schemas",
+      "policies",
+      "templates",
+      "tools",
+      "evals"
+    ],
+    "verificacao": {
+      "tools": 40,
+      "golden": 30,
+      "adversariais": 30
+    },
+    "kernel": {
+      "policy": 35,
+      "schema": 35,
+      "docs": 30
+    },
+    "policy_min_linhas": 2,
+    "schema_min_linhas": 3,
+    "colisao_penalidade": 100,
+    "palavras_genericas": [
+      "help",
+      "helps",
+      "helper",
+      "assist",
+      "assistant",
+      "tasks",
+      "task",
+      "general",
+      "generic",
+      "useful",
+      "various",
+      "things",
+      "stuff",
+      "ajuda",
+      "ajudar",
+      "assistente",
+      "tarefas",
+      "tarefa",
+      "geral",
+      "generico",
+      "diversas",
+      "coisas"
+    ]
+  }
+}

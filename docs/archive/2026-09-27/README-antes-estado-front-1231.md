@@ -12,22 +12,8 @@ A norma de referência é a BCB RC 8/2023.
 
 > Documento consolidado em 2026-09-27. As versões anteriores estão em `docs/archive/2026-09-27/`
 > (ver `docs/archive/INDICE.md`).
-> Repositório git: `github.com/JonathaCosta10/batalha-agente-backend`, branch `main` (estado desta página:
-> `84ead9b` + docs de 2026-09-27 12:40 BRT). É o **backend único** da integração: Django em `127.0.0.1:8000`.
-> O `agent_backend/` do repo do front não sobe junto (dois processos na `:8000`).
-
-### Estado medido (2026-09-27)
-
-| Fato | Valor · fonte · hora |
-| :--- | :--- |
-| Suíte backend | **588 OK** · `unittest discover -s tests`, sessão backend-21, commit `84ead9b` · 2026-09-27 |
-| Rotas `i-agora/*` | portadas para `apps/i_agora` · commit `b95cf2a` · 2026-09-27 |
-| Guard de números | aceita ponto decimal e fonte negativa. Falso positivo corrigido: titular com `cash_flow` -1729.62 e texto "fluxo negativo de R$ 1.729,62" era reprovado em `apps/conversas/estado.py` `numeros_sem_fonte` → 503 · `84ead9b` |
-| Contingência Gemini | `MODELO_CONTINGENCIA = gemini-3.5-flash` (antes igual ao principal; caía em `gemini-flash-latest` com 429 em 4/4 sondas, 11:38–11:41 BRT) · `84ead9b` |
-| Identidade | `definir/` só aceita `id_usuario` UUID; índice ("1") → 400 desde 10:32 BRT · `services/perfil_usuario.identificar` |
-| Front ponta a ponta pela `:3000` | 11:52 BRT "O que eu faço com as sobras?" → 200 `needs_clarification` 14,5 s. 12:31 BRT: `definir` 201 / `sessao` 200 / `perfil` 200 / `abertura` 201 / `plano` 200; chat **503 por provedor** (flash-lite falhou em 515 ms, contingência `gemini-3.5-flash` timeout 15 s), sem rejeição determinística · medido no front (`c4a9ff3`) |
-| 503 por provedor/cota | ver `docs/backend-unico-2026-09-27.md` (router de modelos e limites documentados lá) |
-| Skill `extracao-comportamental-iai` | nota **39 → 100** no avaliador Organizesee · `relatorios/skills/mapa-2026-09-27T1236` → `mapa-2026-09-27T1240` · pré-guard `tools/gate.mjs`: 7/7 casos, 6/6 provas negativas; `testar_skill.py` 8 OK · 2026-09-27 12:40 BRT |
+> **Esta pasta não é um repositório git.** O código também vive, portado, em `agente-app-mobile/agent_backend`
+> (ver [Etapa 0](#etapa-0--onde-este-projeto-está-no-ecossistema)).
 
 ## Sumário
 
@@ -136,7 +122,7 @@ apps/
   conversas/                 conversa i.agora: interacao/ por etapa + mensagens/ livre  (montado só por URL, sem models)
   recomendacao/              demo legada: 1.000 clientes fictícios, score, templates HTML
 templates/                   HTML da demo de recomendação
-skills/                      skill extracao-comportamental-iai (anatomia Organizesee; ainda não chamada pelo front nem pelo Django)
+skills/                      skill extracao-comportamental-iai (ainda não chamada pelo front nem pelo Django)
 scripts/                     avaliação de LLM, download do CSV, revisão Gemini, conferência RC 8
 notebooks/                   estudo i.agora (cópia do Colab) e regras da batalha
 datasets/                    evidências offline (baterias, corpus de intenção) — o runtime não lê
@@ -285,8 +271,8 @@ tem de acusar um `totais.valor_liberado` ausente e um `nivel` fora de "Nível 1/
 | :--- | :--- | :--- | :--- |
 | `planApi.ts` `POST i-agora/plano/proposta/` `{ref: person.id+1}`, sem CSRF | `PlanoPropostaAPI` | **OK**, verificado no teste | Sem `CsrfViewMiddleware`, o POST sem token passa. Os estados `OK`/`LIVRE_SEM_CORTE`/`CORTE_INSUFICIENTE` coincidem com `ProposalState`. Em 503, o front mostra "Valores de exemplo (NAO_MEDIDO)". |
 | `balanceApi.ts` `GET usuario-real/<ref>/saldo-mes/` | `UsuarioRealSaldoMesAPI` | **OK**, verificado no teste | O front usa só `negativado_na_media` e o saldo para a mensagem de apoio. Em 503 ou em `NAO_MEDIDO`, o front grava `saldoMedido = null`. |
-| Texto livre no chat | `conversas/interacao/` \| `mensagens/` | **Não ligado** no `frontend-agent-conversacional@main`; **ligado** no `batalha-agente-frontend` (`c4a9ff3`, `conversas/mensagens/`) | No `main`, o front responde localmente, por palavra-chave (`conversationService.replyTo`). |
-| Identidade da pessoa | `perfil-usuario/definir/` | **Não ligado** no `main`; **ligado** no `batalha-agente-frontend` (`c4a9ff3`) com `{"usuario": "<UUID>"}` | No `main`, `ref = índice local + 1`, sem sessão. Sequência completa e degradações: `docs/contrato-api-frontend.md` §5.2. |
+| Texto livre no chat | `conversas/interacao/` \| `mensagens/` | **Não ligado** | O front responde localmente, por palavra-chave (`conversationService.replyTo`). |
+| Identidade da pessoa | `perfil-usuario/definir/` | **Não ligado** | O front usa `ref = índice local + 1`, sem sessão. |
 | Confirmar o plano / Acompanhe | `i-agora/plano/confirmar/`, `i-agora/acompanhamento/` | **Existe (2026-09-27)** | `apps/i_agora`. Confirmar exige o caso de compromisso preparado pela conversa (sem ele: 409); idempotente por `clientRequestId`. |
 | Front i-agora (`Frontend/src/services/backend.ts`) | `conversas/sessao/`, `i-agora/perfil/`, `i-agora/plano/` GET/PATCH/DELETE, `plano/proposta/` POST/DELETE, `plano/confirmar/`, `sessao/abertura/`, `conversas/mensagens/` | **OK (2026-09-27)** | Portadas para `apps/i_agora`. `GET conversas/sessao/` sem sessão sorteia a pessoa entre os 1.000 do CSV da verdade; a mesma pessoa vale em `conversas/*` e `i-agora/*` até `sessao/abertura/ {next:true}`. `plano/proposta/` despacha pelo corpo: com `clientRequestId` é o contrato do front; com `ref` (ou GET) segue em `PlanoPropostaAPI`. Verificado: `tests/test_i_agora_*.py`. |
 
@@ -309,7 +295,6 @@ Copy-Item db.sqlite3 $env:TEMP\teste.sqlite3; $env:SQLITE_PATH="$env:TEMP\teste.
 | Suíte completa | **528 testes OK, 21 falhas esperadas** (`test_spec_*` e 1 limite do léxico) | `unittest discover`, 2026-09-27 10:15 BRT |
 | Suíte completa após o porte do i-agora | **580 testes, OK** (1 skip, 22 falhas esperadas); antes do porte, na mesma árvore: 545 OK | `unittest discover -s tests` com `SQLITE_PATH` numa cópia, 2026-09-27 11:39 BRT |
 | Contrato front ↔ back | **4/4 OK** | `tests.test_contrato_front_main`, 2026-09-27 10:21 BRT |
-| Suíte completa em `84ead9b` | **588 OK** | sessão backend-21, 2026-09-27 (contagem dela; não repetida nesta página) |
 | Suíte completa após o contrato | **NAO_MEDIDO de forma estável**: entre 10:21 e 10:25, outra sessão editava `apps/conversas/*.py` e rodava a suíte em paralelo, e cada rodada deu um resultado diferente (falhas só em `test_conversas_*`). Rode de novo quando `apps/conversas` estiver parado. | 2026-09-27 10:25 BRT |
 
 Efeito colateral conhecido: a suíte acrescenta linhas ao ledger `relatorios/avaliacoes/<data>.jsonl`, porque o

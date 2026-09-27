@@ -8,3 +8,5 @@
 {"ts":"2026-09-27T07:40:48.747Z","repo":"desafio-itau-batalha-de-agentes-time2","skill":"medicao-selada-bigquery","total":27490,"sempre_bytes":3482,"nota":100,"mapa":"mapa-2026-09-27T0440"}
 {"ts":"2026-09-27T07:40:48.747Z","repo":"desafio-itau-batalha-de-agentes-time2","skill":"revisao-gemini","total":33354,"sempre_bytes":3796,"nota":100,"mapa":"mapa-2026-09-27T0440"}
 {"ts":"2026-09-27T07:40:48.747Z","repo":"desafio-itau-batalha-de-agentes-time2","skill":"segmentacao-t3","total":31756,"sempre_bytes":3718,"nota":100,"mapa":"mapa-2026-09-27T0440"}
+{"ts":"2026-09-27T15:36:00.946Z","repo":"skills","skill":"extracao-comportamental-iai","total":25315,"sempre_bytes":4435,"nota":39,"mapa":"mapa-2026-09-27T1236"}
+{"ts":"2026-09-27T15:40:00.165Z","repo":"skills","skill":"extracao-comportamental-iai","total":67901,"sempre_bytes":3679,"nota":100,"mapa":"mapa-2026-09-27T1240"}
