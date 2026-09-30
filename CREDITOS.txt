@@ -1,0 +1,59 @@
+CREDITOS - i.agora (Batalha de Agentes, Itau, 27/09/2026) - Time 2
+
+Medido a 30/09/2026 01:30 BRT nos repositorios privados agente-app-mobile (A) e
+mobile-front-agente (M) e no fork HenriqueSoares28/agente-app-mobile (H), com
+git log --numstat, sem merges. Os repositorios publicos batalha-agente-frontend e
+batalha-agente-backend nasceram as 10:51 e 10:57 de 27/09 como instantaneo sem
+historico; este ficheiro regista a divisao do trabalho que o historico publico
+nao mostra.
+
+AUTORES
+
+Jonatha Costa (JonathaCosta10)
+  A: 49 commits, 741 ficheiros, +114.403 -6.872 linhas
+  M: 16 commits, 412 ficheiros, +46.741 -214 linhas
+  Areas: front (src/), backend Django (apps/conversas, apps/i_agora,
+  apps/context_agent_datadriven), identidade e sessao (X-Sessao-Id, sorteio por
+  id_usuario, nome gerado com selo), integracao front-back, skills, evidencias
+  e relatorios, testes, documentacao, consolidacao e merges.
+
+Henrique Franca Carvalho Soares (HenriqueSoares28)
+  A: 14 commits, 125 ficheiros, +5.547 -3.380 linhas (22% dos commits, 5% das linhas)
+  M: 5 commits, 48 ficheiros, +672 -1.241 linhas
+  Areas: agent_backend/conversation (3.340 linhas), testes do agent_backend
+  (1.154), front do chat (756), deploy Cloud Run, settings e middleware (110),
+  scripts/secret_scan.py.
+
+CONTRIBUICOES DO HENRIQUE, POR COMMIT (hora BRT de 27/09)
+
+  a2f7f96 04:29 preview guardado do i-agora, CI pendente          PR#1, merge 04:58
+  7fc5d09 04:58 Gemini 3.5 Flash-Lite para agente e guards          PR#2, merge 05:34
+  e6cef87 05:23 projecoes de gasto confirmadas e respostas de igualdade
+  401aa4b 06:53 agente financeiro, metas explicitas e persistencia (M)
+  2f7fae2 07:04 BigQuery, metas duraveis e runtime Cloud Run         PR#3, merge 08:11
+                (foi a versao que esteve no ar no Cloud Run)
+  ed06daf 07:04 docs do fluxo integrado e limites do MVP
+  32a8851 07:57 compromissos so depois de dialogo fundamentado
+  c6a7ba8 07:57 conversar antes de propor metas; limpar estado no reset (M)
+  3b84543 08:08 preservar accao fundamentada ao rever um valor
+  38baed8 08:15 fundamentar valores independentemente da formatacao do modelo
+  91f9344 08:47 abertura com perguntas proativas fundamentadas
+  1f66e6a 08:47 abrir o chat com orientacao por dados (M)
+  6f995b7 10:04 analise por transaccoes e perfis de demo seleccionaveis
+  58ff86f 10:35 release: preserve validated backend and frontend      PR#4
+
+EPISODIO DO PR#4 (58ff86f, 10:35)
+
+O release repunha o backend e o front anteriores sobre a main: 53 ficheiros,
++463 -1.916 linhas. Removia sem conflito test_session_pick.py (158 linhas),
+src/services/identity.ts e identity.test.ts, pick/repick, IAGORA_DEV_ORIGINS e
+evidencias. Foi integrado as 13:10 (6204523) com merge -s ours mais cherry-pick
+de 38baed8, 91f9344 e 6f995b7: entraram contexto detalhado, guided_opening,
+perguntas proativas e o fix de valores; identidade e nome ficaram os da main;
+o front do PR#4 ficou em archive/front-pr4-58ff86f/ (no frontend publico).
+Testes na altura: npm 40/40, tsc 0, pytest 115 ok.
+
+AGENTES DE CODIGO
+
+Claude Code nos commits de Jonatha. A ferramenta do Henrique nao e
+identificavel pelo git (commits sem trailer).
