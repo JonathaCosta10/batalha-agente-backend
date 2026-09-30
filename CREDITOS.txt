@@ -57,3 +57,7 @@ AGENTES DE CODIGO
 
 Claude Code nos commits de Jonatha. A ferramenta do Henrique nao e
 identificavel pelo git (commits sem trailer).
+
+PRAZO DA ENTREGA
+
+A entrega fechou no domingo 27/09/2026 as 11h00 BRT. Commits e ajustes depois dessa hora (merge das 13:10, portas ate 14:39, consolidacao de 30/09) sao trabalho de desenvolvedor curioso, sem efeito no resultado do evento.

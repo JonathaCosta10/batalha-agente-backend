@@ -5,6 +5,13 @@ Backend da entrega do Time 2 na **Batalha de Agentes** (Itaú, 27/09/2026). Serv
 uma pessoa da base, abre a sessão, conduz a conversa «i.ai» por etapas e devolve a frase de
 abertura do botão **«E agora?»**.
 
+## Prazo da entrega
+
+A entrega do evento fechou no **domingo, 27/09/2026, às 11h00 (BRT)**. O que este repositório
+tinha até essa hora é a entrega avaliada. **Tudo o que foi feito depois das 11h00 é trabalho de
+desenvolvedor curioso**: consolidação, limpeza, créditos e este README, sem efeito no
+resultado do evento.
+
 ## Resultado e classificação estimada
 
 O time **não ficou entre os vencedores** (venceram os times 3, 5 e 11). Num estudo posterior
