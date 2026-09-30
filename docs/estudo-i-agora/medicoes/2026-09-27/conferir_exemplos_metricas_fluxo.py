@@ -2,7 +2,7 @@
 import importlib.util, sys
 from decimal import Decimal as D
 
-CAMINHO = r"C:\Users\ACER\Desktop\hackton-1-itau\backend-agente-conversacional\apps\context_agent_datadriven\services\metricas_fluxo.py"
+CAMINHO = r"apps\context_agent_datadriven\services\metricas_fluxo.py"
 spec = importlib.util.spec_from_file_location("metricas_fluxo", CAMINHO)
 mf = importlib.util.module_from_spec(spec)
 sys.modules["metricas_fluxo"] = mf

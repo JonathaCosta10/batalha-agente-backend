@@ -1,7 +1,7 @@
 """Importa a base de calibragem de comportamento para desafio_itau/politica/comportamento-v1.json.
 
 Uso (da raiz do repo):
-    python scripts/importar_comportamento.py "C:/Users/ACER/Desktop/Perguntas e Respostas.txt"
+    python scripts/importar_comportamento.py "dados/perguntas-e-respostas.txt"
     python scripts/importar_comportamento.py <fonte> --seco      # só valida e imprime achados, não grava
 
 - Extrai TODO array JSON de objetos com `id` do arquivo-fonte (o texto pode ter prosa em volta); não reescreve dados.

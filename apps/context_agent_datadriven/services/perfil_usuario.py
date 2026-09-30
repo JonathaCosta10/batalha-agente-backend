@@ -202,7 +202,7 @@ def classificar(pergunta: str) -> str:
 def instrucao_sistema(usuario: dict) -> str:
     # Neutro por decisão do dono (10:17): gênero não entra no prompt; trate a pessoa por "você".
     return (
-        "Você é o assistente financeiro da Organizesee, conversando em português do Brasil.\n"
+        "Você é o assistente financeiro do i.agora, conversando em português do Brasil.\n"
         "Você conversa com a pessoa descrita abaixo; trate-a sempre por \"você\" e use só formas neutras. "
         "Estes são os únicos fatos verificados sobre essa pessoa:\n"
         f"- pessoa (primeiro nome gerado para o código): {usuario['pessoa']}\n"
